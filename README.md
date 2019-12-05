@@ -16,52 +16,52 @@ MSTG 和 MASVS 正被许多公司、标准和各种组织采用。想了解更�
 
 ### 介绍
 
-- [页眉](Document/0x00-Header.md)
-- [前言](Document/Foreword.md)
-- [正面](Document/0x02-Frontispiece.md)
-- [移动安全测试指南简介](Document/0x03-Overview.md)
-- [移动应用分类](Document/0x04a-Mobile-App-Taxonomy.md)
-- [移动应用安全测试](Document/0x04b-Mobile-App-Security-Testing.md)
+- [页眉](Document-cn/0x00-Header.md)
+- [前言](Document-cn/Foreword.md)
+- [正面](Document-cn/0x02-Frontispiece.md)
+- [移动安全测试指南简介](Document-cn/0x03-Overview.md)
+- [移动应用分类](Document-cn/0x04a-Mobile-App-Taxonomy.md)
+- [移动应用安全测试](Document-cn/0x04b-Mobile-App-Security-Testing.md)
 
 ### 一般测试指南
 
-- [移动应用身份验证体系结构](Document/0x04e-Testing-Authentication-and-Session-Management.md)
-- [测试网络通信](Document/0x04f-Testing-Network-Communication.md)
-- [移动应用中的加密](Document/0x04g-Testing-Cryptography.md)
-- [测试代码质量](Document/0x04h-Testing-Code-Quality.md)
-- [篡改和逆向工程](Document/0x04c-Tampering-and-Reverse-Engineering.md)
-- [测试用户教育](Document/0x04i-Testing-user-interaction.md)
+- [移动应用身份验证体系结构](Document-cn/0x04e-Testing-Authentication-and-Session-Management.md)
+- [测试网络通信](Document-cn/0x04f-Testing-Network-Communication.md)
+- [移动应用中的加密](Document-cn/0x04g-Testing-Cryptography.md)
+- [测试代码质量](Document-cn/0x04h-Testing-Code-Quality.md)
+- [篡改和逆向工程](Document-cn/0x04c-Tampering-and-Reverse-Engineering.md)
+- [测试用户教育](Document-cn/0x04i-Testing-user-interaction.md)
 
 ### Android 测试指南
 
-- [平台概述](Document/0x05a-Platform-Overview.md)
-- [Android 基本安全测试](Document/0x05b-Basic-Security_Testing.md)
-- [Android 上的数据存储](Document/0x05d-Testing-Data-Storage.md)
-- [Android 加密 API](Document/0x05e-Testing-Cryptography.md)
-- [Android 上的本地身份验证](Document/0x05f-Testing-Local-Authentication.md)
-- [Android 网络 APIs](Document/0x05g-Testing-Network-Communication.md)
-- [Android 平台 APIs](Document/0x05h-Testing-Platform-Interaction.md)
-- [Android 应用的代码质量和构建设置](Document/0x05i-Testing-Code-Quality-and-Build-Settings.md)
-- [Android 上的篡改和反向工程](Document/0x05c-Reverse-Engineering-and-Tampering.md)
-- [Android 防逆转防御](Document/0x05j-Testing-Resiliency-Against-Reverse-Engineering.md)
+- [平台概述](Document-cn/0x05a-Platform-Overview.md)
+- [Android 基本安全测试](Document-cn/0x05b-Basic-Security_Testing.md)
+- [Android 上的数据存储](Document-cn/0x05d-Testing-Data-Storage.md)
+- [Android 加密 API](Document-cn/0x05e-Testing-Cryptography.md)
+- [Android 上的本地身份验证](Document-cn/0x05f-Testing-Local-Authentication.md)
+- [Android 网络 APIs](Document-cn/0x05g-Testing-Network-Communication.md)
+- [Android 平台 APIs](Document-cn/0x05h-Testing-Platform-Interaction.md)
+- [Android 应用的代码质量和构建设置](Document-cn/0x05i-Testing-Code-Quality-and-Build-Settings.md)
+- [Android 上的篡改和反向工程](Document-cn/0x05c-Reverse-Engineering-and-Tampering.md)
+- [Android 防逆转防御](Document-cn/0x05j-Testing-Resiliency-Against-Reverse-Engineering.md)
 
 ### iOS 测试指南
 
-- [平台概述](Document/0x06a-Platform-Overview.md)
-- [iOS 基本安全测试](Document/0x06b-Basic-Security-Testing.md)
-- [iOS 上的数据存储](Document/0x06d-Testing-Data-Storage.md)
-- [iOS 加密 API](Document/0x06e-Testing-Cryptography.md)
-- [iOS 上的本地身份验证](Document/0x06f-Testing-Local-Authentication.md)
-- [iOS 网络 APIs](Document/0x06g-Testing-Network-Communication.md)
-- [iOS 平台 APIs](Document/0x06h-Testing-Platform-Interaction.md)
-- [iOS 应用的代码质量和构建设置](Document/0x06i-Testing-Code-Quality-and-Build-Settings.md)
-- [iOS 上的篡改和反向工程](Document/0x06c-Reverse-Engineering-and-Tampering.md)
-- [iOS 防逆防御](Document/0x06j-Testing-Resiliency-Against-Reverse-Engineering.md)
+- [平台概述](Document-cn/0x06a-Platform-Overview.md)
+- [iOS 基本安全测试](Document-cn/0x06b-Basic-Security-Testing.md)
+- [iOS 上的数据存储](Document-cn/0x06d-Testing-Data-Storage.md)
+- [iOS 加密 API](Document-cn/0x06e-Testing-Cryptography.md)
+- [iOS 上的本地身份验证](Document-cn/0x06f-Testing-Local-Authentication.md)
+- [iOS 网络 APIs](Document-cn/0x06g-Testing-Network-Communication.md)
+- [iOS 平台 APIs](Document-cn/0x06h-Testing-Platform-Interaction.md)
+- [iOS 应用的代码质量和构建设置](Document-cn/0x06i-Testing-Code-Quality-and-Build-Settings.md)
+- [iOS 上的篡改和反向工程](Document-cn/0x06c-Reverse-Engineering-and-Tampering.md)
+- [iOS 防逆防御](Document-cn/0x06j-Testing-Resiliency-Against-Reverse-Engineering.md)
 
 ### 附录
 
-- [测试工具](Document/0x08-Testing-Tools.md)
-- [建议阅读](Document/0x09-Suggested-Reading.md)
+- [测试工具](Document-cn/0x08-Testing-Tools.md)
+- [建议阅读](Document-cn/0x09-Suggested-Reading.md)
 
 ## 阅读移动安全测试指南
 
