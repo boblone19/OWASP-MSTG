@@ -211,7 +211,7 @@ Ghidra中还有许多其他功能，可以通过打开 **窗口** 菜单来探�
 
 为了实现这一点，在上面的示例中，我们可以通过执行进一步的逆向工程或动态执行程序并将此信息输入到我们的符号执行分析中来获取外部变量的值。 这些额外的信息将减少方程的复杂性，并可能产生更准确的分析结果。 结合改进的SMT求解器和当前的硬件速度，Conolically执行允许探索中型软件模块中的路径（即，大约10 KLOC）。
 
-此外，符号执行对于支持去混淆任务（例如简化控制流程图）也非常有用。 例如，乔纳森·萨万（Jonathan Salwan）和罗曼·托马斯（Romain Thomas）[展示了如何使用动态符号执行来反向工程基于VM的软件保护](https://triton.quarkslab.com/files/csaw2016-sos-rthomas-jsalwan.pdf "Jonathan Salwan and Romain Thomas: How Triton can help to reverse virtual machine based software protections") [#JSalwan] (i.e., using a mix of actual execution traces, simulation, and symbolic execution).
+此外，符号执行对于支持去混淆任务（例如简化控制流程图）也非常有用。 例如，乔纳森·萨万（Jonathan Salwan）和罗曼·托马斯（Romain Thomas）[展示了如何使用动态符号执行来反向工程基于VM的软件保护](https://triton.quarkslab.com/files/csaw2016-sos-rthomas-jsalwan.pdf "Jonathan Salwan and Romain Thomas: How Triton can help to reverse virtual machine based software protections") [#JSalwan](i.e.,_using_a_mix_of_actual_execution_traces,_simulation,_and_symbolic_execution).
 
 在Android部分中，您将找到一个使用符号执行来破解Android应用程序中的简单许可证检查的演练。
 
