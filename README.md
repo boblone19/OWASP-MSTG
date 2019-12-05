@@ -25,43 +25,43 @@ MSTG 和 MASVS 正被许多公司、标准和各种组织采用。想了解更�
 
 ### 一般测试指南
 
-- [Mobile App Authentication Architectures](Document/0x04e-Testing-Authentication-and-Session-Management.md)
-- [Testing Network Communication](Document/0x04f-Testing-Network-Communication.md)
-- [Cryptography in Mobile Apps](Document/0x04g-Testing-Cryptography.md)
-- [Testing Code Quality](Document/0x04h-Testing-Code-Quality.md)
-- [Tampering and Reverse Engineering](Document/0x04c-Tampering-and-Reverse-Engineering.md)
-- [Testing User Education](Document/0x04i-Testing-user-interaction.md)
+- [移动应用身份验证体系结构](Document/0x04e-Testing-Authentication-and-Session-Management.md)
+- [测试网络通信](Document/0x04f-Testing-Network-Communication.md)
+- [移动应用中的加密](Document/0x04g-Testing-Cryptography.md)
+- [测试代码质量](Document/0x04h-Testing-Code-Quality.md)
+- [篡改和逆向工程](Document/0x04c-Tampering-and-Reverse-Engineering.md)
+- [测试用户教育](Document/0x04i-Testing-user-interaction.md)
 
-### 安卓测试指南
+### Android 测试指南
 
-- [Platform Overview](Document/0x05a-Platform-Overview.md)
-- [Android Basic Security Testing](Document/0x05b-Basic-Security_Testing.md)
-- [Data Storage on Android](Document/0x05d-Testing-Data-Storage.md)
-- [Android Cryptographic APIs](Document/0x05e-Testing-Cryptography.md)
-- [Local Authentication on Android](Document/0x05f-Testing-Local-Authentication.md)
-- [Android Network APIs](Document/0x05g-Testing-Network-Communication.md)
-- [Android Platform APIs](Document/0x05h-Testing-Platform-Interaction.md)
-- [Code Quality and Build Settings for Android Apps](Document/0x05i-Testing-Code-Quality-and-Build-Settings.md)
-- [Tampering and Reverse Engineering on Android](Document/0x05c-Reverse-Engineering-and-Tampering.md)
-- [Android Anti-Reversing Defenses](Document/0x05j-Testing-Resiliency-Against-Reverse-Engineering.md)
+- [平台概述](Document/0x05a-Platform-Overview.md)
+- [Android 基本安全测试](Document/0x05b-Basic-Security_Testing.md)
+- [Android 上的数据存储](Document/0x05d-Testing-Data-Storage.md)
+- [Android 加密 API](Document/0x05e-Testing-Cryptography.md)
+- [Android 上的本地身份验证](Document/0x05f-Testing-Local-Authentication.md)
+- [Android 网络 APIs](Document/0x05g-Testing-Network-Communication.md)
+- [Android 平台 APIs](Document/0x05h-Testing-Platform-Interaction.md)
+- [Android 应用的代码质量和构建设置](Document/0x05i-Testing-Code-Quality-and-Build-Settings.md)
+- [Android 上的篡改和反向工程](Document/0x05c-Reverse-Engineering-and-Tampering.md)
+- [Android 防逆转防御](Document/0x05j-Testing-Resiliency-Against-Reverse-Engineering.md)
 
 ### iOS 测试指南
 
-- [Platform Overview](Document/0x06a-Platform-Overview.md)
-- [iOS Basic Security Testing](Document/0x06b-Basic-Security-Testing.md)
-- [Data Storage on iOS](Document/0x06d-Testing-Data-Storage.md)
-- [iOS Cryptographic APIs](Document/0x06e-Testing-Cryptography.md)
-- [Local Authentication on iOS](Document/0x06f-Testing-Local-Authentication.md)
-- [iOS Network APIs](Document/0x06g-Testing-Network-Communication.md)
-- [iOS Platform APIs](Document/0x06h-Testing-Platform-Interaction.md)
-- [Code Quality and Build Settings for iOS Apps](Document/0x06i-Testing-Code-Quality-and-Build-Settings.md)
-- [Tampering and Reverse Engineering on iOS](Document/0x06c-Reverse-Engineering-and-Tampering.md)
-- [iOS Anti-Reversing Defenses](Document/0x06j-Testing-Resiliency-Against-Reverse-Engineering.md)
+- [平台概述](Document/0x06a-Platform-Overview.md)
+- [iOS 基本安全测试](Document/0x06b-Basic-Security-Testing.md)
+- [iOS 上的数据存储](Document/0x06d-Testing-Data-Storage.md)
+- [iOS 加密 API](Document/0x06e-Testing-Cryptography.md)
+- [iOS 上的本地身份验证](Document/0x06f-Testing-Local-Authentication.md)
+- [iOS 网络 APIs](Document/0x06g-Testing-Network-Communication.md)
+- [iOS 平台 APIs](Document/0x06h-Testing-Platform-Interaction.md)
+- [iOS 应用的代码质量和构建设置](Document/0x06i-Testing-Code-Quality-and-Build-Settings.md)
+- [iOS 上的篡改和反向工程](Document/0x06c-Reverse-Engineering-and-Tampering.md)
+- [iOS 防逆防御](Document/0x06j-Testing-Resiliency-Against-Reverse-Engineering.md)
 
 ### 附录
 
-- [Testing Tools](Document/0x08-Testing-Tools.md)
-- [Suggested Reading](Document/0x09-Suggested-Reading.md)
+- [测试工具](Document/0x08-Testing-Tools.md)
+- [建议阅读](Document/0x09-Suggested-Reading.md)
 
 ## 阅读移动安全测试指南
 
@@ -106,23 +106,23 @@ MSTG 的 1.0 版本于 2018 年 6 月发布。您可以获取多种格式的中�
 请注意，MSTG 主要关注本机应用程序。这些是使用 Java 或 Kotlin 构建的应用程序，使用 Android 的 Android SDK 构建，或使用适用于 iOS 的 Apple SDK 使用 Swift 或 Objective-C 构建。原生脚本/反应原生/Xamarin/Cordova/...应用不在 MSTG 的重点范围内。但是，一些键控件（如固定）已经针对其中一些平台进行了解释。
 如果您正在寻找有关此字段的更多安全建议，请查看基于合规性清单 1.1.2 的正在进行的 Google 工作表：
 
-- [Flutter Compliancy Checklist (WIP)](https://drive.google.com/open?id=1wHK3VI1cU1xmYrCu9yb5OHKUEeLIPSkC "Flutter Compliancy Checklist");
-- [React-Native Compliancy Checklist (WIP)](https://drive.google.com/open?id=1P5FZ_Bup5eSPOmkePZA8cIpKGOKvngkN "React-Native Compliancy Checklist").
-- [Xamarin Compliancy Checklist (WIP)](https://drive.google.com/open?id=1UL1yLRREJwXfe0HlrcX-IuvPYQM7lTtG "Xamarin Compliancy Checklist").
+- [Flutter 合规性检查表 (WIP)](https://drive.google.com/open?id=1wHK3VI1cU1xmYrCu9yb5OHKUEeLIPSkC "Flutter Compliancy Checklist");
+- [React-Native 合规性检查表 (WIP)](https://drive.google.com/open?id=1P5FZ_Bup5eSPOmkePZA8cIpKGOKvngkN "React-Native Compliancy Checklist").
+- [Xamarin 合规性检查表 (WIP)](https://drive.google.com/open?id=1UL1yLRREJwXfe0HlrcX-IuvPYQM7lTtG "Xamarin Compliancy Checklist").
 
 如果指南中确实要查看某些内容，或者您想要建议改进，请创建一个问题 [问题](https://github.com/OWASP/owasp-mstg/issues "Issue") 或呼叫我们 [Slack](https://app.slack.com/client/T04T40NHX/C1M6ZVC6S "Come to our Slack!").
 如果问题被接受，我们将将其安排到我们的[里程碑](https://github.com/OWASP/owasp-mstg/milestones "Milestones").
 
-## Authoring Credit
+## 创作贡献
 
-Contributors are added to the acknowledgements table based on their contributions logged by GitHub. The list of names is sorted by the number of lines added. Authors are categorized as follows:
+参与者将根据其 GitHub 记录的贡献添加到确认表中。名称列表按添加的行数排序。作者的分类如下：
 
-- Project Leader / Author: Manage development of the guide continuously and write a large amount of new content. Project Leadership cannot be achieved if any violations of the Code of Conduct occurred in the past.
-- Co-Author: Consistently contribute quality content, [at least 2,000 additions logged](https://github.com/OWASP/owasp-mstg/graphs/contributors "Co-author").
-- Top Contributor: Consistently contribute quality content, [at least 500 additions logged](https://github.com/OWASP/owasp-mstg/graphs/contributors "Top Contributor").
-- Contributor: Any form of contribution, [at least 50 additions logged](https://github.com/OWASP/owasp-mstg/graphs/contributors "Contributor").
-- Mini-contributor: Everything below 50 additions, e.g. committing a single word or sentence.
-- Reviewer: People that haven't submitted their own pull requests, but have created issues or given useful feedback in other ways.
+- 项目负责人/作者：不断管理指南的开发，撰写大量新内容。如果过去发生过任何违反《行为准则》的行为，则无法实现项目领导。
+- 共同作者：持续提供高质量的内容，[至少记录2，000个新增内容](https://github.com/OWASP/owasp-mstg/graphs/contributors "Co-author").
+- 最佳贡献者：持续贡献优质内容，[至少记录 500 个新增内容](https://github.com/OWASP/owasp-mstg/graphs/contributors "Top Contributor").
+- 贡献者：任何形式的贡献，[至少记录50个新增量](https://github.com/OWASP/owasp-mstg/graphs/contributors "Contributor").
+- 迷你贡献者：所有低于50个的新增内容，例如，提交一个单词或句子。
+- 审阅者：尚未提交自己的拉取请求，但以其他方式创建问题或提供有用反馈的人。
 
 如果您在表或错误的列中缺少，请 ping 我们或创建拉取请求（请注意，我们经常更新表，但不是实时更新）。
 
