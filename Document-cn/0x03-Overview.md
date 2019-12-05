@@ -49,7 +49,7 @@
 
 本指南与 OWASP 移动应用程序安全验证标准 （MASVS） 密切相关。MASVS 定义了移动应用安全模型，并列出了移动应用的通用安全要求。架构师、开发人员、测试人员、安全专业人员和消费者可以使用它来定义和理解安全移动应用的质量。MSTG 映射到 MASVS 提供的相同基本安全要求集，并且根据上下文可以单独使用或组合以实现不同的目标。
 
-![Document Overview](Images/Chapters/0x03/owasp-mobile-overview.jpg)
+![文档概述](Images/Chapters/0x03/owasp-mobile-overview.jpg)
 
 例如，MASVS 要求可用于应用的规划和体系结构设计阶段，而检查表和测试指南可以用作手动安全测试的基准，也可以用作开发期间或开发后自动安全测试的模板。在"[移动应用安全测试](0x04b-Mobile-App-Security-Testing.md)" 章节将介绍如何将检查表和 MSTG 应用于移动应用渗透测试。
 

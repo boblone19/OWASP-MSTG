@@ -1,36 +1,36 @@
 # General Testing Guide
 
-## Mobile App Taxonomy
+## 移动应用分类
 
-The term "mobile app" refers to a self-contained computer program designed to execute on a mobile device. Today, the Android and iOS operating systems cumulatively comprise [more than 99% of the mobile OS market share](https://www.idc.com/promo/smartphone-market-share/os "Smartphone Market Share"). Additionally, mobile Internet usage has surpassed desktop usage for the first time in history, making mobile browsing and apps the [most widespread kind of Internet-capable applications](https://www.idc.com/promo/smartphone-market-share/os "Smartphone Market Share").
+术语"移动应用"是指用于在移动设备上执行的自包含计算机程序。如今，Android 和 iOS 操作系统累计占据了移动操作系统市场份额的 99% 以上。(https://www.idc.com/promo/smartphone-market-share/os "智能手机市场份额"). 此外，移动互联网的使用在历史上首次超过桌面使用，使得移动浏览和应用程序成为[最普遍的互联网应用程序](https://www.idc.com/promo/smartphone-market-share/os "Smartphone Market Share").
 
-> In this guide, we'll use the term "app" as a general term for referring to any kind of application running on popular mobile OSes.
+> 在本指南中，我们将使用术语"应用"作为通用术语，用于引用在流行的移动 OS 上运行的任何类型的应用程序。
 
-In a basic sense, apps are designed to run either directly on the platform for which they’re designed, on top of a smart device’s mobile browser, or using a mix of the two. Throughout the following chapter, we will define characteristics that qualify an app for its respective place in mobile app taxonomy as well as discuss differences for each variation.
+从基本意义上讲，应用设计为直接在为其设计的平台上运行，在智能设备的移动浏览器之上运行，或者使用两者的组合。在以下一章中，我们将定义符合应用在移动应用分类中各自位置的特征，并讨论每个变体的差异。
 
-### Native App
+### 原生应用程序
 
-Mobile operating systems, including Android and iOS, come with a Software Development Kit (SDK) for developing applications specific to the OS. Such applications are referred to as *native* to the system for which they have been developed. When discussing an app, the general assumption is that it is a native app implemented in a standard programming language for the respective operating system - Objective-C or Swift for iOS, and Java or Kotlin for Android.
+移动操作系统（包括 Android 和 iOS）附带软件开发工具包 （SDK），用于开发特定于操作系统的应用程序。此类应用程序称为 *原生*，用于开发这些应用程序的系统。讨论应用时，一般假设是，它是在相应操作系统的标准编程语言中实现的本机应用 - iOS 的目标 C 或 Swift，以及用于 Android 的 Java 或 Kotlin。
 
-Native apps inherently have the capability to provide the fastest performance with the highest degree of reliability. They usually adhere to platform-specific design principles (e.g. the [Android Design Principles](https://developer.android.com/design/get-started/principles.html "Android Design Principles")), which tends to result in a more consistent user interface (UI) compared to *hybrid* or *web* apps. Due to their close integration with the operating system, native apps can directly access almost every component of the device (camera, sensors, hardware-backed key stores, etc.).
+本机应用本质上能够提供具有最高可靠性的最快性能。它们通常遵循特定于平台的设计原则（例如 [安卓设计原则](https://developer.android.com/design/get-started/principles.html "Android Design Principles")), 与 *hybrid* 或 *web* 应用程序相比，这往往会导致更一致的用户界面（UI）。 由于它们与操作系统的紧密集成，因此本机应用程序可以直接访问设备的几乎每个组件（相机，传感器，硬件支持的密钥存储区等）。
 
-Some ambiguity exists when discussing *native apps* for Android as the platform provides two development kits - the Android SDK and the Android NDK. The SDK, which is based on the Java and Kotlin programming language, is the default for developing apps. The NDK (or Native Development Kit) is a C/C++ development kit used for developing binary libraries that can directly access lower level APIs (such as OpenGL). These libraries can be included in regular apps built with the SDK. Therefore, we say that Android *native apps* (i.e. built with the SDK) may have *native* code built with the NDK.
+在讨论Android的 *原生应用* 时，由于平台提供了两个开发工具包-Android SDK和Android NDK，因此存在一些歧义。 该SDK基于Java和Kotlin编程语言，是开发应用程序的默认工具。 NDK（或本机开发套件）是一种C / C ++开发套件，用于开发可直接访问较低级别的API（例如OpenGL）的二进制库。 这些库可以包含在使用SDK构建的常规应用程序中。 因此，我们说Android *原生应用*（即使用SDK构建的）可能具有NDK构建的 *原生* 代码。
 
-The most obvious downside of *native apps* is that they target only one specific platform. To build the same app for both Android and iOS, one needs to maintain two independent code bases, or introduce often complex development tools to port a single code base to two platforms (e.g. [Xamarin](https://www.xamarin.com/ "Xamarin")).
+*原生应用程序* 最明显的缺点是它们仅针对一个特定平台。 要为Android和iOS构建相同的应用程序，需要维护两个独立的代码库，或引入通常复杂的开发工具才能将单个代码库移植到两个平台 (e.g. [Xamarin](https://www.xamarin.com/ "Xamarin")).
 
-### Web App
+### 网络应用
 
-Mobile web apps (or simply, *web apps*) are websites designed to look and feel like a *native app*. These apps run on top of a device’s browser and are usually developed in HTML5, much like a modern web page. Launcher icons may be created to parallel the same feel of accessing a *native app*; however, these icons are essentially the same as a browser bookmark, simply opening the default web browser to load the referenced web page.
+移动网络应用程序（或简称为 *网络应用* ）是旨在外观和感觉像 *原始应用程序* 的网站。这些应用程序运行在设备的浏览器之上，通常使用HTML5开发，就像现代的网页一样。可以创建启动器图标，以与访问*原始应用*相同的感觉。但是，这些图标本质上与浏览器书签相同，只需打开默认的Web浏览器以加载引用的网页即可。
 
-Web apps have limited integration with the general components of the device as they run within the confines of a browser (i.e. they are “sandboxed”) and usually lack in performance compared to native apps. Since a web app typically targets multiple platforms, their UIs do not follow some of the design principles of a specific platform. The biggest advantage is reduced development and maintenance costs associated with a single code base as well as enabling developers to distribute updates without engaging the platform-specific app stores. For example, a change to the HTML file for a web app can serve as viable, cross-platform update whereas an update to a store-based app requires considerably more effort.
+Web应用程序在浏览器范围内运行（即，它们被“沙盒化”），因此与设备的常规组件的集成受限，并且与原始应用程序相比通常缺乏性能。由于Web应用程序通常针对多个平台，因此其UI不遵循特定平台的某些设计原则。最大的优点是减少了与单个代码库相关的开发和维护成本，并使开发人员无需使用特定于平台的应用程序商店即可分发更新。例如，对Web应用程序的HTML文件进行更改可以作为可行的跨平台更新，而对基于商店的应用程序进行更新则需要付出更多的努力。
 
-### Hybrid App
+### 混合应用
 
-Hybrid apps attempt to fill the gap between *native* and *web apps*. A *hybrid app* executes like a *native app*, but a majority of the processes rely on web technologies, meaning a portion of the app runs in an embedded web browser (commonly called “webview”). As such, hybrid apps inherit both pros and cons of *native* and *web apps*.
+混合应用程序试图填补 *原生* 和 *网络应用* 之间的空白。 *混合应用* 的执行方式类似于 *原始应用程序*，但是大多数流程都依赖于网络技术，这意味着该应用程序的一部分在嵌入式网络浏览器（通常称为“网络视图”）中运行。 因此，混合应用程序继承了 * 原生* 和 *web应用* 的优缺点。
 
-A web-to-native abstraction layer enables access to device capabilities for *hybrid apps* not accessible to a pure *web app*. Depending on the framework used for development, one code base can result in multiple applications that target different platforms, with a UI closely resembling that of the original platform for which the app was developed.
+Web到本地的抽象层允许访问纯混合的Web应用程序无法访问的混合应用程序的设备功能。 根据开发所使用的框架，一个代码库可以导致针对不同平台的多个应用程序，其UI与开发该应用程序的原始平台的UI非常相似。
 
-Following is a non-exhaustive list of more popular frameworks for developing *hybrid apps*:
+以下是用于开发*混合应用程序*的较流行框架的详尽列表：
 
 - [Apache Cordova](https://cordova.apache.org/ "Apache Cordova")
 - [Framework 7](https://framework7.io/ "Framework 7")
@@ -42,16 +42,16 @@ Following is a non-exhaustive list of more popular frameworks for developing *hy
 - [React Native](https://www.reactnative.com/ "React Native")
 - [Sencha Touch](https://www.sencha.com/products/touch/ "Sencha Touch")
 
-### Progressive Web App
+### 渐进式Web应用
 
-Progressive Web Apps (PWA) load like regular web pages, but differ from usual web apps in several ways. For example it's possible to work offline and access to mobile device hardware is possible, that traditionally is only available to native mobile apps.
+渐进式Web应用程序（PWA）的加载方式与常规网页一样，但是在某些方面与常规Web应用程序不同。 例如，可以脱机工作，并且可以访问移动设备硬件，而传统上仅对本地移动应用程序可用。
 
-PWAs combine different open standards of the web offered by modern browsers to provide benefits of a rich mobile experience. A Web App Manifest, which is a simple JSON file, can be used to configure the behavior of the app after "installation".
+PWA结合了现代浏览器提供的不同的Web开放标准，以提供丰富的移动体验。 Web App Manifest是一个简单的JSON文件，可用于配置“安装”后应用程序的行为。
 
-PWAs are supported by Android and iOS, but not all hardware features are yet available. For example Push Notifications, Face ID on iPhone X or ARKit for augmented reality is not available yet on iOS. An overview of PWA and supported features on each platform can be found in a [Medium article from Maximiliano Firtman](https://medium.com/@firt/progressive-web-apps-on-ios-are-here-d00430dee3a7 "Progressive Web Apps on iOS are here").
+Android和iOS支持PWA，但并非所有硬件功能都可用。 例如，推送通知，iPhone X或增强现实的ARKit上的人脸ID在iOS上尚不可用。 可以在[Maximiliano Firtman的中文章]中找到PWA和每个平台上支持的功能的概述。(https://medium.com/@firt/progressive-web-apps-on-ios-are-here-d00430dee3a7 "iOS上的渐进式Web应用程序在这里").
 
-### What's Covered in the Mobile Testing Guide
+### 移动测试指南涵盖的内容
 
-Throughout this guide, we will focus on apps for the two platforms dominating the market: Android and iOS. Mobile devices are currently the most common device class running these platforms – increasingly however, the same platforms (in particular, Android) run on other devices, such as smartwatches, TVs, car navigation/audio systems, and other embedded systems.
+在本指南中，我们将重点关注主导市场的两个平台的应用程序：Android和iOS。 移动设备是当前在这些平台上运行的最常见的设备类别–但是，越来越多的相同平台（尤其是Android）运行在其他设备上，例如智能手表，电视，汽车导航/音频系统和其他嵌入式系统。
 
-Given the vast amount of mobile app frameworks available it would be impossible to cover all of them exhaustively. Therefore, we focus on *native* apps on each operating system. However, the same techniques are also useful when dealing with web or hybrid apps (ultimately, no matter the framework, every app is based on native components).
+鉴于有大量的移动应用程序框架可用，因此不可能详尽地涵盖所有这些框架。 因此，我们专注于每个操作系统上的 *原生*应用。 但是，在处理Web或混合应用程序时，同样的技术也很有用（最终，无论采用哪种框架，每个应用程序都基于本机组件）。
