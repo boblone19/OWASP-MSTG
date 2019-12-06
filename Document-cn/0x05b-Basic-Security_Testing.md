@@ -41,11 +41,11 @@ MacOS:
 
 注意：在Linux上，您需要选择一个SDK目录。 / opt，/ srv和/ usr / local是常见的选择。
 
-##### Setting up the Android NDK
+##### 设置Android NDK
 
-The Android NDK contains prebuilt versions of the native compiler and toolchain. Both the GCC and Clang compilers have traditionally been supported, but active support for GCC ended with NDK revision 14. The device architecture and host OS determine the appropriate version. The prebuilt toolchains are in the `toolchains` directory of the NDK, which contains one subdirectory for each architecture.
+Android NDK包含本机编译器和工具链的预构建版本。 传统上都支持GCC和Clang编译器，但是对NCC的有效支持以NDK版本14结束。设备体系结构和主机OS确定适当的版本。 预先构建的工具链位于NDK的“工具链”目录中，其中每个体系结构都包含一个子目录。
 
-|Architecture | Toolchain name|
+|建筑 | 工具链名称|
 |------------ | --------------|
 |ARM-based|arm-linux-androideabi-&lt;gcc-version&gt;|
 |x86-based|x86-&lt;gcc-version&gt;|
@@ -54,140 +54,140 @@ The Android NDK contains prebuilt versions of the native compiler and toolchain.
 |X86-64-based|x86_64-&lt;gcc-version&gt;|
 |MIPS64-based|mips64el-linux-android-&lt;gcc-version&gt;|
 
-Besides picking the right architecture, you need to specify the correct sysroot for the native API level you want to target. The sysroot is a directory that contains the system headers and libraries for your target. Native APIs vary by Android API level. Possible sysroots for each Android API level are in `$NDK/platforms/`. Each API level directory contains subdirectories for the various CPUs and architectures.
+除了选择正确的体系结构之外，您还需要为要定位的本机API级别指定正确的sysroot。 sysroot是一个目录，其中包含目标的系统头和库。 原生API因Android API级别而异。 每个Android API级别的可能sysroot在$ NDK / platforms /中。 每个API级别目录都包含各种CPU和体系结构的子目录。
 
-One possibility for setting up the build system is exporting the compiler path and necessary flags as environment variables. To make things easier, however, the NDK allows you to create a so-called standalone toolchain—a "temporary" toolchain that incorporates the required settings.
+设置构建系统的一种可能性是将编译器路径和必要的标志导出为环境变量。 但是，为了使事情变得更容易，NDK允许您创建所谓的独立工具链，即包含所需设置的“临时”工具链。
 
-To set up a standalone toolchain, download the [latest stable version of the NDK](https://developer.android.com/ndk/downloads/index.html#stable-downloads "Android NDK Downloads"). Extract the ZIP file, change into the NDK root directory, and run the following command:
+要设置独立的工具链，请下载[NDK的最新稳定版本](https://developer.android.com/ndk/downloads/index.html#stable-downloads "Android NDK Downloads"). 解压缩ZIP文件，进入NDK根目录，然后运行以下命令：
 
 ```shell
 $ ./build/tools/make_standalone_toolchain.py --arch arm --api 24 --install-dir /tmp/android-7-toolchain
 ```
 
-This creates a standalone toolchain for Android 7.0 (API level 24) in the directory `/tmp/android-7-toolchain`. For convenience, you can export an environment variable that points to your toolchain directory, (we'll be using this in the examples). Run the following command or add it to your `.bash_profile` or other startup script:
+这会在目录“ / tmp / android-7-toolchain”中为Android 7.0（API级别24）创建一个独立的工具链。 为了方便起见，您可以导出指向您的工具链目录的环境变量（我们将在示例中使用它）。 运行以下命令或将其添加到您的.bash_profile或其他启动脚本中：
 
 ```shell
 $  export TOOLCHAIN=/tmp/android-7-toolchain
 ```
 
-#### Testing Device
+#### 测试装置
 
-For dynamic analysis, you'll need an Android device to run the target app on. In principle, you can test without a real Android device and use only the emulator. However, apps execute quite slowly on a emulator, and simulators may not give realistic results. Testing on a real device makes for a smoother process and a more realistic environment. On the other hand, emulators allow you to easily change SDK versions or create multiple devices. A full overview of the pros and cons of each approach is listed in the table below.
+为了进行动态分析，您需要一个Android设备才能在其上运行目标应用程序。 原则上，您可以在没有真正的Android设备的情况下进行测试，而仅使用模拟器。 但是，应用程序在模拟器上的执行速度非常慢，并且模拟器可能无法提供真实的结果。 在真实设备上进行测试可以使过程更流畅，环境更真实。 另一方面，仿真器使您可以轻松更改SDK版本或创建多个设备。 下表列出了每种方法的优缺点的完整概述。
 
-| Property | Physical | Emulator/Simulator |
+| 属性 | 物理 | 仿真器/仿真器 |
 |---|---|---|
-| Ability to restore | Softbricks are always possible, but new firmware can typically still be flashed. Hardbricks are very rare. | Emulators can crash or become corrupt, but a new one can be created or a snapshot can be restored. |
-| Reset | Can be restored to factory settings or reflashed. | Emulators can be deleted and recreated. |
-| Snapshots | Not possible. | Supported, great for malware analysis. |
-| Speed | Much faster than emulators. | Typically slow, but improvements are being made. |
-| Cost | Typically start at $200 for a usable device. You may require different devices, such as one with or without a biometric sensor. | Both free and commercial solutions exist. |
-| Ease of rooting | Highly dependent on the device. | Typically rooted by default. |
-| Ease of emulator detection | It's not an emulator, so emulator checks are not applicable. | Many artefacts will exist, making it easy to detect that the app is running in an emulator. |
-| Ease of root detection | Easier to hide root, as many root detection algorithms check for emulator properties. With Magisk Systemless root it's nearly impossible to detect. | Emulators will almost always trigger root detection algorithms due to the fact that they are built for testing with many artefacts that can be found. |
-| Hardware interaction | Easy interaction through Bluetooth, NFC, 4G, WiFi, biometrics, camera, GPS, gyroscope, ... | Usually fairly limited, with emulated hardware input (e.g. random GPS coordinates) |
-| API level support | Depends on the device and the community. Active communities will keep distributing updated versions (e.g. LineageOS), while less popular devices may only receive a few updates. Switching between versions requires flashing the device, a tedious process. | Always supports the latest versions, including beta releases. Emulators containing specific API levels can easily be downloaded and launched. |
-| Native library support | Native libraries are usually built for ARM devices, so they will work on a physical device. | Some emulators run on x86 CPUs, so they may not be able to run packaged native libraries. |
-| Malware danger | Malware samples can infect a device, but if you can clear out the device storage and flash a clean firmware, thereby restoring it to factory settings, this should not be a problem. Be aware that there are malware samples that try to exploit the USB bridge. | Malware samples can infect an emulator, but the emulator can simply be removed and recreated. It is also possible to create snapshots and compare different snapshots to help in malware analysis. Be aware that there are malware proofs of concept which try to attack the hypervisor. |
+| 恢复能力| 软砖总是可能的，但是新固件通常仍可以刷新。 硬砖头非常罕见。 | 模拟器可能崩溃或损坏，但可以创建一个新模拟器或还原快照。 |
+| 重设| 可以恢复为出厂设置或刷新。 | 可以删除并重新创建仿真器。|
+| 快照| 不可能。 | 支持，非常适合恶意软件分析。 |
+| 速度 比仿真器快得多。 | 通常速度较慢，但正在改进。 |
+| 费用| 可用设备的起价通常为200美元。 您可能需要不同的设备，例如带有或不带有生物特征传感器的设备。 | 免费和商业解决方案都存在。|
+|容易生根|高度依赖于设备。 |通常默认情况下为root。 |
+|易于检测仿真器|它不是模拟器，因此模拟器检查不适用。 |将存在许多伪像，从而可以轻松检测到该应用程序正在模拟器中运行。 |
+|易于根检测|隐藏根更容易，因为许多根检测算法都会检查模拟器属性。借助Magisk Systemless根，几乎无法检测到。 |仿真器几乎总是会触发根检测算法，这是因为仿真器是为测试许多可发现的伪像而构建的。 |
+|硬件交互|通过蓝牙，NFC，4G，WiFi，生物识别，相机，GPS，陀螺仪，...轻松交互。通常相当有限，具有模拟的硬件输入（例如，随机GPS坐标）|
+| API级支持|取决于设备和社区。活跃的社区将继续分发更新的版本（例如LineageOS），而不太受欢迎的设备可能只会收到一些更新。在不同版本之间切换需要刷新设备，这是一个乏味的过程。 |始终支持最新版本，包括beta版本。包含特定API级别的仿真器可以轻松下载并启动。 |
+|本机库支持|本机库通常是为ARM设备构建的，因此它们将在物理设备上运行。 |某些仿真器在x86 CPU上运行，因此它们可能无法运行打包的本机库。 |
+|恶意软件危险|恶意软件样本可能会感染设备，但是如果您可以清除设备存储并刷新干净的固件，从而将其恢复为出厂设置，则应该没有问题。请注意，有一些恶意软件样本试图利用USB桥接器。 |恶意软件样本可以感染模拟器，但是可以简单地将其删除并重新创建。还可以创建快照并比较不同的快照，以帮助进行恶意软件分析。请注意，有一些恶意软件概念证明会尝试攻击管理程序。 |
 
-##### Testing on a Real Device
+##### 在真实设备上测试
 
-Almost any physical device can be used for testing, but there are a few considerations to be made. First, the device needs to be rootable. This is typically either done through an exploit, or through an unlocked bootloader. Exploits are not always available, and the bootloader may be locked permanently, or it may only be unlocked once the carrier contract has been terminated.
+几乎所有物理设备都可以用于测试，但是要考虑一些注意事项。 首先，设备需要是可生根的。 通常通过漏洞利用或未锁定的引导加载程序来完成此操作。 漏洞利用并不总是可用的，并且引导加载程序可能会被永久锁定，或者只有在运营商合同终止后才能被解锁。
 
-The best candidates are flagship Google pixel devices built for developers. These devices typically come with an unlockable bootloader, opensource firmware, kernel, radio available online and official OS source code. The developer communities prefer Google devices as the OS is closest to the android open source project. These devices generally have the longest support windows with 2 years of OS updates and 1 year of security updates after that.
+最佳候选人是为开发人员打造的旗舰Google像素设备。 这些设备通常带有可解锁的引导程序，开源固件，内核，在线可用的广播和官方OS源代码。 开发者社区更喜欢Google设备，因为该操作系统最接近android开源项目。 这些设备通常具有最长的支持窗口，并具有2年的OS更新和1年的安全更新。
 
-Alternatively, Google's [Android One](https://www.android.com/one/ "Android One") project contains devices that will receive the same support windows (2 years of OS updates, 1 year of security updates) and have near-stock experiences. While it was originally started as a project for low-end devices, the program has evolved to include mid-range and high-end smartphones, many of which are actively supported by the modding community.
+另外，Google的 [Android One](https://www.android.com/one/ "Android One") 项目所包含的设备将获得相同的支持窗口（2年的操作系统更新，1年的安全更新）并具有接近库存的经验。该程序最初是针对低端设备的项目而启动的，但现在已经演变为包括中端和高端智能手机，其中许多产品受到改装社区的积极支持。
 
-Devices that are supported by the [LineageOS](https://lineageos.org/ "LineageOS") project are also very good candidates for test devices. They have an active community, easy to follow flashing and rooting instructions and the latest Android versions are typically quickly available as a Lineage installation. LineageOS also continues support for new Android versions long after the OEM has stopped distributing updates.
+[LineageOS](https://lineageos.org/ "LineageOS") 项目支持的设备也非常适合测试设备。他们有一个活跃的社区，易于遵循的闪烁和生根说明，并且通常可以通过Lineage安装快速获得最新的Android版本。在OEM停止分发更新之后，LineageOS还继续支持新的Android版本。
 
-When working with an Android physical device, you'll want to enable Developer Mode and USB debugging on the device in order to use the ADB debugging interface. Since Android 4.2 (API level 16), the **Developer options** sub menu in the Settings app is hidden by default. To activate it, tap the **Build number** section of the **About phone** view seven times. Note that the build number field's location varies slightly by device—for example, on LG Phones, it is under **About phone** -> **Software information**. Once you have done this, **Developer options** will be shown at bottom of the Settings menu. Once developer options are activated, you can enable debugging with the **USB debugging** switch.
+使用Android物理设备时，您需要在设备上启用开发人员模式和USB调试，才能使用ADB调试界面。从Android 4.2（API级别16）开始，默认情况下，“设置”应用中的“开发人员选项”子菜单处于隐藏状态。要激活它，请点按**关于电话**视图的**内部版本号**部分七次。请注意，内部版本号字段的位置因设备而异，例如，在LG Phones上，它位于**关于手机**-> **软件信息**下。完成此操作后，“开发人员选项”将显示在“设置”菜单的底部。开发人员选项激活后，您可以使用“ USB调试”开关启用调试。
 
-##### Testing on an Emulator
+##### 在仿真器上测试
 
-Multiple emulators exist, once again with their own strengths and weaknesses:
+存在多个仿真器，它们又各有优缺点：
 
-Free emulators:
+免费模拟器：
 
-- [Android Virtual Device (AVD)](https://developer.android.com/studio/run/managing-avds.html "Create and Manage Virtual Devices") - The official android emulator, distributed with Android Studio.
-- [Android X86](https://www.android-x86.org/ "Android X86") - An x86 port of the Android code base
+- [Android Virtual Device (AVD)](https://developer.android.com/studio/run/managing-avds.html "Create and Manage Virtual Devices") - 随Android Studio分发的官方android模拟器.
+- [Android X86](https://www.android-x86.org/ "Android X86") - Android代码库的x86端口
 
-Commercial emulators:
+商业仿真器：
 
-- [Genymotion](https://www.genymotion.com/fun-zone/ "Genymotion") - Mature emulator with many features, both as local and cloud-based solution. Free version available for non-commercial use.
-- [Corellium](https://corellium.com/ "Corellium") - Offers custom device virtualization through a cloud-based or on-prem solution.
+- [Genymotion](https://www.genymotion.com/fun-zone/ "Genymotion") - 具有许多功能的成熟模拟器，既可以作为本地解决方案，也可以基于云解决方案。 免费版本可用于非商业用途。
+- [Corellium](https://corellium.com/ "Corellium") - 通过基于云或本地解决方案提供自定义设备虚拟化。
 
-Although there exist several free Android emulators, we recommend using AVD as it provides enhanced features appropriate for testing your app compared to the others. In the remainder of this guide, we will use the official AVD to perform tests.
+尽管有多个免费的Android模拟器，但我们建议您使用AVD，因为与其他应用程序相比，它提供了适合测试您的应用程序的增强功能。 在本指南的其余部分，我们将使用官方的AVD进行测试。
 
-AVD supports some hardware emulation, such as [GPS](https://developer.android.com/studio/run/emulator-commandline.html#geo "GPS Emulation"), [SMS](https://developer.android.com/studio/run/emulator-commandline.html#sms "SMS") and [motion sensors](https://developer.android.com/guide/topics/sensors/sensors_overview#test-with-the-android-emulator "Testing motion sensors on emulators").
+AVD支持某些硬件仿真，例如 [GPS](https://developer.android.com/studio/run/emulator-commandline.html#geo "GPS Emulation"), [SMS](https://developer.android.com/studio/run/emulator-commandline.html#sms "SMS") 和[运动传感器](https://developer.android.com/guide/topics/sensors/sensors_overview#test-with-the-android-emulator "Testing motion sensors on emulators").
 
-You can either start an Android Virtual Device (AVD) by using the AVD Manager in Android Studio or start the AVD manager from the command line with the `android` command, which is found in the tools directory of the Android SDK:
+您可以通过使用Android Studio中的AVD管理器来启动Android虚拟设备（AVD），也可以使用Android SDK的tools目录中的`android`命令从命令行启动AVD管理器：
 
 ```shell
 $ ./android avd
 ```
 
-Several tools and VMs that can be used to test an app within an emulator environment are available:
+提供了几种可用于在模拟器环境中测试应用程序的工具和VM：
 
 - [MobSF](https://github.com/MobSF/Mobile-Security-Framework-MobSF "MobSF")
 - [Nathan](https://github.com/mseclab/nathan "Nathan") (not updated since 2016)
 
-Please also verify the "[Testing Tools](0x08-Testing-Tools.md)" chapter at the end of this book.
+还请验证本书结尾处的 “[测试工具](0x08-Testing-Tools.md)"一章.
 
-##### Getting Privileged Access
+##### 获取特权访问
 
-*Rooting* (i.e., modifying the OS so that you can run commands as the root user) is recommended for testing on a real device. This gives you full control over the operating system and allows you to bypass restrictions such as app sandboxing. These privileges in turn allow you to use techniques like code injection and function hooking more easily.
+建议在实际设备上进行测试时，要**rooting**（即修改OS，以便您可以以root用户身份运行命令）。这使您可以完全控制操作系统，并可以绕过应用程序沙箱之类的限制。这些特权又使您可以更轻松地使用代码注入和函数挂钩之类的技术。
 
-Note that rooting is risky, and three main consequences need to be clarified before you proceed. Rooting can have the following negative effects:
+请注意，生根是有风险的，在继续操作之前，需要弄清三个主要后果。生根有以下负面影响：
 
-- voiding the device warranty (always check the manufacturer's policy before taking any action)
-- "bricking" the device, i.e., rendering it inoperable and unusable
-- creating additional security risks (because built-in exploit mitigations are often removed)
+-取消设备保修（在执行任何操作之前，请始终检查制造商的政策）
+-“砖化”设备，即使其无法操作和无法使用
+-造成额外的安全风险（因为通常会消除内置的漏洞利用缓解措施）
 
-You should not root a personal device that you store your private information on. We recommend getting a cheap, dedicated test device instead. Many older devices, such as Google's Nexus series, can run the newest Android versions and are perfectly fine for testing.
+您不应将用于存储您的私人信息的个人设备植根。我们建议改为使用便宜的专用测试设备。许多较旧的设备（例如Google的Nexus系列）可以运行最新的Android版本，并且非常适合测试。
 
-**You need to understand that rooting your device is ultimately YOUR decision and that OWASP shall in no way be held responsible for any damage. If you're uncertain, seek expert advice before starting the rooting process.**
+**您需要了解，植根设备最终是您的决定，并且OWASP对任何损坏不承担任何责任。如果不确定，请在开始生根过程之前寻求专家意见。**
 
-###### Which Mobiles Can Be Rooted
+###### 哪些手机可以 Rooted
 
-Virtually any Android mobile can be rooted. Commercial versions of Android OS (which are Linux OS evolutions at the kernel level) are optimized for the mobile world. Some features have been removed or disabled for these versions, for example, non-privileged users' ability to become the 'root' user (who has elevated privileges). Rooting a phone means allowing users to become the root user, e.g., adding a standard Linux executable called `su`, which is used to change to another user account.
+几乎任何Android手机都可以 rooted。 Android OS的商业版本（在内核级别上是Linux OS的演进）针对移动世界进行了优化。这些版本已删除或禁用了某些功能，例如，非特权用户具有成为`root`用户（具有较高特权的权限）的能力。扎根电话意味着允许用户成为根用户，例如，添加名为`su`的标准Linux可执行文件，该可执行文件可用于更改为另一个用户帐户。
 
-To root a mobile device, first unlock its boot loader. The unlocking procedure depends on the device manufacturer. However, for practical reasons, rooting some mobile devices is more popular than rooting others, particularly when it comes to security testing: devices created by Google and manufactured by companies like Samsung, LG, and Motorola are among the most popular, particularly because they are used by many developers. The device warranty is not nullified when the boot loader is unlocked and Google provides many tools to support the root itself. A curated list of guides for rooting all major brand devices is posted on the [XDA forums](https://www.xda-developers.com/root/ "Guide to rooting mobile devices").
+要启动移动设备，请首先解锁其引导加载程序。解锁步骤取决于设备制造商。但是，出于实际原因，扎根某些移动设备比扎根其他移动设备更为普遍，尤其是在安全测试方面：由Google创建并由三星，LG和摩托罗拉等公司生产的设备最受欢迎，尤其是因为它们许多开发人员使用的。解锁引导加载程序并且Google提供了许多工具来支持root本身时，设备保修不会失效。精选的所有主要品牌设备生根指南精选清单已发布在 [XDA forums](https://www.xda-developers.com/root/ "Guide to rooting mobile devices").
 
 <br/>
 <br/>
 
-###### Rooting with Magisk
+###### 用Magisk 实现 Rooting 
 
-Magisk ("Magic Mask") is one way to root your Android device. It's specialty lies in the way the modifications on the system are performed. While other rooting tools alter the actual data on the system partition, Magisk does not (which is called "systemless"). This enables a way to hide the modifications from root-sensitive applications (e.g. for banking or games) and allows using the official Android OTA upgrades without the need to unroot the device beforehand.
+Magisk ("Magic Mask") 是root Android设备的一种方法。 它的特色在于对系统进行修改的方式。 尽管其他生根工具会更改系统分区上的实际数据，但Magisk不会（这称为“无系统”）。 这样可以隐藏对根敏感的应用程序（例如银行或游戏）的修改，并允许使用官方的Android OTA升级而无需事先取消设备的根目录。
 
-You can get familiar with Magisk reading the official [documentation on GitHub](https://topjohnwu.github.io/Magisk/ "Magisk Documentation"). If you don't have Magisk installed, you can find installation instructions in [the documentation](https://topjohnwu.github.io/Magisk/install.html "Magisk Installation"). If you use an official Android version and plan to upgrade it, Magisk provides a [tutorial on GitHub](https://topjohnwu.github.io/Magisk/tutorials.html#ota-installation "OTA Installation").
+您可以通过阅读官方的[GitHub上的文档](https://topjohnwu.github.io/Magisk/ "Magisk Documentation") 来熟悉Magisk。 如果尚未安装Magisk，则可以在[文档](https://topjohnwu.github.io/Magisk/install.html "Magisk Installation")中找到安装说明。 如果您使用官方Android版本并计划对其进行升级，则Magisk将提供[GitHub上的教程](https://topjohnwu.github.io/Magisk/tutorials.html#ota-installation "OTA Installation").
 
-Furthermore, developers can use the power of Magisk to create custom modules and [submit](https://github.com/Magisk-Modules-Repo/submission "Submission") them to the official [Magisk Modules repository](https://github.com/Magisk-Modules-Repo "Magisk-Modules-Repo"). Submitted modules can then be installed inside the Magisk Manager application. One of these installable modules is a systemless version of the famous [Xposed Framework](https://repo.xposed.info/module/de.robv.android.xposed.installer "Xposed Installer (framework)") (available for SDK versions up to 27).
+此外，开发人员可以使用Magisk的功能来创建自定义模块，然后将它们[提交](https://github.com/Magisk-Modules-Repo/submission "Submission") 到官方的[Magisk Modules存储库](https://github.com/Magisk-Modules-Repo "Magisk-Modules-Repo"). 然后可以将提交的模块安装在Magisk Manager应用程序中。 这些可安装模块之一是著名的[Xposed Framework](https://repo.xposed.info/module/de.robv.android.xposed.installer "Xposed Installer (framework)") 的无系统版本（适用于SDK） 版本不超过27）。
 
-###### Root Detection
+###### Root 检测
 
-An extensive list of root detection methods is presented in the "Testing Anti-Reversing Defenses on Android" chapter.
+“在Android上测试防逆转防御”一章中提供了广泛的根检测方法列表。
 
-For a typical mobile app security build, you'll usually want to test a debug build with root detection disabled. If such a build is not available for testing, you can disable root detection in a variety of ways that will be introduced later in this book.
+对于典型的移动应用程序安全性构建，通常需要在禁用根检测的情况下测试调试构建。 如果没有这样的构建可用于测试，则可以通过多种方式禁用根检测，这将在本书的后面介绍。
 
-#### Recommended Tools - Android device
+#### 推荐工具-Android设备
 
-There are many tools and frameworks used throughout this guide to assess the security of Android applications. In the next sections, you will learn more about some of the commands and interesting use cases. Please check the official documentation for installation instructions of the following tools/APKs:
+本指南通篇使用了许多工具和框架来评估Android应用程序的安全性。 在下一部分中，您将了解有关某些命令和有趣用例的更多信息。 请查看官方文档，了解以下工具/ APK的安装说明：
 
-- APK Extractor: App to extract APKs without root.
-- Frida server: Server for Frida, the dynamic instrumentation toolkit for developers, reverse-engineers, and security researchers. See [Frida](#frida "Frida section") section below for more information.
-- Drozer agent: Agent for drozer, the framework that allows you to search for security vulnerabilities in apps and devices. See [Drozer](#drozer "Drozer section") section below for more information.
+- APK 提取器：提取无根APK的应用程序。
+- Frida 服务器：Frida服务器，适用于开发人员，逆向工程人员和安全研究人员的动态工具套件。 有关更多信息，请参见下面的[Frida]（＃frida“ Frida部分”）部分。
+- Drozer 代理：drozer的代理，该框架使您可以搜索应用程序和设备中的安全漏洞。 有关更多信息，请参见下面的[Drozer]（＃drozer“ Drozer部分”）部分。
 
 ##### Xposed
 
-[Xposed](http://repo.xposed.info/module/de.robv.android.xposed.installer "Xposed Installer") is a "framework for modules that can change the behavior of the system and apps without touching any APKs.". Technically, it is an extended version of Zygote that exports APIs for running Java code when a new process is started. Running Java code in the context of the newly instantiated app makes it possible to resolve, hook, and override Java methods belonging to the app. Xposed uses [reflection](https://docs.oracle.com/javase/tutorial/reflect/ "Reflection Tutorial") to examine and modify the running app. Changes are applied in memory and persist only during the process' runtime since the application binaries are not modified.
+[Xposed](http://repo.xposed.info/module/de.robv.android.xposed.installer "Xposed Installer") 是“模块框架，可以在不触摸任何APK的情况下更改系统和应用程序的行为”。从技术上讲，它是Zygote的扩展版本，可在启动新进程时导出用于运行Java代码的API。在新实例化的应用程序上下文中运行Java代码可以解析，挂钩和覆盖属于该应用程序的Java方法。 Xposed使用[reflection](https://docs.oracle.com/javase/tutorial/reflect/ "Reflection Tutorial") 检查和修改正在运行的应用程序。因为未修改应用程序二进制文件，所以更改将应用​​到内存中，并且仅在进程的运行时持久保存。
 
-To use Xposed, you need to first install the Xposed framework on a rooted device as explained on [XDA-Developers Xposed framework hub](https://www.xda-developers.com/xposed-framework-hub/ "Xposed framework hub from XDA"). Modules can be installed through the Xposed Installer app, and they can be toggled on and off through the GUI.
+要使用Xposed，您需要先按照[XDA-Developers Xposed framework hub](https://www.xda-developers.com/xposed-framework-hub/ "Xposed framework hub from XDA"). 可以通过Xposed Installer应用程序安装模块，也可以通过GUI启用和禁用这些模块。
 
-Note: given that a plain installation of the Xposed framework is easily detected with SafetyNet, we recommend using Magisk to install Xposed. This way, applications with SafetyNet attestation should have a higher chance of being testable with Xposed modules.
+注意：鉴于可以使用SafetyNet轻松检测到Xposed框架的简单安装，因此我们建议使用Magisk安装Xposed。这样，带有SafetyNet认证的应用程序应该具有更高的可通过Xposed模块进行测试的机会。
 
-Xposed has been compared to Frida. When you run Frida server on a rooted device, you will end up with a similarly effective setup. Both frameworks deliver a lot of value when you want to do dynamic instrumentation. When Frida crashes the app, you can try something similar with Xposed. Next, similar to the abundance of Frida scripts, you can easily use one of the many modules that come with Xposed, such as the earlier discussed module to bypass SSL pinning ([JustTrustMe](https://github.com/Fuzion24/JustTrustMe "JustTrustMe") and [SSLUnpinning](https://github.com/ac-pm/SSLUnpinning_Xposed "SSL Unpinning")). Xposed includes other modules, such as [Inspeckage](https://github.com/ac-pm/Inspeckage "Inspeckage") which allow you to do more in depth application testing as well. On top of that, you can create your own modules as well to patch often used security mechanisms of Android applications.
+Xposed已与Frida进行了比较。在有根设备上运行Frida服务器时，最终将获得类似的有效设置。当您要进行动态检测时，这两个框架都可以带来很多价值。当Frida使该应用程序崩溃时，您可以尝试使用Xposed类似的方法。接下来，类似于丰富的Frida脚本，您可以轻松使用Xposed随附的众多模块之一，例如前面讨论的模块绕过SSL固定（[JustTrustMe](https://github.com/Fuzion24/JustTrustMe "JustTrustMe") 和 [SSLUnpinning](https://github.com/ac-pm/SSLUnpinning_Xposed "SSL Unpinning")). Xposed包括其他模块，例如[Inspeckage](https://github.com/ac-pm/Inspeckage "Inspeckage") 这些模块也使您可以进行更多的深度应用程序测试。最重要的是，您还可以创建自己的模块来修补Android应用程序的常用安全机制。
 
-Xposed can also be installed on an emulator through the following script:
+也可以通过以下脚本将Xposed安装在模拟器上：
 
 ```sh
 #!/bin/sh
@@ -215,15 +215,15 @@ echo "Next, run installer and then adb reboot"
 echo "Want to use it again? Start your emulator with 'emulator -avd NAMEOFX86A8.0 -writable-system -selinux permissive'"
 ```
 
-Please note that Xposed, as of early 2019, does not work on Android 9 (API level 28) yet.
+请注意，截至2019年初，Xposed尚不适用于Android 9（API级别28）。
 
-#### Recommended Tools - Host computer
+#### 推荐工具 - 主机
 
-In order to analyze Android apps, you should install the following tools on your host computer. Please check the official documentation for installation instructions of the following tools/frameworks. We'll be referring to them throughout the guide.
+为了分析Android应用，您应该在主机上安装以下工具。 请查看官方文档，了解以下工具/框架的安装说明。 在整个指南中，我们将参考它们。
 
 ##### Adb
 
-[adb](https://developer.android.com/studio/command-line/adb "Android Debug Bridge") (Android Debug Bridge), shipped with the Android SDK, bridges the gap between your local development environment and a connected Android device. You'll usually leverage it to test apps on the emulator or a connected device via USB or WiFi. Use the `adb devices` command to list the connected devices and execute it with the `-l` argument to retrieve more details on them.
+[adb](https://developer.android.com/studio/command-line/adb "Android Debug Bridge") (Android Debug Bridge), Android SDK附带的[adb], 弥合了本地开发环境与已连接的开发环境之间的差距 Android设备。 通常，您将利用它来通过USB或WiFi在仿真器或连接的设备上测试应用程序。 使用“ adb devices”命令列出连接的设备，并使用 `-l` 参数执行它以获取有关它们的更多详细信息。
 
 ```shell
 $ adb devices -l
@@ -232,7 +232,7 @@ List of devices attached
 emulator-5554    device product:sdk_google_phone_x86 model:Android_SDK_built_for_x86 device:generic_x86 transport_id:1
 ```
 
-adb provides other useful commands such as `adb shell` to start an interactive shell on a target and `adb forward` to forward traffic on a specific host port to a different port on a connect device.
+adb 提供了其他有用的命令，例如 `adb shell` 以在目标上启动交互式shell，以及`adb forward` 以将特定主机端口上的流量转发到连接设备上的其他端口。
 
 ```shell
 $ adb forward tcp:<host port> tcp:<device port>
@@ -248,31 +248,31 @@ config
 ...
 ```
 
-You'll come across different use cases on how you can use adb commands when testing later in this book. Note that you must define the serialnummer of the target device with the `-s` argument (as shown by the previous code snippet) in case you have multiple devices connected.
+在本书后面的测试中，您将遇到不同的使用案例，以了解如何使用adb命令。 请注意，如果连接了多个设备，则必须使用-s参数定义目标设备的序列号（如前面的代码片段所示）。
 
 ##### Angr
 
-Angr is a Python framework for analyzing binaries. It is useful for both static and dynamic symbolic ("concolic") analysis. In other words: given a binary and a requested state, Angr will try to get to that state, using formal methods (a technique used for static code analysis) to find a path, as well as brute forcing. Using angr to get to the requested state is often much faster than taking manual steps for debugging and searching the path towards the required state. Angr operates on the VEX intermediate language and comes with a loader for ELF/ARM binaries, so it is perfect for dealing with native code, such as native Android binaries.
+Angr是一个用于分析二进制文件的Python框架。 它对于静态和动态符号（“共余”）分析都是有用的。 换句话说：给定一个二进制状态和一个请求状态，Angr将尝试使用形式化方法（一种用于静态代码分析的技术）来找到该状态以及蛮力。 使用angr进入请求的状态通常比采取手动步骤进行调试和搜索通往所需状态的路径要快得多。 Angr使用VEX中间语言进行操作，并带有ELF / ARM二进制文件的加载程序，因此非常适合处理本机代码，例如本机Android二进制文件。
 
-Angr allows for disassembly, program instrumentation, symbolic execution, control-flow analysis, data-dependency analysis, decompilation and more, given a large set of plugins.
+Angr允许使用大量插件来进行反汇编，程序检测，符号执行，控制流分析，数据依赖分析，反编译等。
 
-Since version 8, Angr is based on Python 3, and can be installed with pip on \*nix operating systems, macOS and Windows:
+从版本8开始，Angr基于Python 3，并且可以通过pip安装在\ * nix操作系统，macOS和Windows上：
 
 ```shell
 $ pip install angr
 ```
 
-> Some of angr's dependencies contain forked versions of the Python modules Z3 and PyVEX, which would overwrite the original versions. If you're using those modules for anything else, you should create a dedicated virtual environment with [Virtualenv](https://docs.python.org/3/tutorial/venv.html "Virtualenv documentation"). Alternatively, you can always use the provided docker container. See the [installation guide](https://docs.angr.io/introductory-errata/install "angr Installation Guide") for more details.
+> Angr 的某些依赖项包含Python模块Z3和PyVEX的分支版本，这些版本会覆盖原始版本。如果将这些模块用于其他任何用途，则应使用 [Virtualenv](https://docs.python.org/3/tutorial/venv.html "Virtualenv documentation") 创建专用的虚拟环境。或者，您可以始终使用提供的docker容器。有关更多详细信息，请参见[安装指南](https://docs.angr.io/introductory-errata/install "angr Installation Guide").
 
-Comprehensive documentation, including an installation guide, tutorials, and usage examples are available on [Angr's Gitbooks page](https://docs.angr.io/ "angr"). A complete [API reference](https://angr.io/api-doc/ "angr API") is also available.
+可在[Angr's Gitbooks页面](https://docs.angr.io/ "angr")上获得包括安装指南，教程和用法示例在内的全面文档。也提供完整的[API参考](https://angr.io/api-doc/ "angr API").
 
-You can use angr from a Python REPL - such as iPython - or script your approaches. Although angr has a bit of a steep learning curve, we do recommend using it when you want to brute force your way to a given state of an executable. Please see the "[Symbolic Execution](0x05c-Reverse-Engineering-and-Tampering.md#symbolic-execution "Symbolic Execution")" section of the "Reverse Engineering and Tampering" chapter as a great example on how this can work.
+您可以使用Python REPL（例如iPython）中的angr或编写方法脚本。尽管angr的学习曲线有些陡峭，但是当您要蛮力将可执行文件的状态设为特定状态时，我们还是建议您使用它。请参阅“反向工程和篡改”一章的“ [符号执行](0x05c-Reverse-Engineering-and-Tampering.md#symbolic-execution "Symbolic Execution")" 部分，以获取有关如何执行此操作的绝佳示例。
 
 ##### Apktool
 
-[Apktool](https://github.com/iBotPeaches/Apktool) is used to unpack Android app packages (APKs). Simply unzipping APKs with the standard `unzip` utility leaves some files unreadable. `AndroidManifest.xml` is encoded into binary XML format which isn’t readable with a text editor. Also, the app resources are still packaged into a single archive file.
+[Apktool](https://github.com/iBotPeaches/Apktool) 用于解压缩Android应用程序包（APK）。 使用标准的“ unzip”实用工具简单地将APK解压缩会使一些文件不可读。 “ AndroidManifest.xml”已编码为二进制XML格式，文本编辑器无法读取。 此外，应用程序资源仍打包到单个存档文件中。
 
-When run with default command line flags, apktool automatically decodes the Android Manifest file to text-based XML format and extracts the file resources (it also disassembles the .DEX files to smali code – a feature that we’ll revisit later in this book).
+当使用默认命令行标志运行时，apktool会自动将Android Manifest文件解码为基于文本的XML格式并提取文件资源（还将.DEX文件反汇编为smali代码，这一功能我们将在本书后面部分进行介绍） 。
 
 ```shell
 $ apktool d base.apk
@@ -301,19 +301,18 @@ drwxr-xr-x  131 sven  staff   4.3K Dec  5 16:29 res
 drwxr-xr-x    9 sven  staff   306B Dec  5 16:29 smali
 ```
 
-The unpacked files are:
+解压缩的文件是：
 
-- AndroidManifest.xml: The decoded Android Manifest file, which can be opened and edited in a text editor.
-- apktool.yml: file containing information about the output of apktool
-- original: folder containing the MANIFEST.MF file, which contains information about the files contained in the JAR file
-- res: directory containing the app’s resources
-- smali: directory containing the disassembled Dalvik bytecode.
+-AndroidManifest.xml：已解码的Android Manifest文件，可以在文本编辑器中打开和编辑该文件。
+-apktool.yml：包含有关apktool输出的信息的文件
+-原始：包含MANIFEST.MF文件的文件夹，该文件包含有关JAR文件中包含的文件的信息
+-res：包含应用程序资源的目录
+-smali：包含反汇编的Dalvik字节码的目录。
 
-You can also use apktool to repackage decoded resources back to binary APK/JAR. See the section "[Exploring the App Package](#exploring-the-app-package "Exploring the App Package")" later on this chapter and section "[Repackaging](0x05c-Reverse-Engineering-and-Tampering.md#repackaging "Repackaging")" in the chapter "Tampering and Reverse Engineering on Android" for more information and practical examples.
-
+您还可以使用apktool将解码后的资源重新打包回二进制APK / JAR。 请参阅本章后面的“ [探索应用程序包](#exploring-the-app-package "Exploring the App Package")" 部分和“ [重新包装](0x05c-Reverse-Engineering-and-Tampering.md#repackaging "Repackaging")" 请参阅“在Android上进行篡改和逆向工程”一章中的“重新包装” 有关更多信息和实际示例.
 ##### Apkx
 
-`Apkx` is a Python wrapper to popular free DEX converters and Java decompilers. It automates the extraction, conversion, and decompilation of APKs. Install it as follows:
+`Apkx` 是流行的免费DEX转换器和Java反编译器的Python包装器。 它自动执行APK的提取，转换和反编译。 如下安装：
 
 ```shell
 $ git clone https://github.com/b-mueller/apkx
@@ -321,27 +320,27 @@ $ cd apkx
 $ sudo ./install.sh
 ```
 
-This should copy `apkx` to `/usr/local/bin`. See section "[Decompiling Java Code](0x05c-Reverse-Engineering-and-Tampering.md#decompiling-java-code "Decompiling Java Code")" of the "Reverse Engineering and Tampering" chapter for more information about usage.
+这应该将 `apkx` 复制到 `/usr/local/bin`. 有关用法的更多信息，请参见 “逆向工程和篡改” 一章的“[反编译Java代码](0x05c-Reverse-Engineering-and-Tampering.md#decompiling-java-code "Decompiling Java Code")"
 
 ##### Burp Suite
 
-Burp Suite is an integrated platform for security testing mobile and web applications. Its tools work together seamlessly to support the entire testing process, from initial mapping and analysis of attack surfaces to finding and exploiting security vulnerabilities. Burp Proxy operates as a web proxy server for Burp Suite, which is positioned as a man-in-the-middle between the browser and web server(s). Burp Suite allows you to intercept, inspect, and modify incoming and outgoing raw HTTP traffic.
+Burp Suite是用于安全测试移动和Web应用程序的集成平台。 它的工具无缝协作，以支持整个测试过程，从最初的攻击面映射和分析到发现和利用安全漏洞。 Burp Proxy充当Burp Suite的Web代理服务器，该服务器位于浏览器和Web服务器之间的中间人位置。 Burp Suite允许您拦截，检查和修改传入和传出的原始HTTP通信。
 
-Setting up Burp to proxy your traffic is pretty straightforward. We assume that you have an iOS device and workstation connected to a Wi-Fi network that permits client-to-client traffic.
+设置Burp代理您的流量非常简单。 我们假设您有连接到Wi-Fi网络且允许客户端到客户端流量的iOS设备和工作站。
 
-PortSwigger provides a good [tutorial on setting up an Android device to work with Burp](https://support.portswigger.net/customer/portal/articles/1841101-configuring-an-android-device-to-work-with-burp "Configuring an Android Device to Work With Burp") and a [tutorial on installing Burp's CA certificate to an Android device](https://support.portswigger.net/customer/portal/articles/1841102-installing-burp-s-ca-certificate-in-an-android-device "Installing Burp's CA Certificate in an Android Device").
+PortSwigger提供了很好的 [设置Android设备以与Burp配合使用的教程](https://support.portswigger.net/customer/portal/articles/1841101-configuring-an-android-device-to-work-with-burp "Configuring an Android Device to Work With Burp") 以及[将Burp的CA证书安装到Android设备上的教程](https://support.portswigger.net/customer/portal/articles/1841102-installing-burp-s-ca-certificate-in-an-android-device "Installing Burp's CA Certificate in an Android Device").
 
 ##### Drozer
 
-[Drozer](https://github.com/mwrlabs/drozer "Drozer on GitHub") is an Android security assessment framework that allows you to search for security vulnerabilities in apps and devices by assuming the role of a third-party app interacting with the other application's IPC endpoints and the underlying OS.
+[Drozer](https://github.com/mwrlabs/drozer "Drozer on GitHub") 是一个Android安全评估框架，允许您通过假设第三方应用交互的作用来搜索应用和设备中的安全漏洞。 与其他应用程序的IPC端点和基础操作系统。
 
-The advantage of using Drozer consists on its ability to automate several tasks and that it can be expanded through modules. The modules are very helpful and they cover different categories including a scanner category that allows you to scan for known defects with a simple command such as the module `scanner.provider.injection` which detects SQL injections in content providers in all the apps installed in the system. Without drozer, simple tasks such as listing the app's permissions require several steps that include decompiling the APK and manually analyzing the results.
+使用Drozer的优势在于其能够自动执行多个任务的能力，并且可以通过模块进行扩展。 这些模块非常有用，涵盖了不同的类别，其中包括扫描程序类别，可让您使用简单的命令扫描已知缺陷，例如模块`scanner.provider.injection`，该模块可检测安装在所有应用程序中内容提供程序中的SQL注入 系统。 如果不使用drozer，则简单的任务（例如列出应用程序的权限）需要几个步骤，包括反编译APK和手动分析结果。
 
 ###### Installing Drozer
 
-You can refer to [drozer GitHub page](https://github.com/mwrlabs/drozer "Drozer on GitHub") (for Linux and Windows, for macOS please refer to this [blog post](https://blog.ropnop.com/installing-drozer-on-os-x-el-capitan/ "ropnop Blog - Installing Drozer on OS X El Capitan")) and the [drozer website](https://labs.mwrinfosecurity.com/tools/drozer/ "Drozer Website") for prerequisites and installation instructions.
+您可以参考[drozer GitHub页面](https://github.com/mwrlabs/drozer "Drozer on GitHub") (对于Linux和Windows，对于macOS，请参考此[blog post](https://blog.ropnop.com/installing-drozer-on-os-x-el-capitan/ "ropnop Blog - Installing Drozer on OS X El Capitan")) 和 [drozer website](https://labs.mwrinfosecurity.com/tools/drozer/ "Drozer Website") 以获取先决条件和安装说明。
 
-The installation instructions for drozer on Unix, Linux and Windows are explained in the [drozer Github page](https://github.com/mwrlabs/drozer "drozer GitHub page"). For [macOS this blog post](https://blog.ropnop.com/installing-drozer-on-os-x-el-capitan/ "Installing Drozer on OS X El Capitan") will be demonstrating all installation instructions.
+在[drozer Github页面](https://github.com/mwrlabs/drozer "drozer GitHub page")中说明了Unix，Linux和Windows上drozer的安装说明。 对于[macOS，此博客文章](https://blog.ropnop.com/installing-drozer-on-os-x-el-capitan/ "Installing Drozer on OS X El Capitan") 将演示所有安装说明。
 
 ###### Using Drozer
 
