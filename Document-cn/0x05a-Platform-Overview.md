@@ -1,42 +1,42 @@
-## Android Platform Overview
+## Android 平台概述
 
-This section introduces the Android platform from an architecture point of view. The following five key areas are discussed:
+本节从架构角度介绍Android平台。 讨论了以下五个关键领域：
 
-1. Android security architecture
-2. Android application structure
-3. Inter-process Communication (IPC)
-4. Android application publishing
-5. Android application attack surface
+1. Android安全架构
+2. Android应用程序结构
+3. 进程间通信（IPC）
+4. Android应用程序发布
+5. Android应用程序的攻击面
 
-Visit the official [Android developer documentation website](https://developer.android.com/index.html "Android Developer Guide") for more details about the Android platform.
+访问官方[Android开发人员文档网站](https://developer.android.com/index.html "Android Developer Guide") 有关Android平台的更多详细信息。
 
-### Android Security Architecture
+### Android 安全架构
 
-Android is a Linux-based open source platform developed by Google, which serves as a mobile operating system (OS). Today the platform is the foundation for a wide variety of modern technology, such as mobile phones, tablets, wearable tech, TVs, and other "smart" devices. Typical Android builds ship with a range of pre-installed ("stock") apps and support installation of third-party apps through the Google Play store and other marketplaces.
+Android是Google开发的基于Linux的开放源代码平台，用作移动操作系统（OS）。 如今，该平台已成为各种现代技术（例如手机，平板电脑，可穿戴技术，电视和其他“智能”设备）的基础。 典型的Android版本附带了一系列预安装（“库存”）应用程序，并支持通过Google Play商店和其他市场安装第三方应用程序。
 
-Android's software stack is composed of several different layers. Each layer defines interfaces and offers specific services.
+Android的软件堆栈由几个不同的层组成。 每一层定义接口并提供特定的服务。
 
 <img src="Images/Chapters/0x05a/android_software_stack.png" alt="Android Software Stack" width="400">
 
-At the lowest level, Android is based on a variation of the Linux Kernel. On top of the kernel, the Hardware Abstraction Layer (HAL) defines a standard interface for interacting with built-in hardware components. Several HAL implementations are packaged into shared library modules that the Android system calls when required. This is the basis for allowing applications to interact with the device's hardware—for example, it allows a stock phone application to use a device's microphone and speaker.
+在最低级别上，Android基于Linux内核的变体。 在内核之上，硬件抽象层（HAL）定义了用于与内置硬件组件进行交互的标准接口。 几种HAL实现打包在Android系统需要时调用的共享库模块中。 这是允许应用程序与设备的硬件进行交互的基础，例如，它允许股票电话应用程序使用设备的麦克风和扬声器。
 
-Android apps are usually written in Java and compiled to Dalvik bytecode, which is somewhat different from the traditional Java bytecode. Dalvik bytecode is created by first compiling the Java code to .class files, then converting the JVM bytecode to the Dalvik .dex format with the `dx` tool.
+Android应用程序通常用Java编写并编译为Dalvik字节码，这与传统的Java字节码有些不同。 通过首先将Java代码编译为.class文件，然后使用`dx`工具将JVM字节码转换为Dalvik .dex格式来创建Dalvik字节码。
 
 <img src="Images/Chapters/0x05a/java_vs_dalvik.png" alt="Java vs Dalvik" width="350">
 
-The current version of Android executes this bytecode on the Android runtime (ART). ART is the successor to Android's original runtime, the Dalvik Virtual Machine. The key difference between Dalvik and ART is the way the bytecode is executed.
+当前版本的Android在Android运行时（ART）上执行此字节码。 ART是Android原始运行时Dalvik虚拟机的后继者。 Dalvik和ART之间的主要区别在于字节码的执行方式。
 
-In Dalvik, bytecode is translated into machine code at execution time, a process known as *just-in-time* (JIT) compilation. JIT compilation adversely affects performance: the compilation must be performed every time the app is executed. To improve performance, ART introduced *ahead-of-time* (AOT) compilation. As the name implies, apps are precompiled before they are executed for the first time. This precompiled machine code is used for all subsequent executions. AOT improves performance by a factor of two while reducing power consumption.
+在Dalvik中，字节码在执行时转换为机器代码，该过程称为“即时”（JIT）编译。 JIT编译会对性能产生不利影响：每次执行应用程序时都必须执行编译。为了提高性能，ART引入了“提前”（AOT）编译。顾名思义，应用会在首次执行之前进行预编译。此预编译的机器代码用于所有后续执行。 AOT在降低功耗的同时将性能提高了两倍。
 
-Android apps don't have direct access to hardware resources, and each app runs in its own sandbox. This allows precise control over resources and apps: for instance, a crashing app doesn't affect other apps running on the device. At the same time, the Android runtime controls the maximum number of system resources allocated to apps, preventing any one app from monopolizing too many resources.
+Android应用程序无法直接访问硬件资源，并且每个应用程序都在自己的沙箱中运行。这样可以精确控制资源和应用程序：例如，崩溃的应用程序不会影响设备上运行的其他应用程序。同时，Android运行时控制分配给应用程序的最大系统资源数量，从而防止任何一个应用程序垄断过多的资源。
 
-#### Android Users and Groups
+#### Android 用户和群组
 
-Even though the Android operating system is based on Linux, it doesn't implement user accounts in the same way other Unix-like systems do. In Android, the multi-user support of the Linux kernel to sandbox apps: with a few exceptions, each app runs as though under a separate Linux user, effectively isolated from other apps and the rest of the operating system.
+即使Android操作系统基于Linux，它也无法像其他类似Unix的系统那样实现用户帐户。 在Android中，Linux内核向沙盒应用程序提供了多用户支持：除少数例外，每个应用程序都像在一个单独的Linux用户下运行，与其他应用程序和操作系统的其余部分有效隔离。
 
-The file [system/core/include/private/android_filesystem_config.h](http://androidxref.com/7.1.1_r6/xref/system/core/include/private/android_filesystem_config.h "android_filesystem_config.h") includes a list of the predefined users and groups system processes are assigned to. UIDs (userIDs) for other applications are added as the latter are installed. For more details, check out Bin Chen's [blog post](https://pierrchen.blogspot.mk/2016/09/an-walk-through-of-android-uidgid-based.html "Bin Chen - AProgrammer Blog - Android Security: An Overview Of Application Sandbox") on Android sandboxing.
+文件 [system/core/include/private/android_filesystem_config.h](http://androidxref.com/7.1.1_r6/xref/system/core/include/private/android_filesystem_config.h "android_filesystem_config.h") 包括预定义的用户和系统进程所分配到的组的列表。 安装其他应用程序时，会添加其他应用程序的UID（用户ID）。 有关更多详细信息，请查看陈斌的 [blog post](https://pierrchen.blogspot.mk/2016/09/an-walk-through-of-android-uidgid-based.html "Bin Chen - AProgrammer Blog - Android Security: An Overview Of Application Sandbox") 在 Android 沙箱上.
 
-For example, Android 7.0 (API level 24) defines the following system users:
+例如，Android 7.0（API级别24）定义了以下系统用户：
 
 ```c
     #define AID_ROOT             0  /* traditional unix root user */
@@ -51,70 +51,70 @@ For example, Android 7.0 (API level 24) defines the following system users:
 <br/>
 <br/>
 
-#### Android Device Encryption
+#### Android 设备加密
 
-Android supports device encryption from Android 2.3.4 (API level 10) and it has undergone some big changes since then. Google imposed that all devices running Android 6.0 (API level 23) or higher had to support storage encryption. Although some low-end devices were exempt because it would significantly impact performance. In the following sections you can find information about device encryption and its algorithms.
+Android支持Android 2.3.4（API级别10）中的设备加密，此后发生了一些大变化。 Google规定，所有运行Android 6.0（API级别23）或更高版本的设备都必须支持存储加密。 尽管某些低端设备可以免税，因为这会严重影响性能。 在以下各节中，您可以找到有关设备加密及其算法的信息。
 
-##### Full-Disk Encryption
+##### 全盘加密
 
-Android 5.0 (API level 21) and above support full-disk encryption. This encryption uses a single key protected by the users' device password to encrypt and decrypt the userdata partition. This kind of encryption is now considered deprecated and file-based encryption should be used whenever possible. Full-disk encryption has drawbacks, such as not being able to receive calls or not having operative alarms after a reboot if the user does not enter his password.
+Android 5.0（API级别21）及更高版本支持全盘加密。 这种加密使用受用户设备密码保护的单个密钥来加密和解密userdata分区。 现在认为这种加密已被弃用，并且应尽可能使用基于文件的加密。 全盘加密具有一些缺点，例如，如果用户未输入密码，则在重新启动后无法接听电话或没有可操作的警报。
 
-##### File-Based Encryption
+##### 基于文件的加密
 
-Android 7.0 (API level 24) supports file-based encryption. File-based encryption allows different files to be encrypted with different keys so they can be deciphered independently. Devices which support this type of encryption support Direct Boot as well. Direct Boot enables the device to have access to features such as alarms or accessibility services even if the user does not enter his password.
+Android 7.0（API级别24）支持基于文件的加密。 基于文件的加密允许使用不同的密钥对不同的文件进行加密，以便可以独立解密它们。 支持这种加密方式的设备也支持直接启动。 通过直接引导，即使用户未输入密码，设备也可以访问警报或辅助功能等功能。
 
 ##### Adiantum
 
-AES is used on most modern Android devices for storage encryption. Actually, AES has become such a widely used algorithm that the most recent processor implementations have a dedicated set of instructions to provide hardware accelerated encryption and decryption operations, such as ARMv8 with its Cryptography Extensions or x86 with AES-NI extension.
-However, not all devices are capable of using AES for storage encryption in a timely fashion. Especially low-end devices running Android Go. These devices usually use low-end processors, such as the ARM Cortex-A7 which don't have hardware accelerated AES.
+AES在大多数现代Android设备上用于存储加密。实际上，AES已经成为一种被广泛使用的算法，以至于最新的处理器实现具有专用的指令集来提供硬件加速的加密和解密操作，例如带有密码学扩展的ARMv8或具有AES-NI扩展的x86。
+但是，并非所有设备都能及时使用AES进行存储加密。尤其是运行Android Go的低端设备。这些设备通常使用低端处理器，例如ARM Cortex-A7，它们没有硬件加速的AES。
 
-Adiantum is a cipher construction designed by Paul Crowley and Eric Biggers at Google to fill the gap for that set of devices which are not able to run AES at least at 50 MiB/s. Adiantum relies only on additions, rotations and XORs; these operations are natively supported on all processors. Therefore, the low-end processors can encrypt 4 times faster and decrypt 5 times faster than they would if they were using AES.
+Adiantum是由Google的Paul Crowley和Eric Biggers设计的密码结构，用于填补那些不能以至少50 MiB / s的速度运行AES的设备的空白。 Adiantum仅依赖于加法，循环和XOR。所有处理器本身都支持这些操作。因此，低端处理器的加密速度和解密速度比使用AES的速度快4倍，解密速度快5倍。
 
-Adiantum is a composition of other ciphers:
+铁线蕨是其他密码的组成：
 
-- NH: A hashing function.
-- Poly1305: A message authentication code (MAC).
-- XChaCha12: A stream cipher.
-- AES-256: A single invocation of AES.
+-NH：散列函数。
+-Poly1305：消息验证码（MAC）。
+-XChaCha12：流密码。
+-AES-256：AES的单次调用。
 
-Adiantum is a new cipher but it is secure, as long as ChaCha12 and AES-256 are considered secure. Its designers didn't create any new cryptographic primitive, instead they relied on other well-known and thoroughly studied primitives to create a new performant algorithm.
+只要ChaCha12和AES-256被认为是安全的，Adiantum是一种新密码，但是它是安全的。它的设计师没有创建任何新的密码原语，而是依靠其他众所周知且经过深入研究的原语来创建新的性能算法。
 
-Adiantum is available for Android 9 (API level 28) and higher versions. It is natively supported in Linux kernel 5.0 and onwards, while kernel 4.19, 4.14 & 4.9 need patching.
-Android does not provide an API to application developers to use Adiantum; this cipher is to be taken into account and implemented by ROM developers or device vendors, which want to provide full disk encryption without sacrificing performance on low-end devices. At the moment of writing there is no public cryptographic library that implements this cipher to use it on Android applications.
-It should be noted that AES runs faster on devices having the AES instruction set. In that case the use of Adiantum is highly discouraged.
+Adiantum适用于Android 9（API级别28）和更高版本。 Linux内核5.0及更高版本本身支持该功能，而内核4.19、4.14和4.9需要修补。
+Android不向应用程序开发人员提供使用Adiantum的API。此密码将由ROM开发人员或设备供应商考虑并实施，他们希望在不牺牲低端设备性能的情况下提供全盘加密。在撰写本文时，尚无实现此密码的公共密码库可在Android应用程序上使用。
+应该注意的是，AES在具有AES指令集的设备上运行得更快。在那种情况下，强烈不建议使用铁线蕨。
 
-### Apps on Android
+### Android上的应用
 
-#### Communication with the Operating System
+#### 与操作系统通讯
 
-Android apps interact with system services via the Android Framework, an abstraction layer that offers high-level Java APIs. The majority of these services are invoked via normal Java method calls and are translated to IPC calls to system services that are running in the background. Examples of system services include:
+Android应用程序通过Android框架与系统服务进行交互，Android框架是提供高级Java API的抽象层。这些服务中的大多数是通过常规Java方法调用来调用的，并转换为对在后台运行的系统服务的IPC调用。系统服务的示例包括：
 
-- Connectivity (Wi-Fi, Bluetooth, NFC, etc.)
-- Files
-- Cameras
-- Geolocation (GPS)
-- Microphone
+- 连接（Wi-Fi，蓝牙，NFC等）
+- 文件
+- 相机
+- 地理位置（GPS）
+- 麦克风
 
-The framework also offers common security functions, such as cryptography.
+该框架还提供了常见的安全功能，例如加密。
 
-The API specifications change with every new Android release. Critical bug fixes and security patches are usually applied to earlier versions as well. The oldest Android version supported at the time of writing is Android 7.0 (API level 24-25) and the current Android version is Android 9 (API level 28).
+每个新的Android版本都会更改API规范。关键的错误修复程序和安全修补程序通常也适用于早期版本。在撰写本文时，支持的最旧的Android版本是Android 7.0（API级别24-25），当前的Android版本是Android 9（API级别28）。
 
-Noteworthy API versions:
+值得注意的API版本：
 
-- Android 4.2 (API level 16) in November 2012 (introduction of SELinux)
-- Android 4.3 (API level 18) in July 2013 (SELinux became enabled by default)
-- Android 4.4 (API level 19) in October 2013 (several new APIs and ART introduced)
-- Android 5.0 (API level 21) in November 2014 (ART used by default and many other features added)
-- Android 6.0 (API level 23) in October 2015 (many new features and improvements, including granting; detailed permissions setup at run time rather than all or nothing during installation)
-- Android 7.0 (API level 24-25) in August 2016 (new JIT compiler on ART)
-- Android 8.0 (API level 26-27) in August 2017 (A lot of security improvements)
-- Android 9 (API level 28) in August 2018.
+- 2012年11月推出的Android 4.2（API级别16）（SELinux推出）
+- 2013年7月的Android 4.3（API级别18）（默认情况下启用SELinux）
+- 2013年10月推出的Android 4.4（API级别19）（引入了几个新的API和ART）
+- 2014年11月采用Android 5.0（API级别21）（默认情况下使用的是ART，并添加了许多其他功能）
+- 2015年10月的Android 6.0（API级别23）（许多新功能和改进，包括授予；在运行时设置详细的权限，而不是在安装过程中全部或全部设置）
+- 2016年8月，Android 7.0（API级别24-25）（ART上的新JIT编译器）
+- 2017年8月，Android 8.0（API级别26-27）（许多安全性改进）
+- 2018年8月推出Android 9（API级别28）。
 
-#### Linux UID/GID for Normal Applications
+#### 普通应用程序的Linux UID / GID
 
-Android leverages Linux user management to isolate apps. This approach is different from user management usage in traditional Linux environments, where multiple apps are often run by the same user. Android creates a unique UID for each Android app and runs the app in a separate process. Consequently, each app can access its own resources only. This protection is enforced by the Linux kernel.
+Android利用Linux用户管理来隔离应用程序。 这种方法不同于传统Linux环境中的用户管理用法，在传统Linux环境中，多个应用程序通常由同一用户运行。 Android为每个Android应用程序创建一个唯一的UID，并在单独的过程中运行该应用程序。 因此，每个应用只能访问自己的资源。 此保护由Linux内核强制执行。
 
-Generally, apps are assigned UIDs in the range of 10000 and 99999. Android apps receive a user name based on their UID. For example, the app with UID 10188 receives the user name `u0_a188`. If the permissions an app requested are granted, the corresponding group ID is added to the app's process. For example, the user ID of the app below is 10188. It belongs to the group ID 3003 (inet). That group is related to android.permission.INTERNET permission. The output of the `id` command is shown below.
+通常，为应用程序分配的UID在10000和99999之间。Android应用程序会根据其UID接收用户名。 例如，UID为10188的应用程序收到用户名“ u0_a188”。 如果授予了应用程序请求的权限，则会将相应的组ID添加到应用程序的进程中。 例如，下面的应用程序的用户ID是10188。它属于组ID 3003（inet）。 该组与android.permission.INTERNET权限相关。 id命令的输出如下所示。
 
 ```shell
 $ id
@@ -122,7 +122,7 @@ uid=10188(u0_a188) gid=10188(u0_a188) groups=10188(u0_a188),3003(inet),
 9997(everybody),50188(all_a188) context=u:r:untrusted_app:s0:c512,c768
 ```
 
-The relationship between group IDs and permissions is defined in the file [frameworks/base/data/etc/platform.xml](http://androidxref.com/7.1.1_r6/xref/frameworks/base/data/etc/platform.xml "platform.xml")
+组ID和权限之间的关系在文件中定义 [frameworks/base/data/etc/platform.xml](http://androidxref.com/7.1.1_r6/xref/frameworks/base/data/etc/platform.xml "platform.xml")
 
 ```xml
 <permission name="android.permission.INTERNET" >
@@ -139,22 +139,22 @@ The relationship between group IDs and permissions is defined in the file [frame
 </permission>
 ```
 
-#### The App Sandbox
+#### 应用沙箱
 
-Apps are executed in the Android Application Sandbox, which separates the app data and code execution from other apps on the device. This separation adds a layer of security.
+应用程序在Android应用程序沙箱中执行，该应用程序将应用程序数据和代码执行与设备上的其他应用程序分开。 这种分离增加了一层安全性。
 
-Installation of a new app creates a new directory named after the app package, which results in the following path: `/data/data/[package-name]`. This directory holds the app's data. Linux directory permissions are set such that the directory can be read from and written to only with the app's unique UID.
+安装新应用程序会创建一个以该应用程序包命名的新目录，该目录将导致以下路径：`/ data / data / [package-name]`。 此目录保存应用程序的数据。 设置Linux目录权限，以便只能使用应用程序的唯一UID读取和写入目录。
 
 <img src="Images/Chapters/0x05a/Selection_003.png" alt="Sandbox" width="400">
 
-We can confirm this by looking at the file system permissions in the `/data/data` folder. For example, we can see that Google Chrome and Calendar are assigned one directory each and run under different user accounts:
+我们可以通过查看`/ data / data`文件夹中的文件系统权限来确认这一点。 例如，我们可以看到Google Chrome和Calendar分别分配了一个目录，并在不同的用户帐户下运行：
 
 ```shell
 drwx------  4 u0_a97              u0_a97              4096 2017-01-18 14:27 com.android.calendar
 drwx------  6 u0_a120             u0_a120             4096 2017-01-19 12:54 com.android.chrome
 ```
 
-Developers who want their apps to share a common sandbox can sidestep sandboxing . When two apps are signed with the same certificate and explicitly share the same user ID (having the _sharedUserId_ in their _AndroidManifest.xml_ files), each can access the other's data directory. See the following example to achieve this in the NFC app:
+希望其应用共享公用沙箱的开发人员可以避开沙箱。 当两个应用程序使用相同的证书签名并显式共享相同的用户ID时 (having the _sharedUserId_ in their _AndroidManifest.xml_ files), 每个人都可以访问对方的数据目录。 请参阅以下示例以在NFC应用中实现此目的：
 
 ```xml
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
@@ -164,23 +164,23 @@ Developers who want their apps to share a common sandbox can sidestep sandboxing
 
 ##### Zygote
 
-The process `Zygote` starts up during [Android initialization](https://github.com/dogriffiths/HeadFirstAndroid/wiki/How-Android-Apps-are-Built-and-Run "How Android Apps are run"). Zygote is a system service for launching apps. The Zygote process is a "base" process that contains all the core libraries the app needs. Upon launch, Zygote opens the socket `/dev/socket/zygote` and listens for connections from local clients. When it receives a connection, it forks a new process, which then loads and executes the app-specific code.
+`Zygote`进程在期间启动[Android初始化](https://github.com/dogriffiths/HeadFirstAndroid/wiki/How-Android-Apps-are-Built-and-Run "How Android Apps are run"). Zygote是用于启动应用程序的系统服务。 Zygote流程是一个“基本”流程，其中包含应用程序需要的所有核心库。 启动后，Zygote打开套接字`/ dev / socket / zygote`并侦听来自本地客户端的连接。 接收到连接后，它将派生一个新进程，然后该进程将加载并执行特定于应用程序的代码。
 
-##### App Lifeycle
+##### 应用生命周期
 
-In Android, the lifetime of an app process is controlled by the operating system. A new Linux process is created when an app component is started and the same app doesn’t yet have any other components running. Android may kill this process when the latter is no longer necessary or when reclaiming memory is necessary to run more important apps. The decision to kill a process is primarily related to the state of the user's interaction with the process. In general, processes can be in one of four states.
+在Android中，应用进程的生存期由操作系统控制。当启动应用程序组件并且同一应用程序尚未运行任何其他组件时，将创建一个新的Linux进程。当不再需要后者或需要回收内存以运行更重要的应用程序时，Android可能会终止该过程。终止进程的决定主要与用户与进程交互的状态有关。通常，进程可以处于四种状态之一。
 
-- A foreground process (e.g., an activity running at the top of the screen or a running BroadcastReceive)
-- A visible process is a process that the user is aware of, so killing it would have a noticeable negative impact on user experience. One example is running an activity that's visible to the user on-screen but not in the foreground.
+-前台进程（例如，在屏幕顶部运行的活动或正在运行的BroadcastReceive）
+-可见过程是用户意识到的过程，因此将其杀死将对用户体验产生明显的负面影响。一个示例是运行一种活动，该活动在屏幕上对用户可见，但在前台却不可见。
 
-- A service process is a process hosting a service that has been started with the `startService` method. Though these processes aren't directly visible to the user, they are generally things that the user cares about (such as background network data upload or download), so the system will always keep such processes running unless there's insufficient memory to retain all foreground and visible processes.
-- A cached process is a process that's not currently needed, so the system is free to kill it when memory is needed.
-Apps must implement callback methods that react to a number of events; for example, the `onCreate` handler is called when the app process is first created. Other callback methods include `onLowMemory`, `onTrimMemory` and `onConfigurationChanged`.
+-服务进程是托管已由 `startService`方法启动的服务的进程。尽管这些进程对用户不是直接可见的，但是它们通常是用户关心的事情（例如，后台网络数据的上载或下载），因此，除非没有足够的内存来保留所有前景和内存，否则系统将始终保持这些进程运行。可见的过程。
+-缓存进程是当前不需要的进程，因此系统可以在需要内存时随意杀死它。
+应用必须实现对许多事件做出反应的回调方法；例如，在首次创建应用进程时会调用`onCreate`处理程序。其他回调方法包括`onLowMemory`，`onTrimMemory`和`onConfigurationChanged`。
 
-##### App Bundles
+##### 应用套件
 
-Android applications can be shipped in two forms: the Android Package Kit (APK) file or an [Android App Bundle](https://developer.android.com/guide/app-bundle "Android App Bundle") (.aab). Android App Bundles provide all the resources necessary for an app, but defer the generation of the APK and its signing to Google Play. App Bundles are signed binaries which contain the code of the app in several modules. The base module contains the core of the application. The base module can be extended with various modules which contain new enrichments/functionalities for the app as further explained on the [developer documentation for app bundle](https://developer.android.com/guide/app-bundle "Documentation on App Bundle").
-If you have an Android App Bundle, you can best use the [bundletool](https://developer.android.com/studio/command-line/bundletool "bundletool") command line tool from Google to build unsigned APKs in order to use the existing tooling on the APK. You can create an APK from an AAB file by running the following command:
+Android应用程序可以以两种形式发送：Android软件包工具包（APK）文件或[Android应用程序捆绑包](https://developer.android.com/guide/app-bundle "Android App Bundle") (.aab). Android App Bundles提供了应用程序所需的所有资源，但推迟了APK的生成及其向Google Play的签名。 应用程序捆绑包是签名的二进制文件，其中包含几个模块中的应用程序代码。 基本模块包含应用程序的核心。 基本模块可以用各种模块扩展，这些模块包含该应用程序的新增强功能/功能，如中进一步说明[应用程序捆绑包的开发人员文档](https://developer.android.com/guide/app-bundle "Documentation on App Bundle").
+如果您有Android App Bundle，则最好使用 [bundletool](https://developer.android.com/studio/command-line/bundletool "bundletool") Google提供的命令行工具来构建未签名的APK，以便使用APK上的现有工具。 您可以通过运行以下命令从AAB文件创建APK：
 
 ```shell
 
@@ -188,7 +188,7 @@ $ bundletool build-apks --bundle=/MyApp/my_app.aab --output=/MyApp/my_app.apks
 
 ```
 
-If you want to create signed APKs ready for deployment to a test device, use:
+如果要创建已签名的APK，准备将其部署到测试设备，请使用：
 
 ```shell
 $ bundletool build-apks --bundle=/MyApp/my_app.aab --output=/MyApp/my_app.apks
@@ -198,15 +198,15 @@ $ bundletool build-apks --bundle=/MyApp/my_app.aab --output=/MyApp/my_app.apks
 --key-pass=file:/MyApp/key.pwd
 ```
 
-We recommend that you test both the APK with and without the additional modules, so that it becomes clear whether the additional modules introduce and/or fix security issues for the base module.
+我们建议您同时测试带有和不带有附加模块的APK，以便清楚了解附加模块是否引入和/或修复了基本模块的安全性问题。
 
-##### Android Manifest
+##### Android 清单
 
-Every app has an Android Manifest file, which embeds content in binary XML format. The standard name of this file is AndroidManifest.xml. It is located in the root directory of the app’s Android Package Kit (APK) file.
+每个应用程序都有一个Android Manifest文件，该文件以二进制XML格式嵌入内容。 该文件的标准名称是AndroidManifest.xml。 它位于应用程序的Android Package Kit（APK）文件的根目录中。
 
-The manifest file describes the app structure, its components (activities, services, content providers, and intent receivers), and requested permissions. It also contains general app metadata, such as the app's icon, version number, and theme. The file may list other information, such as compatible APIs (minimal, targeted, and maximal SDK version) and the [kind of storage it can be installed on (external or internal)](https://developer.android.com/guide/topics/data/install-location.html "Define app install location").
+清单文件描述了应用程序的结构，其组件（活动，服务，内容提供者和意图接收者）以及请求的权限。 它还包含常规应用程序元数据，例如应用程序的图标，版本号和主题。 该文件可能会列出其他信息，例如兼容的API（最小，目标和最大SDK版本）以及[可以在其上安装的存储类型（外部或内部）](https://developer.android.com/guide/topics/data/install-location.html "Define app install location").
 
-Here is an example of a manifest file, including the package name (the convention is a reversed URL, but any string is acceptable). It also lists the app version, relevant SDKs, required permissions, exposed content providers, broadcast receivers used with intent filters and a description of the app and its activities:
+这是清单文件的示例，其中包括程序包名称（约定是反向URL，但是可以接受任何字符串）。 它还列出了应用程序版本，相关的SDK，所需的权限，公开的内容提供程序，与意图过滤器一起使用的广播接收器以及该应用程序及其活动的描述：
 
 ```xml
 <manifest
@@ -243,34 +243,34 @@ Here is an example of a manifest file, including the package name (the conventio
 </manifest>
 ```
 
-The full list of available manifest options is in the official [Android Manifest file documentation](https://developer.android.com/guide/topics/manifest/manifest-intro.html "Android Developer Guide for Manifest").
+可用清单选项的完整列表在官方中 [Android Manifest文件文档](https://developer.android.com/guide/topics/manifest/manifest-intro.html "Android Developer Guide for Manifest").
 
-#### App Components
+#### 应用组件
 
-Android apps are made of several high-level components. The main components are:
+Android应用程序由几个高级组件组成。 主要组件有：
 
-- Activities
-- Fragments
-- Intents
-- Broadcast receivers
-- Content providers and services
+- 活动
+- 碎片
+- 目的
+- 广播接收器
+- 内容提供商和服务
 
-All these elements are provided by the Android operating system, in the form of predefined classes available through APIs.
+所有这些元素均由Android操作系统以API可用的预定义类的形式提供。
 
-##### Activities
+##### 活动项目
 
-Activities make up the visible part of any app. There is one activity per screen, so an app with three different screens implements three different activities. Activities are declared by extending the Activity class. They contain all user interface elements: fragments, views, and layouts.
+活动构成任何应用程序的可见部分。 每个屏幕只有一个活动，因此具有三个不同屏幕的应用程序可以实现三个不同的活动。 通过扩展Activity类来声明活动。 它们包含所有用户界面元素：片段，视图和布局。
 
-Each activity needs to be declared in the Android Manifest with the following syntax:
+每个活动都需要使用以下语法在Android清单中声明：
 
 ```xml
 <activity android:name="ActivityName">
 </activity>
 ```
 
-Activities not declared in the manifest can't be displayed, and attempting to launch them will raise an exception.
+清单中未声明的活动无法显示，尝试启动它们将引发异常。
 
-Like apps, activities have their own life cycle and need to monitor system changes to handle them. Activities can be in the following states: active, paused, stopped, and inactive. These states are managed by the Android operating system. Accordingly, activities can implement the following event managers:
+像应用程序一样，活动有其自己的生命周期，需要监视系统更改以进行处理。 活动可以处于以下状态：活动，暂停，停止和不活动。 这些状态由Android操作系统管理。 因此，活动可以实施以下事件管理器：
 
 - onCreate
 - onSaveInstanceState
@@ -282,17 +282,17 @@ Like apps, activities have their own life cycle and need to monitor system chang
 - onRestart
 - onDestroy
 
-An app may not explicitly implement all event managers, in which case default actions are taken. Typically, at least the `onCreate` manager is overridden by the app developers. This is how most user interface components are declared and initialized. `onDestroy` may be overridden when resources (like network connections or connections to databases) must be explicitly released or specific actions must occur when the app shuts down.
+应用程序可能未明确实现所有事件管理器，在这种情况下，将采取默认操作。 通常，应用开发人员至少会覆盖`onCreate` 管理器。 这就是大多数用户界面组件的声明和初始化方式。 当必须明确释放资源（例如网络连接或数据库连接）或在应用程序关闭时必须执行特定操作时，可能会覆盖`onDestroy`。
 
-##### Fragments
+##### 碎片
 
-A fragment represents a behavior or a portion of the user interface within the activity. Fragments were introduced Android with the version Honeycomb 3.0 (API level 11).
+片段代表活动中的行为或用户界面的一部分。 片段是在Honeycomb 3.0版本（API级别11）中引入的。
 
-Fragments are meant to encapsulate parts of the interface to facilitate re-usability and adaptation to different screen sizes. Fragments are autonomous entities in that they include all their required components (they have their own layout, buttons, etc.). However, they must be integrated with activities to be useful: fragments can't exist on their own. They have their own life cycle, which is tied to the life cycle of the Activities that implement them.
+片段旨在封装界面的各个部分，以促进重用性和适应不同的屏幕尺寸。 片段是自治实体，因为它们包含所有必需的组件（它们具有自己的布局，按钮等）。 但是，它们必须与活动集成在一起才有用：片段不能单独存在。 它们有自己的生命周期，与实施它们的活动的生命周期紧密相关。
 
-Because fragments have their own life cycle, the Fragment class contains event managers that can be redefined and extended. These event managers included onAttach, onCreate, onStart, onDestroy and onDetach. Several others exist; the reader should refer to the [Android Fragment specification](https://developer.android.com/reference/android/app/Fragment.html "Fragment Class") for more details.
+因为片段具有自己的生命周期，所以Fragment类包含可以重新定义和扩展的事件管理器。 这些事件管理器包括onAttach，onCreate，onStart，onDestroy和onDetach。 还有其他几个。 读者应参考[Android Fragment规范](https://developer.android.com/reference/android/app/Fragment.html "Fragment Class") 更多细节。
 
-Fragments can be easily implemented by extending the Fragment class provided by Android:
+可以通过扩展Android提供的Fragment类轻松实现片段：
 
 ```Java
 public class myFragment extends Fragment {
@@ -300,46 +300,46 @@ public class myFragment extends Fragment {
 }
 ```
 
-Fragments don't need to be declared in manifest files because they depend on activities.
+片段不需要在清单文件中声明，因为它们取决于活动。
 
-To manage its fragments, an activity can use a Fragment Manager (FragmentManager class). This class makes it easy to find, add, remove, and replace associated fragments.
+要管理其片段，活动可以使用片段管理器（FragmentManager类）。 此类使查找，添加，删除和替换关联的片段变得容易。
 
-Fragment Managers can be created via the following:
+可以通过以下方式创建片段管理器：片段不一定具有用户界面。 它们可以是管理与应用程序用户界面有关的后台操作的便捷有效方式。 可以将一个片段声明为持久片段，以便即使系统的活动被销毁也可以保留其状态。
 
 ```Java
 FragmentManager fm = getFragmentManager();
 ```
 
-Fragments don't necessarily have a user interface; they can be a convenient and efficient way to manage background operations pertaining to the app's user interface. A fragment may be declared persistent so that if the system preserves its state even if its Activity is destroyed.
+Fragement 不一定具有用户界面。 它们可以是管理与应用程序用户界面有关的后台操作的便捷有效方式。 可以将一个片段声明为持久片段，以便即使系统的活动被销毁也可以保留其状态。
 
-##### Inter-Process Communication
+##### 进程间通讯
 
-As we've already learned, every Android process has its own sandboxed address space. Inter-process communication facilities allow apps to exchange signals and data securely. Instead of relying on the default Linux IPC facilities, Android's IPC is based on Binder, a custom implementation of OpenBinder. Most Android system services and all high-level IPC services depend on Binder.
+如我们所知，每个Android进程都有其自己的沙盒地址空间。进程间通信功能允许应用程序安全地交换信号和数据。 Android的IPC不再依赖默认的Linux IPC设施，而是基于Binder（OpenBinder的自定义实现）。大多数Android系统服务和所有高级IPC服务都依赖于Binder。
 
-The term *Binder* stands for a lot of different things, including:
+*活页夹*一词代表许多不同的事物，包括：
 
-- Binder Driver: the kernel-level driver
-- Binder Protocol: low-level ioctl-based protocol used to communicate with the binder driver
-- IBinder Interface: a well-defined behavior that Binder objects implement
-- Binder object: generic implementation of the IBinder interface
-- Binder service: implementation of the Binder object; for example, location service, and sensor service
-- Binder client: an object using the Binder service
+- 活页夹驱动程序：内核级驱动程序
+- 活页夹协议：用于与活页夹驱动程序通信的基于ioctl的低级协议
+- IBinder接口：Binder对象实现的明确定义的行为
+- 活页夹对象：IBinder接口的通用实现
+- 活页夹服务：活页夹对象的实现；例如位置服务和传感器服务
+- 活页夹客户端：使用活页夹服务的对象
 
-The Binder framework includes a client-server communication model. To use IPC, apps call IPC methods in proxy objects. The proxy objects transparently *marshall* the call parameters into a *parcel* and send a transaction to the Binder server, which is implemented as a character driver (/dev/binder). The server holds a thread pool for handling incoming requests and delivers messages to the destination object. From the perspective of the client app, all of this seems like a regular method call—all the heavy lifting is done by the Binder framework.
+活页夹框架包括一个客户端-服务器通信模型。要使用IPC，应用程序会在代理对象中调用IPC方法。代理对象透明地将调用参数“封送”到“包裹”中，并将事务发送到作为字符驱动器（/ dev / binder）实现的Binder服务器。服务器拥有用于处理传入请求的线程池，并将消息传递到目标对象。从客户端应用程序的角度来看，所有这些似乎都像是一个常规方法调用—所有繁重的工作都是由Binder框架完成的。
 
 <img src="Images/Chapters/0x05a/binder.jpg" alt="Binder Overview" width="400">
 
-*Binder Overview - Image source: [Android Binder by Thorsten Schreiber](https://www.nds.rub.de/media/attachments/files/2011/10/main.pdf "Android Binder")*
+*活页夹概述-图片来源：[Android Binder by Thorsten Schreiber](https://www.nds.rub.de/media/attachments/files/2011/10/main.pdf "Android Binder")*
 
-Services that allow other applications to bind to them are called *bound services*. These services must provide an IBinder interface to clients. Developers use the Android Interface Descriptor Language (AIDL) to write interfaces for remote services.
+允许其他应用程序绑定到它们的服务称为*绑定服务*。 这些服务必须为客户端提供IBinder接口。 开发人员使用Android接口描述符语言（AIDL）编写用于远程服务的接口。
 
-Servicemanager is a system daemon that manages the registration and lookup of system services. It maintains a list of name/Binder pairs for all registered services. Services are added with `addService` and retrieved by name with the static `getService` method in `android.os.ServiceManager`:
+Servicemanager是一个系统守护程序，用于管理系统服务的注册和查找。 它维护所有已注册服务的名称/活页夹对列表。 服务使用`addService`添加，并使用`android.os.ServiceManager`中的静态`getService`方法按名称检索：
 
 ```java
   public static IBinder getService(String name)
 ```
 
-You can query the list of system services with the `service list` command.
+您可以使用以下命令查询系统服务列表 `service list` 命令.
 
 ```shell
 $ adb shell service list
@@ -352,47 +352,47 @@ Found 99 services:
 
 #### Intents
 
-*Intent messaging* is an asynchronous communication framework built on top of Binder. This framework allows both point-to-point and publish-subscribe messaging. An *Intent* is a messaging object that can be used to request an action from another app component. Although intents facilitate inter-component communication in several ways, there are three fundamental use cases:
+*意图消息传递* 是建立在Binder之上的异步通信框架。此框架允许点对点和发布-订阅消息传递。 *Intent* 是一个消息传递对象，可用于请求另一个应用程序组件的操作。尽管意图通过多种方式促进了组件间的通信，但是存在三个基本用例：
 
-- Starting an activity
-  - An activity represents a single screen in an app. You can start a new instance of an activity by passing an intent to `startActivity`. The intent describes the activity and carries necessary data.
-- Starting a service
-  - A Service is a component that performs operations in the background, without a user interface. With Android 5.0 (API level 21) and later, you can start a service with JobScheduler.
-- Delivering a broadcast
-  - A broadcast is a message that any app can receive. The system delivers broadcasts for system events, including system boot and charging initialization. You can deliver a broadcast to other apps by passing an intent to `sendBroadcast` or `sendOrderedBroadcast`.
+-开始活动
+  -活动代表应用程序中的单个屏幕。您可以通过向initActivity传递意图来启动活动的新实例。目的描述活动并携带必要的数据。
+-开始服务
+  服务是在没有用户界面的情况下在后台执行操作的组件。在Android 5.0（API级别21）及更高版本中，您可以使用JobScheduler启动服务。
+-播放广播
+  -广播是任何应用均可接收的消息。系统为系统事件提供广播，包括系统启动和充电初始化。您可以通过将意图传递给`sendBroadcast`或`sendOrderedBroadcast`来向其他应用传递广播。
 
-There are two types of intents. Explicit intents name the component that will be started (the fully qualified class name). For instance:
+有两种类型的意图。明确的意图为将要启动的组件命名（完全限定的类名）。例如：
 
 ```Java
     Intent intent = new Intent(this, myActivity.myClass);
 ```
 
-Implicit intents are sent to the OS to perform a given action on a given set of data (The URL of the OWASP website in our example below). It is up to the system to decide which app or class will perform the corresponding service. For instance:
+隐式意图被发送到OS，以对给定的数据集（在下面的示例中，OWASP网站的URL）执行给定的操作。 由系统决定哪个应用程序或类将执行相应的服务。 例如：
 
 ```Java
     Intent intent = new Intent(Intent.MY_ACTION, Uri.parse("https://www.owasp.org"));
 ```
 
-An *intent filter* is an expression in Android Manifest files that specifies the type of intents the component would like to receive. For instance, by declaring an intent filter for an activity, you make it possible for other apps to directly start your activity with a certain kind of intent. Likewise, your activity can only be started with an explicit intent if you don't declare any intent filters for it.
+*意图过滤器*是Android清单文件中的一个表达式，用于指定组件希望接收的意图类型。例如，通过为活动声明一个意图过滤器，您可以使其他应用程序以某种意图直接启动您的活动。同样，如果您未为活动声明任何意图过滤器，则只能以明确的意图开始您的活动。
 
-Android uses intents to broadcast messages to apps (such as an incoming call or SMS) important power supply information (low battery, for example), and network changes (loss of connection, for instance). Extra data may be added to intents (through `putExtra`/`getExtras`).
+Android使用意图将消息广播到应用程序（例如来电或SMS），重要的电源信息（例如电池电量不足）和网络变化（例如连接断开）。可以将额外的数据添加到意图中（通过`putExtra` /`getExtras`）。
 
-Here is a short list of intents sent by the operating system. All constants are defined in the Intent class, and the whole list is in the official Android documentation:
+这是操作系统发送的意图的简短列表。所有常量都在Intent类中定义，整个列表在官方的Android文档中：
 
-- ACTION_CAMERA_BUTTON
-- ACTION_MEDIA_EJECT
-- ACTION_NEW_OUTGOING_CALL
-- ACTION_TIMEZONE_CHANGED
+-ACTION_CAMERA_BUTTON
+-ACTION_MEDIA_EJECT
+-ACTION_NEW_OUTGOING_CALL
+-ACTION_TIMEZONE_CHANGED
 
-To improve security and privacy, a Local Broadcast Manager is used to send and receive intents within an app without having them sent to the rest of the operating system. This is very useful for ensuring that sensitive and private data don't leave the app perimeter (geolocation data for instance).
+为了提高安全性和隐私性，本地广播管理器用于在应用程序中发送和接收意图，而无需将其发送到操作系统的其余部分。这对于确保敏感和私有数据不会离开应用程序边界（例如地理位置数据）非常有用。
 
-##### Broadcast Receivers
+##### 广播接收器
 
-Broadcast Receivers are components that allow apps to receive notifications from other apps and from the system itself. With them, apps can react to events (internal, initiated by other apps, or initiated by the operating system). They are generally used to update user interfaces, start services, update content, and create user notifications.
+广播接收器是允许应用程序从其他应用程序和系统本身接收通知的组件。 使用它们，应用程序可以对事件做出反应（内部事件，其他应用程序发起或操作系统发起）。 它们通常用于更新用户界面，启动服务，更新内容以及创建用户通知。
 
-There are two ways to make a Broadcast Receiver known to the system. One way is to declare it in the Android Manifest file. The manifest should specify an association between the Broadcast Receiver and an intent filter to indicate the actions the receiver is meant to listen for.
+有两种方法可以使系统知道广播接收器。 一种方法是在Android Manifest文件中声明它。 清单应指定广播接收器和意图过滤器之间的关联，以指示接收器要监听的动作。
 
-An example Broadcast Receiver declaration with an intent filter in a manifest:
+在清单中具有意图过滤器的示例广播接收器声明：
 
 ```xml
 <receiver android:name=".myReceiver" >
@@ -402,11 +402,11 @@ An example Broadcast Receiver declaration with an intent filter in a manifest:
 </receiver>
 ```
 
-Please note that in this example, the Broadcast Receiver does not include the [`android:exported`](https://developer.android.com/guide/topics/manifest/receiver-element "receiver element") attribute. As at least one filter was defined, the default value will be set to "true". In absence of any filters, it will be set to "false".
+请注意，在此示例中，广播接收器不包括 [`android:exported`](https://developer.android.com/guide/topics/manifest/receiver-element "receiver element") 属性。 定义了至少一个过滤器后，默认值将设置为“ true”。 如果没有任何过滤器，则将其设置为“ false”。
 
-The other way is to create the receiver dynamically in code and register it with the [`Context.registerReceiver`](https://developer.android.com/reference/android/content/Context.html#registerReceiver(android.content.BroadcastReceiver,%2520android.content.IntentFilter) "Context.registerReceiver") method.
+另一种方法是在代码中动态创建接收器，然后将其注册到 [`Context.registerReceiver`](https://developer.android.com/reference/android/content/Context.html#registerReceiver(android.content.BroadcastReceiver,%2520android.content.IntentFilter) "Context.registerReceiver") method.
 
-An example of registering a Broadcast Receiver dynamically:
+动态注册广播接收器的示例：
 
 ```Java
 // Define a broadcast receiver
@@ -425,59 +425,59 @@ registerReceiver(myReceiver, intentFilter);
 unregisterReceiver(myReceiver);
 ```
 
-Note that the system starts an app with the registered receiver automatically when a relevant intent is raised.
+请注意，当提出相关意图时，系统会自动使用注册的接收者启动应用程序。
 
-According to [Broadcasts Overview](https://developer.android.com/guide/components/broadcasts "Broadcasts Overview"), a broadcast is considered "implicit" if it does not target an app specifically. After receiving an implicit broadcast, Android will list all apps that have registered a given action in their filters. If more than one app has registered for the same action, Android will prompt the user to select from the list of available apps.
+根据 [Broadcasts Overview](https://developer.android.com/guide/components/broadcasts "Broadcasts Overview"), 如果广播没有专门针对某个应用，则将其视为“隐式”。 收到隐式广播后，Android会在其过滤器中列出已注册给定操作的所有应用。 如果已为同一操作注册了多个应用程序，则Android将提示用户从可用应用程序列表中进行选择。
 
-An interesting feature of Broadcast Receivers is that they can be prioritized; this way, an intent will be delivered to all authorized receivers according to their priority. A priority can be assigned to an intent filter in the manifest via the `android:priority` attribute as well as programmatically via the [`IntentFilter.setPriority`](https://developer.android.com/reference/android/content/IntentFilter#setPriority(int) "IntentFilter.setPriority") method. However, note that receivers with the same priority will be [run in an arbitrary order](https://developer.android.com/guide/components/broadcasts.html#sending-broadcasts "Sending Broadcasts").
+广播接收器的一个有趣的功能是可以对它们进行优先级排序。 这样，将根据所有授权接收者的优先级将其意图传达给他们。 优先级可以通过android：priority属性分配给清单中的意图过滤器，也可以通过 [`IntentFilter.setPriority`](https://developer.android.com/reference/android/content/IntentFilter#setPriority(int) "IntentFilter.setPriority") 方法。 但是，请注意，具有相同优先级的接收方将 [run in an arbitrary order](https://developer.android.com/guide/components/broadcasts.html#sending-broadcasts "Sending Broadcasts").
 
-If your app is not supposed to send broadcasts across apps, use a Local Broadcast Manager ([`LocalBroadcastManager`](https://developer.android.com/reference/androidx/localbroadcastmanager/content/LocalBroadcastManager.html "LocalBroadcastManager")). They can be used to make sure intents are received from the internal app only, and any intent from any other app will be discarded. This is very useful for improving security and the efficiency of the app, as no interprocess communication is involved. However, please note that the `LocalBroadcastManager` class is [deprecated](https://developer.android.com/reference/androidx/localbroadcastmanager/content/LocalBroadcastManager.html "LocalBroadcastManager") and Google recommends using alternatives such as [`LiveData`](https://developer.android.com/reference/androidx/lifecycle/LiveData.html "LiveData").
+如果您的应用程序不应该跨应用程序发送广播，请使用本地广播管理器 ([`LocalBroadcastManager`](https://developer.android.com/reference/androidx/localbroadcastmanager/content/LocalBroadcastManager.html "LocalBroadcastManager")). 它们可用于确保仅从内部应用程序接收到意图，而来自任何其他应用程序的任何意图都将被丢弃。 由于不涉及进程间通信，因此对于提高应用程序的安全性和效率非常有用。 但是，请注意，`LocalBroadcastManager`类是 [deprecated](https://developer.android.com/reference/androidx/localbroadcastmanager/content/LocalBroadcastManager.html "LocalBroadcastManager") 并且Google建议使用其他替代方法，例如 [`LiveData`](https://developer.android.com/reference/androidx/lifecycle/LiveData.html "LiveData").
 
-For more security considerations regarding Broadcast Receiver, see [Security Considerations and Best Practices](https://developer.android.com/guide/components/broadcasts.html#security-and-best-practices "Security Considerations and Best Practices").
+有关广播接收器的更多安全注意事项，请参阅[安全注意事项和最佳做法](https://developer.android.com/guide/components/broadcasts.html#security-and-best-practices "Security Considerations and Best Practices").
 
-###### Implicit Broadcast Receiver Limitiation
+###### 隐式广播接收器限制
 
-According to [Background Optimizations](https://developer.android.com/topic/performance/background-optimization "Background Optimizations"), apps targeting Android 7.0 (API level 24) or higher no longer receive `CONNECTIVITY_ACTION` broadcast unless they register their Broadcast Receivers with `Context.registerReceiver()`. The system does not send `ACTION_NEW_PICTURE` and `ACTION_NEW_VIDEO` broadcasts as well.
+根据 [Background Optimizations](https://developer.android.com/topic/performance/background-optimization "Background Optimizations"), 除非其使用“ Context.registerReceiver（）”注册其广播接收器，否则面向Android 7.0（API级别24）或更高版本的应用将不再接收“ CONNECTIVITY_ACTION”广播。 系统也不会发送“ ACTION_NEW_PICTURE”和“ ACTION_NEW_VIDEO”广播。
 
-According to [Background Execution Limits](https://developer.android.com/about/versions/oreo/background.html#broadcasts "Background Execution Limits"), apps that target Android 8.0 (API level 26) or higher can no longer register Broadcast Receivers for implicit broadcasts in their manifest, except for those listed in [Implicit Broadcast Exceptions](https://developer.android.com/guide/components/broadcast-exceptions "Implicit Broadcast Exceptions"). The Broadcast Receivers created at runtime by calling `Context.registerReceiver` are not affected by this limitation.
+根据 [Background Execution Limits](https://developer.android.com/about/versions/oreo/background.html#broadcasts "Background Execution Limits"), 针对Android 8.0（API级别26）或更高版本的应用不能 除了[Implicit Broadcast Exceptions](https://developer.android.com/guide/components/broadcast-exceptions "Implicit Broadcast Exceptions"). 在运行时通过调用Context.registerReceiver创建的广播接收器不受此限制的影响。
 
-According to [Changes to System Broadcasts](https://developer.android.com/guide/components/broadcasts#changes-system-broadcasts "Changes to System Broadcasts"), beginning with Android 9 (API level 28), the `NETWORK_STATE_CHANGED_ACTION` broadcast doesn't receive information about the user's location or personally identifiable data.
+根据 [Changes to System Broadcasts](https://developer.android.com/guide/components/broadcasts#changes-system-broadcasts "Changes to System Broadcasts"), 从Android 9（API级别28）开始，`NETWORK_STATE_CHANGED_ACTION` 广播不会接收到有关用户位置的信息或个人身份数据。
 
-##### Content Providers
+##### 内容提供者
 
-Android uses SQLite to store data permanently: as with Linux, data is stored in files. SQLite is a light, efficient, open source relational data storage technology that does not require much processing power, which makes it ideal for mobile use. An entire API with specific classes (Cursor, ContentValues, SQLiteOpenHelper, ContentProvider, ContentResolver, etc.) is available.
-SQLite is not run as a separate process; it is part of the app.
-By default, a database belonging to a given app is accessible to this app only. However, content providers offer a great mechanism for abstracting data sources (including databases and flat files); they also provide a standard and efficient mechanism to share data between apps, including native apps. To be accessible to other apps, a content provider needs to be explicitly declared in the manifest file of the app that will share it. As long as content providers aren't declared, they won't be exported and can only be called by the app that creates them.
+Android使用SQLite永久存储数据：与Linux一样，数据存储在文件中。 SQLite是一种轻便，高效，开源的关系数据存储技术，不需要太多的处理能力，因此非常适合移动使用。提供了具有特定类（光标，ContentValues，SQLiteOpenHelper，ContentProvider，ContentResolver等）的完整API。
+SQLite不是作为单独的进程运行；它是应用程序的一部分。
+默认情况下，该应用只能访问属于给定应用的数据库。但是，内容提供者提供了一种抽象数据源（包括数据库和平面文件）的强大机制；它们还提供了一种标准高效的机制，可在应用程序（包括本地应用程序）之间共享数据。为了让其他应用程序可以访问，需要在将共享内容的应用程序的清单文件中明确声明内容提供程序。只要未声明内容提供者，它们就不会被导出，只能由创建它们的应用程序调用。
 
-content providers are implemented through a URI addressing scheme: they all use the content:// model. Regardless of the type of sources (SQLite database, flat file, etc.), the addressing scheme is always the same, thereby abstracting the sources and offering the developer a unique scheme. Content Providers offer all regular database operations: create, read, update, delete. That means that any app with proper rights in its manifest file can manipulate the data from other apps.
+内容提供者是通过URI寻址方案实现的：它们都使用content：//模型。不管源的类型（SQLite数据库，平面文件等）如何，寻址方案始终是相同的，从而抽象化了源并为开发人员提供了独特的方案。内容提供者提供所有常规的数据库操作：创建，读取，更新，删除。这意味着清单文件中具有适当权限的任何应用程序都可以操纵其他应用程序中的数据。
 
-##### Services
+##### 服务
 
-Services are Android OS components (based on the Service class) that perform tasks in the background (data processing, starting intents, and notifications, etc.) without presenting a user interface. Services are meant to run processes long-term. Their system priorities are lower than those of active apps and higher than those of inactive apps. Therefore, they are less likely to be killed when the system needs resources, and they can be configured to automatically restart when enough resources become available. Activities are executed in the main app thread. They are great candidates for running asynchronous tasks.
+服务是Android OS组件（基于Service类），它们在后台执行任务（数据处理，启动意图和通知等），而无需提供用户界面。 服务旨在长期运行流程。 它们的系统优先级低于活动应用程序的优先级，也高于非活动应用程序的优先级。 因此，它们不太可能在系统需要资源时被杀死，并且可以将它们配置为在有足够资源可用时自动重新启动。 活动在主应用程序线程中执行。 它们是运行异步任务的理想选择。
 
-##### Permissions
+##### 权限
 
-Because Android apps are installed in a sandbox and initially can't access user information and system components (such as the camera and the microphone), Android provides a system with a predefined set of permissions for certain tasks that the app can request.
-For example, if you want your app to use a phone's camera, you have to request the `android.permission.CAMERA` permission.
-Prior to Android 6.0 (API level 23), all permissions an app requested were granted at installation. From API level 23 onwards, the user must approve some permissions requests during app execution.
+由于Android应用程序安装在沙箱中，并且最初无法访问用户信息和系统组件（例如相机和麦克风），因此Android为系统提供了针对该应用程序可以请求的某些任务的一组预定义权限。
+例如，如果您希望您的应用使用手机的摄像头，则必须请求“ android.permission.CAMERA”权限。
+在Android 6.0（API级别23）之前，安装时会授予应用请求的所有权限。 从API级别23开始，用户必须在应用执行期间批准一些权限请求。
 
-###### Protection Levels
+###### 保护等级
 
-Android permissions are ranked on the basis of the protection level they offer and divided into four different categories:
+Android权限根据其提供的保护级别进行排名，分为四类：
 
-- *Normal*: the lower level of protection. It gives the apps access to isolated application-level features with minimal risk to other apps, the user, or the system. It is granted during app installation and is the default protection level:
-Example: `android.permission.INTERNET`
-- *Dangerous*: This permission allows the app to perform actions that might affect the user’s privacy or the normal operation of the user’s device. This level of permission may not be granted during installation; the user must decide whether the app should have this permission.
-Example: `android.permission.RECORD_AUDIO`
-- *Signature*: This permission is granted only if the requesting app has been signed with the same certificate as the app that declared the permission. If the signature matches, the permission is automatically granted.
-Example: `android.permission.ACCESS_MOCK_LOCATION`
-- *SystemOrSignature*: This permission is granted only to apps embedded in the system image or signed with the same certificate that the app that declared the permission was signed with.
-Example: `android.permission.ACCESS_DOWNLOAD_MANAGER`
+- *正常*：较低的保护级别。它使应用程序可以访问隔离的应用程序级功能，而对其他应用程序，用户或系统的风险最小。它是在应用安装过程中授予的，并且是默认的保护级别：
+范例：「android.permission.INTERNET」
+- *危险*：此权限允许该应用执行可能会影响用户隐私或用户设备正常操作的操作。在安装过程中可能不会授予该级别的权限；用户必须决定应用程序是否应具有此权限。
+范例：`android.permission.RECORD_AUDIO`
+- *签名*：仅当使用与声明许可的应用相同的证书对请求的应用进行签名时，才授予此许可。如果签名匹配，则自动授予权限。
+范例：`android.permission.ACCESS_MOCK_LOCATION`
+- *SystemOrSignature*：此权限仅授予嵌入在系统映像中或使用与声明该权限的应用程序签名的证书相同的证书签名的应用程序。
+示例：`android.permission.ACCESS_DOWNLOAD_MANAGER`
 
-###### Requesting Permissions
+###### 申请权限
 
-Apps can request permissions for the protection levels Normal, Dangerous, and Signature by including `<uses-permission />` tags into their manifest.
-The example below shows an AndroidManifest.xml sample requesting permission to read SMS messages:
+应用可以在清单中包含`<uses-permission />`标签，以请求保护级别“正常”，“危险”和“签名”的权限。
+下面的示例显示一个AndroidManifest.xml示例，该示例请求读取SMS消息的权限：
 
 ```xml
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
@@ -488,10 +488,10 @@ The example below shows an AndroidManifest.xml sample requesting permission to r
 </manifest>
 ```
 
-###### Declaring Permissions
+###### 声明权限
 
-Apps can expose features and content to other apps installed on the system. To restrict access to its own components, it can either use any of Android’s [predefined permissions](https://developer.android.com/reference/android/Manifest.permission.html "predefined permissions") or define its own. A new permission is declared with the `<permission>` element.
-The example below shows an app declaring a permission:
+应用程序可以向系统上安装的其他应用程序公开功能和内容。 为了限制对自己组件的访问，它可以使用Android的任何[预定义权限](https://developer.android.com/reference/android/Manifest.permission.html "predefined permissions") 或定义自己的。 使用`<permission>`元素声明新的许可。
+以下示例显示了一个声明权限的应用程序：
 
 ```xml
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
@@ -504,12 +504,12 @@ The example below shows an app declaring a permission:
 </manifest>
 ```
 
-The above code defines a new permission named `com.permissions.sample.ACCESS_USER_INFO` with the protection level `Signature`. Any components protected with this permission would be accessible only by apps signed with the same developer certificate.
+上面的代码定义了一个新的名为`com.permissions.sample.ACCESS_USER_INFO`的权限，其保护级别为`Signature`。 只有具有相同开发者证书的应用才能访问受此权限保护的任何组件。
 
-###### Enforcing Permissions on Android Components
+###### 在Android组件上执行权限
 
-Android components can be protected with permissions. Activities, Services, Content Providers, and Broadcast Receivers—all can use the permission mechanism to protect their interfaces.
-Permissions can be enforced on *Activities*, *Services*, and *Broadcast Receivers* by adding the attribute *android:permission* to the respective component tag in AndroidManifest.xml:
+Android组件可以使用权限进行保护。 活动，服务，内容提供者和广播接收者—都可以使用权限机制来保护其接口。
+通过将属性 *android：permission* 添加到AndroidManifest.xml中的相应组件标签，可以在 *Activity*，*Services* 和 *Broadcast Receivers* 上实施权限：
 
 ```xml
 <receiver
@@ -520,102 +520,102 @@ Permissions can be enforced on *Activities*, *Services*, and *Broadcast Receiver
 </receiver>
 ```
 
-*Content Providers* are a little different. They support a separate set of permissions for reading, writing, and accessing the content provider with a content URI.
+*内容提供者*有些不同。 它们支持一组单独的权限，用于使用内容URI读取，写入和访问内容提供者。
 
-- `android:writePermission`, `android:readPermission`: the developer can set separate permissions for reading or writing.
-- `android:permission`: general permission that will control reading and writing to the content provider.
-- `android:grantUriPermissions`: `"true"` if the content provider can be accessed with a content URI (the access temporarily bypasses the restrictions of other permissions), and `"false"` otherwise.
+-`android：writePermission`，`android：readPermission`：开发人员可以设置单独的读取或写入权限。
+-`android：permission`：一般权限，将控制对内容提供者的读写。
+-`android：grantUriPermissions`：`“ true”`，如果可以使用内容URI访问内容提供者（访问会暂时绕过其他权限的限制），否则返回“ false”。
 
-### Signing and Publishing Process
+### 签名和发布过程
 
-Once an app has been successfully developed, the next step is to publish and share it with others. However, apps can't simply be added to a store and shared, for several reasons—they must be signed. The cryptographic signature serves as a verifiable mark placed by the developer of the app. It identifies the app’s author and ensures that the app has not been modified since its initial distribution.
+成功开发应用程序后，下一步就是发布并与他人共享。 但是，由于多种原因，不能将应用简单地添加到商店并进行共享-必须对其进行签名。 加密签名充当应用程序开发人员放置的可验证标记。 它标识了应用程序的作者，并确保该应用程序自首次发布以来就没有被修改过。
 
-#### Signing Process
+#### 签署过程
 
-During development, apps are signed with an automatically generated certificate. This certificate is inherently insecure and is for debugging only. Most stores don't accept this kind of certificate for publishing; therefore, a certificate with more secure features must be created.
-When an application is installed on the Android device, the Package Manager ensures that it has been signed with the certificate included in the corresponding APK. If the certificate's public key matches the key used to sign any other APK on the device, the new APK may share a UID with the pre-existing APK. This facilitates interactions between applications from a single vendor. Alternatively, specifying security permissions for the Signature protection level is possible; this will restrict access to applications that have been signed with the same key.
+在开发过程中，将使用自动生成的证书对应用进行签名。 该证书本质上是不安全的，仅用于调试。 大多数商店不接受这种发布证书。 因此，必须创建具有更安全功能的证书。
+在Android设备上安装应用程序后，程序包管理器将确保已使用相应APK中包含的证书对应用程序进行了签名。 如果证书的公钥与用于在设备上签署任何其他APK的密钥相匹配，则新的APK可能会与先前存在的APK共享一个UID。 这促进了单个供应商的应用程序之间的交互。 或者，可以为签名保护级别指定安全权限。 这将限制对使用相同密钥签名的应用程序的访问。
 
-#### APK Signing Schemes
+#### APK 签名方案
 
-Android supports three application signing schemes. Starting with Android 9 (API level 28), APKs can be verified with APK Signature Scheme v3 (v3 scheme), APK Signature Scheme v2 (v2 scheme) or JAR signing (v1 scheme). For Android 7.0 (API level 24) and above, APKs can be verified with the APK Signature Scheme v2 (v2 scheme) or JAR signing (v1 scheme). For backwards compatibility, an APK can be signed with multiple signature schemes in order to make the app run on both newer and older SDK versions. [Older platforms ignore v2 signatures and verify v1 signatures only](https://source.android.com/security/apksigning/ "APK Signing ").
+Android支持三种应用程序签名方案。 从Android 9（API级别28）开始，可以使用APK签名方案v3（v3方案），APK签名方案v2（v2方案）或JAR签名（v1方案）来验证APK。 对于Android 7.0（API级别24）及更高版本，可以使用APK签名方案v2（v2方案）或JAR签名（v1方案）来验证APK。 为了向后兼容，可以使用多种签名方案对APK进行签名，以使该应用程序可以同时在新旧SDK版本上运行。 [旧平台忽略v2签名，仅验证v1签名](https://source.android.com/security/apksigning/ "APK Signing ").
 
-##### JAR Signing (v1 Scheme)
+##### JAR签名（v1方案）
 
-The original version of app signing implements the signed APK as a standard signed JAR, which must contain all the entries in `META-INF/MANIFEST.MF`. All files must be signed with a common certificate. This scheme does not protect some parts of the APK, such as ZIP metadata. The drawback of this scheme is that the APK verifier needs to process untrusted data structures before applying the signature, and the verifier discards data the data structures don't cover. Also, the APK verifier must decompress all compressed files, which takes considerable time and memory.
+应用签名的原始版本将签名的APK实现为标准的签名JAR，其中必须包含“ META-INF / MANIFEST.MF”中的所有条目。 所有文件都必须使用通用证书签名。 此方案不保护APK的某些部分，例如ZIP元数据。 该方案的缺点是APK验证程序需要在应用签名之前处理不受信任的数据结构，并且验证程序会丢弃数据结构未涵盖的数据。 同样，APK验证程序必须解压缩所有压缩文件，这会占用大量时间和内存。
 
-##### APK Signature Scheme (v2 Scheme)
+##### APK签名方案（v2方案）
 
-With the APK signature scheme, the complete APK is hashed and signed, and an APK Signing Block is created and inserted into the APK. During validation, the v2 scheme checks the signatures of the entire APK file. This form of APK verification is faster and offers more comprehensive protection against modification. You can see the [APK signature verification process for v2 Scheme](https://source.android.com/security/apksigning/v2#verification "APK Signature verification process") below.
+使用APK签名方案，可以对完整的APK进行哈希处理和签名，然后创建一个APK签名块并将其插入APK。 在验证期间，v2方案检查整个APK文件的签名。 这种形式的APK验证速度更快，并提供了更全面的保护以防修改。 您可以在下面看到[v2方案的APK签名验证过程](https://source.android.com/security/apksigning/v2#verification "APK Signature verification process") 
 
 <img src="Images/Chapters/0x05a/apk-validation-process.png" alt="Android Software Stack" width="450">
 
-#### APK Signature Scheme (v3 Scheme)
+#### APK签名方案（v3方案）
 
-The v3 APK Signing Block format is the same as v2. V3 adds information about the supported SDK versions and a proof-of-rotation struct to the APK signing block. In Android 9 (API level 28) and higher, APKs can be verified according to APK Signature Scheme v3, v2 or v1 scheme. Older platforms ignore v3 signatures and try to verify v2 then v1 signature.
+v3 APK签名块格式与v2相同。 V3将有关受支持的SDK版本和旋转证明结构的信息添加到APK签名块。在Android 9（API级别28）及更高版本中，可以根据APK签名方案v3，v2或v1方案来验证APK。较旧的平台会忽略v3签名，并尝试先验证v2，然后再验证v1签名。
 
-The proof-of-rotation attribute in the signed-data of the signing block consists of a singly-linked list, with each node containing a signing certificate used to sign previous versions of the app. To make backward compatibility work, the old signing certificates sign the new set of certificates, thus providing each new key with evidence that it should be as trusted as the older key(s).
-It is no longer possible to sign APKs independently, because the proof-of-rotation structure must have the old signing certificates signing the new set of certificates, rather than signing them one-by-one. You can see the [APK signature v3 scheme verification process](https://source.android.com/security/apksigning/v3 "APK Signature v3 scheme verification process") below.
+签名块的签名数据中的旋转证明属性由单链接列表组成，每个节点包含用于对应用程序的先前版本进行签名的签名证书。为了使向后兼容有效，旧的签名证书对新的证书集进行签名，从而为每个新密钥提供证据，证明它应该像旧密钥一样受信任。
+不再可以单独对APK进行签名，因为旋转证明结构必须具有旧的签名证书才能对新的证书集进行签名，而不是一个个地对其进行签名。您可以在下面看到[APK签名v3方案验证过程](https://source.android.com/security/apksigning/v3 "APK Signature v3 scheme verification process") 
 
 <img src="Images/Chapters/0x05a/apk-validation-process-v3-scheme.png" alt="apk-validation-process-v3-scheme" width="450">
 
-##### Creating Your Certificate
+##### 创建您的证书
 
-Android uses public/private certificates to sign Android apps (.apk files). Certificates are bundles of information; in terms of security, keys are the most important type of this information Public certificates contain users' public keys, and private certificates contain users' private keys. Public and private certificates are linked. Certificates are unique and can't be re-generated. Note that if a certificate is lost, it cannot be recovered, so updating any apps signed with that certificate becomes impossible.
-App creators can either reuse an existing private/public key pair that is in an available KeyStore or generate a new pair.
-In the Android SDK, a new key pair is generated with the `keytool` command. The following command creates a RSA key pair with a key length of 2048 bits and an expiry time of 7300 days = 20 years. The generated key pair is stored in the file 'myKeyStore.jks', which is in the current directory):
+Android使用公共/私有证书对Android应用程序（.apk文件）进行签名。 证书是一捆信息。 就安全性而言，密钥是此信息中最重要的类型。公用证书包含用户的公用密钥，专用证书包含用户的私钥。 公共证书和私有证书是链接的。 证书是唯一的，不能重新生成。 请注意，如果证书丢失，将无法恢复，因此无法更新使用该证书签名的任何应用程序。
+应用程序创建者可以重用可用KeyStore中的现有私钥/公钥对，也可以生成新的对。
+在Android SDK中，使用`keytool`命令会生成一个新的密钥对。 以下命令创建一个RSA密钥对，其密钥长度为2048位，有效时间为7300天= 20年。 生成的密钥对存储在文件“ myKeyStore.jks”中，该文件位于当前目录中：
 
 ```shell
 $ keytool -genkey -alias myDomain -keyalg RSA -keysize 2048 -validity 7300 -keystore myKeyStore.jks -storepass myStrongPassword
 ```
 
-Safely storing your secret key and making sure it remains secret during its entire life cycle is of paramount importance. Anyone who gains access to the key will be able to publish updates to your apps with content that you don't control (thereby adding insecure features or accessing shared content with signature-based permissions). The trust that a user places in an app and its developers is based totally on such certificates; certificate protection and secure management are therefore vital for reputation and customer retention, and secret keys must never be shared with other individuals. Keys are stored in a binary file that can be protected with a password; such files are referred to as 'KeyStores'. KeyStore passwords should be strong and known only to the key creator. For this reason, keys are usually stored on a dedicated build machine that developers have limited access to.
-An Android certificate must have a validity period that's longer than that of the associated app (including updated versions of the app). For example, Google Play will require certificates to remain valid until Oct 22nd, 2033 at least.
+安全存储您的密钥并确保在其整个生命周期中都保持秘密是至关重要的。有权访问密钥的任何人都可以使用您无法控制的内容将更新发布到您的应用程序（从而添加不安全的功能或使用基于签名的权限来访问共享内容）。用户对应用程序及其开发人员的信任完全基于此类证书；因此，证书保护和安全管理对于声誉和客户保留至关重要，绝不能与其他个人共享密钥。密钥存储在可以用密码保护的二进制文件中；这样的文件称为“密钥库”。 KeyStore密码应该很强，并且只有密钥创建者才能知道。因此，密钥通常存储在开发人员无法访问的专用构建计算机上。
+Android证书的有效期必须长于关联应用程序的有效期（包括应用程序的更新版本）。例如，Google Play将要求证书至少在2033年10月22日之前保持有效。
 
-##### Signing an Application
+##### 签署申请
 
-The goal of the signing process is to associate the app file (.apk) with the developer's public key. To achieve this, the developer calculates a hash of the APK file and encrypts it with their own private key. Third parties can then verify the app's authenticity (e.g., the fact that the app really comes from the user who claims to be the originator) by decrypting the encrypted hash with the author’s public key and verifying that it matches the actual hash of the APK file.
+签名过程的目标是将应用程序文件（.apk）与开发人员的公钥关联。为此，开发人员计算了APK文件的哈希值，并使用自己的私钥对其进行了加密。然后，第三方可以通过使用作者的公钥解密加密的哈希并验证其与APK文件的实际哈希是否匹配，来验证该应用的真实性（例如，该应用确实来自声称是发起者的用户这一事实） 。
 
-Many Integrated Development Environments (IDE) integrate the app signing process to make it easier for the user. Be aware that some IDEs store private keys in clear text in configuration files; double-check this in case others are able to access such files and remove the information if necessary.
-Apps can be signed from the command line with the 'apksigner' tool provided by the Android SDK (API level 24 and higher). It is located at `[SDK-Path]/build-tools/[version]`. For API 24.0.2 and below, you can use 'jarsigner', which is part of the Java JDK. Details about the whole process can be found in official Android documentation; however, an example is given below to illustrate the point.
+许多集成开发环境（IDE）集成了应用程序签名过程，以使用户更轻松。请注意，某些IDE将明文形式的私钥存储在配置文件中。如果其他人能够访问此类文件并在必要时删除信息，请仔细检查。
+可以使用Android SDK（API级别24或更高）提供的“ apksigner”工具从命令行对应用进行签名。它位于`[SDK-Path] / build-tools / [version]`。对于API 24.0.2及更低版本，您可以使用“ jarsigner”，它是Java JDK的一部分。有关整个过程的详细信息，请参见官方的Android文档。然而，下面给出一个例子来说明这一点。
 
 ```shell
 $ apksigner sign --out mySignedApp.apk --ks myKeyStore.jks myUnsignedApp.apk
 ```
 
-In this example, an unsigned app ('myUnsignedApp.apk') will be signed with a private key from the developer KeyStore 'myKeyStore.jks' (located in the current directory). The app will become a signed app called 'mySignedApp.apk' and will be ready to release to stores.
+在此示例中，未签名的应用程序（“ myUnsignedApp.apk”）将使用开发人员密钥库“ myKeyStore.jks”（位于当前目录中）的私钥进行签名。 该应用程序将成为名为“ mySignedApp.apk”的已签名应用程序，并准备发布到商店。
 
 ###### Zipalign
 
-The `zipalign` tool should always be used to align the APK file before distribution. This tool aligns all uncompressed data (such as images, raw files, and 4-byte boundaries) within the APK that helps improve memory management during app run time.
+分发前，应始终使用`zialign`工具来对齐APK文件。 此工具可在APK中对齐所有未压缩的数据（例如图像，原始文件和4字节边界），从而有助于在应用运行时改善内存管理。
 
-> Zipalign must be used before the APK file is signed with apksigner.
+>必须先使用Zipalign，然后才能使用apksigner对APK文件进行签名。
 
-#### Publishing Process
+#### 发布过程
 
-Distributing apps from anywhere (your own site, any store, etc.) is possible because the Android ecosystem is open. However, Google Play is the most well-known, trusted, and popular store, and Google itself provides it. Amazon Appstore is the trusted default store for Kindle devices. If users want to install third-party apps from a non-trusted source, they must explicitly allow this with their device security settings.
+由于Android生态系统是开放的，因此可以从任何地方（您自己的站点，任何商店等）分发应用程序。但是，Google Play是最知名，最受信任和最受欢迎的商店，而Google本身提供了它。 Amazon Appstore是Kindle设备的受信任默认存储。如果用户要从不受信任的来源安装第三方应用程序，则必须在其设备安全设置中明确允许这样做。
 
-Apps can be installed on an Android device from a variety of sources: locally via USB, via Google's official app store (Google Play Store) or from alternative stores.
+可以通过多种方式将应用程序安装在Android设备上：通过USB在本地，通过Google的官方应用程序商店（Google Play商店）或其他商店安装。
 
-Whereas other vendors may review and approve apps before they are actually published, Google will simply scan for known malware signatures; this minimizes the time between the beginning of the publishing process and public app availability.
+其他供应商可能会在实际发布应用之前对其进行审核和批准，而Google只会扫描已知的恶意软件签名；这样可以最大程度地缩短发布流程开始到公共应用程序可用性之间的时间。
 
-Publishing an app is quite straightforward; the main operation is making the signed APK file downloadable. On Google Play, publishing starts with account creation and is followed by app delivery through a dedicated interface. Details are available at [the official Android documentation](https://developer.android.com/distribute/googleplay/start.html "Review the checklists to plan your launch").
+发布应用非常简单；主要操作是使已签名的APK文件可下载。在Google Play上，发布从创建帐户开始，然后通过专用界面交付应用。有关详细信息，请访问[Android官方文档](https://developer.android.com/distribute/googleplay/start.html "Review the checklists to plan your launch").
 
-### Android Application Attack surface
+### Android应用攻击面
 
-The Android application attack surface consists of all components of the application, including the supportive material necessary to release the app and to support its functioning. The Android application may be vulnerable to attack if it does not:
+Android应用程序的攻击面由应用程序的所有组件组成，包括发布应用程序和支持其功能所需的辅助材料。 如果Android应用程序不具备以下条件，则可能容易受到攻击：
 
-- Validate all input by means of IPC communication or URL schemes, see also:
+- 通过IPC通信或URL方案验证所有输入，另请参阅：
   - [Testing for Sensitive Functionality Exposure Through IPC](0x05h-Testing-Platform-Interaction.md#testing-for-sensitive-functionality-exposure-through-ipc-mstg-platform-4 "Testing for Sensitive Functionality Exposure Through IPC")
   - [Testing Custom URL Schemes](0x05h-Testing-Platform-Interaction.md#testing-custom-url-schemes-mstg-platform-3 "Testing Custom URL Schemes")
-- Validate all input by the user in input fields.
-- Validate the content loaded inside a WebView, see also:
+- 验证用户在输入字段中的所有输入。
+- 验证WebView内部加载的内容，另请参见：
   - [Testing JavaScript Execution in WebViews](0x05h-Testing-Platform-Interaction.md#testing-javascript-execution-in-webviews-mstg-platform-5 "Testing JavaScript Execution in WebViews")
   - [Testing WebView Protocol Handlers](0x05h-Testing-Platform-Interaction.md#testing-webview-protocol-handlers-mstg-platform-6 "Testing WebView Protocol Handlers")
   - [Determining Whether Java Objects Are Exposed Through WebViews](0x05h-Testing-Platform-Interaction.md#determining-whether-java-objects-are-exposed-through-webviews-mstg-platform-7 "Determining Whether Java Objects Are Exposed Through WebViews")
-- Securely communicate with backend servers or is susceptible to man-in-the-middle attacks between the server and the mobile application, see also:
+- 与后端服务器安全通信或容易受到服务器与移动应用程序之间的中间人攻击，另请参阅：
   - [Testing Network Communication](0x04f-Testing-Network-Communication.md#testing-network-communication "Testing Network Communication")
   - [Android Network APIs](0x05g-Testing-Network-Communication.md#android-network-apis "Android Network APIs")
-- Securely stores all local data, or loads untrusted data from storage, see also:
+- 安全地存储所有本地数据，或从存储中加载不受信任的数据，另请参见：
   - [Data Storage on Android](0x05d-Testing-Data-Storage.md#data-storage-on-android "Data Storage on Android")
-- Protect itself against compromised environments, repackaging or other local attacks, see also:
+- 保护自己免受受到破坏的环境，重新包装或其他本地攻击的侵害，另请参阅：
   - [Android Anti-Reversing Defenses](0x05j-Testing-Resiliency-Against-Reverse-Engineering.md#android-anti-reversing-defenses "Android Anti-Reversing Defenses")
