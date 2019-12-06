@@ -753,9 +753,9 @@ Objection通过为您提供通过重新打包将Frida小工具轻松地注入到
 
 最后，如果您确实有权访问已植根的设备，则Objection可以直接连接到正在运行的Frida服务器，以提供其所有功能，而无需重新打包应用程序。
 
-###### Installing Objection
+###### 安装 Objection
 
-Objection can be installed through pip as described on [Objection's Wiki](https://github.com/sensepost/objection/wiki/Installation "Objection Wiki - Installation").
+可以按照[Objection Wiki](https://github.com/sensepost/objection/wiki/Installation "Objection Wiki - Installation")所述通过pip安装。
 
 ```shell
 
@@ -763,19 +763,19 @@ $ pip3 install objection
 
 ```
 
-If your device is jailbroken, you are now ready to interact with any application running on the device and you can skip to the "Using Objection" section below.
+如果您的设备已越狱，则现在可以与该设备上运行的任何应用程序进行交互，并且可以跳到下面的“使用异议”部分。
 
-However, if you want to test on a non-rooted device, you will first need to include the Frida gadget in the application. The [Objection Wiki](https://github.com/sensepost/objection/wiki/Patching-Android-Applications "Patching Android Applications") describes the needed steps in detail, but after making the right preparations, you'll be able to patch an APK by calling the objection command:
+但是，如果要在无根设备上进行测试，则首先需要在应用程序中包括Frida小工具。 [Objection Wiki](https://github.com/sensepost/objection/wiki/Patching-Android-Applications "Patching Android Applications") 详细描述了所需的步骤，但是在进行了正确的准备后，您将能够 通过调用异议命令来修补APK：
 
 ```shell
 $ objection patchapk --source app-release.apk
 ```
 
-The patched application then needs to be installed using adb, as explained in "Basic Testing Operations - Installing Apps".
+然后，需要使用adb安装修补的应用程序，如“基本测试操作-安装应用程序”中所述。
 
-###### Using Objection
+###### 使用 Objection
 
-Starting up Objection depends on whether you've patched the APK or whether you are using a rooted device running Frida-server. For running a patched APK, objection will automatically find any attached devices and search for a listening Frida gadget. However, when using frida-server, you need to explicitly tell frida-server which application you want to analyze.
+启动异议取决于您是否已修补APK或使用的是运行Frida服务器的植根设备。 要运行已打补丁的APK，异议会自动找到所有连接的设备并搜索正在收听的Frida小工具。 但是，在使用frida-server时，您需要明确告诉frida-server您要分析哪个应用程序。
 
 ```shell
 # Connecting to a patched APK
@@ -789,7 +789,7 @@ $ frida-ps -Ua | grep -i telegram
 $ objection --gadget="org.telegram.messenger" explore
 ```
 
-Once you are in the Objection REPL, you can execute any of the available commands. Below is an overview of some of the most useful ones:
+进入Objection REPL后，您可以执行任何可用的命令。 以下是一些最有用的概述：
 
 ```shell
 # Show the different storage locations belonging to the app
@@ -806,23 +806,23 @@ $ android root disable
 
 ```
 
-More information on using the Objection REPL can be found on the [Objection Wiki](https://github.com/sensepost/objection/wiki/Using-objection "Using Objection")
+有关使用Objection REPL的更多信息，请参见[Objection Wiki]。(https://github.com/sensepost/objection/wiki/Using-objection "Using Objection")
 
 ##### radare2
 
-[radare2](https://rada.re/r/ "Radare2 official website") (r2) is a popular open source reverse engineering framework for disassembling, debugging, patching and analyzing binaries that is scriptable and supports [many architectures and file formats](https://rada.re/r/cmp "radare2 Comparison Table") including Android/iOS apps. For Android, Dalvik DEX (odex, multidex), ELF (executables, .so, ART) and Java (JNI and Java classes) are supported. It also contains several useful scripts that can help you during mobile application analysis as it offers low level disassembling and safe static analysis that comes in handy when traditional tools fail.
+[radare2](https://rada.re/r/ "Radare2 official website") 是一种流行的开源逆向工程框架，用于反汇编，调试，修补和分析二进制文件，该脚本可编写脚本并支持[许多体系结构和文件格式](https://rada.re/r/cmp "radare2 Comparison Table") 包括Android / iOS应用。对于Android，支持Dalvik DEX（odex，multidex），ELF（可执行文件，.so，ART）和Java（JNI和Java类）。它还包含一些有用的脚本，这些脚本可以在移动应用程序分析期间为您提供帮助，因为它提供了低级别的分解和安全的静态分析，在传统工具出现故障时会派上用场。
 
-radare2 implements a rich command line interface (CLI) where you can perform the mentioned tasks. However, if you're not really comfortable using the CLI for reverse engineering you may want to consider using the Web UI (via the `-H` flag) or the even more convenient Qt and C++ GUI version called [Cutter](https://github.com/radareorg/cutter "Cutter"). Do keep in mind that the CLI, and more concretely its Visual Mode and its scripting capabilities ([r2pipe](https://github.com/radare/radare2-r2pipe "r2pipe")), are the core of radare2's power and it's definitely worth learning how to use it.
+radare2 实现了丰富的命令行界面（CLI），您可以在其中执行上述任务。但是，如果您不习惯使用CLI进行逆向工程，则可以考虑使用Web UI（通过-H标志）或更方便的Qt和C ++ GUI版本[Cutter](https://github.com/radareorg/cutter "Cutter"). 请记住，CLI，更具体地说是其可视模式及其脚本功能（[r2pipe](https://github.com/radare/radare2-r2pipe "r2pipe")), 是radare2功能的核心，它是绝对值得学习如何使用它。
 
-###### Installing radare2
+###### 安装 radare2
 
-Please refer to [radare2's official installation instructions](https://github.com/radare/radare2/blob/master/README.md "radare2 installation instructions"). We highly recommend to always install radare2 from the GitHub version instead of via common package managers such as APT. Radare2 is in very active development, which means that third party repositories are often outdated.
+请参考[radare2的官方安装说明](https://github.com/radare/radare2/blob/master/README.md "radare2 installation instructions"). 我们强烈建议始终从GitHub版本安装radare2，而不要通过常见的软件包管理器（如APT）进行安装。 Radare2的开发非常活跃，这意味着第三方存储库通常已过时。
 
-###### Using radare2
+###### 使用 radare2
 
-The radare2 framework comprises a set of small utilities that can be used from the r2 shell or independently as CLI tools. These utilities include `rabin2`, `rasm2`, `rahash2`, `radiff2`, `rafind2`, `ragg2`, `rarun2`, `rax2`, and of course `r2`, which is the main one.
+radare2 框架包含一组小型实用程序，可以从r2 shell或单独用作CLI工具来使用。这些实用程序包括`rabin2`，`rasm2`，`rahash2`，`radiff2`，`rafind2`，`ragg2`，`rarun2`，`rax2`，当然还有主要的`r2`。
 
-For example, you can use `rafind2` to read strings directly from an encoded Android Manifest (AndroidManifest.xml):
+例如，您可以使用`rafind2`直接从已编码的Android Manifest（AndroidManifest.xml）中读取字符串：
 
 ```shell
 # Permissions
@@ -837,7 +837,7 @@ $ rafind2 -ZS service AndroidManifest.xml
 $ rafind2 -ZS receiver AndroidManifest.xml
 ```
 
-Or use `rabin2` to get information about a binary file:
+或者使用 `rabin2` 获取有关二进制文件的信息：
 
 ```shell
 $ rabin2 -I UnCrackable-Level1/classes.dex
@@ -873,7 +873,7 @@ sha1  12-5508c  b7fafe72cb521450c4470043caa332da61d1bec7
 adler32  12-5528c  00000000
 ```
 
-Type `rabin2 -h` to see all options:
+输入`rabin2 -h`以查看所有选项：
 
 ```bash
 $ rabin2 -h
@@ -894,17 +894,18 @@ Usage: rabin2 [-AcdeEghHiIjlLMqrRsSUvVxzZ] [-@ at] [-a arch] [-b bits] [-B addr]
  ...
 ```
 
-Use the main `r2` utility to access the **r2 shell**. You can load DEX binaries just like any other binary:
+使用主要的 `r2` 实用程序访问 **r2 shell**。 您可以像其他任何二进制文件一样加载DEX二进制文件：
 
 ```shell
 $ r2 classes.dex
 ```
 
-Enter `r2 -h` to see all available options. A very commonly used flag is `-A`, which triggers an analysis after loading the target binary. However, this should be used sparingly and with small binaries as it is very time and resource consuming. You can learn more about this in the chapter "[Tampering and Reverse Engineering on Android](0x05c-Reverse-Engineering-and-Tampering.md)".
+输入`r2 -h`以查看所有可用选项。 一个非常常用的标志是-A，它在加载目标二进制文件后触发分析。 但是，应谨慎使用此文件，并且二进制文件要小，因为这非常耗时和资源。 您可以在“ [Android上的篡改和反向工程](0x05c-Reverse-Engineering-and-Tampering.md)"一章中了解有关此内容的更多信息。
 
-Once in the r2 shell, you can also access functions offered by the other radare2 utilities. For example, running `i` will print the information of the binary, exactly as `rabin2 -I` does.
+进入r2 shell后，您还可以访问其他rade2实用程序提供的功能。 例如，运行`i`将打印二进制文件的信息，就像`rabin2 -I`一样。
 
-To print all the strings use `rabin2 -Z` or the command `iz` (or the less verbose `izq`) from the r2 shell.
+要打印所有字符串，请使用r2 shell中的`rabin2 -Z`或命令`iz`（或更不复杂的`izq`）。
+
 
 ```shell
 [0x000009c8]> izq
@@ -922,7 +923,7 @@ To print all the strings use `rabin2 -Z` or the command `iz` (or the less verbos
 0x11bf 14 14 Root detected!
 ```
 
-Most of the time you can append special options to your commands such as `q` to make the command less verbose (quiet) or `j` to give the output in JSON format (use `~{}` to prettify the JSON string).
+在大多数情况下，您可以在命令中附加特殊选项，例如使用`q`来使命令变得不太冗长（quiet），或者使用`j`来以JSON格式提供输出（use `~{}`来修饰JSON字符串）。
 
 ```shell
 [0x000009c8]> izj~{}
@@ -949,7 +950,7 @@ Most of the time you can append special options to your commands such as `q` to 
   },
 ```
 
-You can print the class names and their methods with the r2 command `ic` (_information classes_).
+您可以使用r2命令打印类名称及其方法 `ic` (_information classes_).
 
 ```shell
 [0x000009c8]> ic
@@ -965,7 +966,7 @@ You can print the class names and their methods with the r2 command `ic` (_infor
 0x00000b5c method 1 sp   Lsg/vantagepoint/uncrackable1/a.method.b(Ljava/lang/String;)[B
 ```
 
-You can print the imported methods with the r2 command `ii` (_information imports_).
+您可以使用r2命令打印导入的方法 `ii` (_information imports_).
 
 ```shell
 [0x000009c8]> ii
@@ -982,11 +983,11 @@ Num  Vaddr       Bind      Type Name
   36 0x00000604    NONE    FUNC Ljavax/crypto/spec/SecretKeySpec.method.<init>([BLjava/lang/String;)V
 ```
 
-A common approach when inspecting a binary is to search for something, navigate to it and visualize it in order to interpret the code. One of the ways to find something using radare2 is by filtering the output of specific commands, i.e. to grep them using `~` plus a keyword (`~+` for case-insensitive). For example, we might know that the app is verifying something, we can inspect all radare2 flags and see where we find something related to "verify".
+检查二进制文件时，一种常见的方法是搜索某些内容，导航到该内容并对其进行可视化以解释代码。 使用radee2查找内容的方法之一是过滤特定命令的输出，即使用`〜`加关键字（不区分大小写的`〜+`）对它们进行grep。 例如，我们可能知道该应用正在验证某些东西，我们可以检查所有radare2标志并查看在哪里找到与“验证”相关的东西。
 
-> When loading a file, radare2 tags everything it's able to find. These tagged names or references are called flags. You can access them via the command `f`.
+>加载文件时，radare2会标记它可以找到的所有内容。 这些标记的名称或引用称为标志。 您可以通过命令`f`访问它们。
 
-In this case we will grep the flags using the keyword "verify":
+在这种情况下，我们将使用关键字“ verify”对标志进行grep：
 
 ```shell
 [0x000009c8]> f~+verify
@@ -996,62 +997,62 @@ In this case we will grep the flags using the keyword "verify":
 0x00001400 6 str.verify
 ```
 
-It seems that we've found one method in 0x00000a38 (that was tagged two times) and one string in 0x00001400. Let's navigate (seek) to that method by using its flag:
+似乎我们在0x00000a38中找到了一个方法（被标记了两次），在0x00001400中找到了一个字符串。 让我们使用其标志导航（搜索）该方法：
 
 ```shell
 [0x000009c8]> s sym.Lsg_vantagepoint_uncrackable1_MainActivity.method.verify_Landroid_view_View__V
 ```
 
-And of course you can also use the disassembler capabilities of r2 and print the disassembly with the command `pd` (or `pdf` if you know you're already located in a function).
+当然，您也可以使用r2的反汇编程序功能，并使用命令“ pd”（或“ pdf”（如果您知道您已经位于函数中）打印反汇编）。
 
 ```shell
 [0x00000a38]> pd
 ```
 
-r2 commands normally accept options (see `pd?`), e.g. you can limit the opcodes displayed by appending a number ("N") to the command `pd N`.
+r2 命令通常接受选项（请参阅`pd？`），例如 您可以通过在命令“ pd N”后附加数字（“ N”）来限制显示的操作码。
 
 ![radare2 r2 shell - pd 10](Images/Chapters/0x05b/r2_pd_10.png)
 
-Instead of just printing the disassembly to the console you may want to enter the so-called **Visual Mode** by typing `V`.
+不仅仅是将反汇编输出到控制台，您可能还想通过输入`V`进入所谓的 **Visual Mode**。
 
 ![radare2 Visual Mode - V](Images/Chapters/0x05b/r2_visualmode_hex.png)
 
-By default, you will see the hexadecimal view. By typing `p` you can switch to different views, such as the disassembly view:
+默认情况下，您将看到十六进制视图。 通过输入`p`，您可以切换到不同的视图，例如反汇编视图：
 
 ![radare2 Visual Mode - Vp](Images/Chapters/0x05b/r2_visualmode_disass.png)
 
-Radare2 offers a **Graph Mode** that is very useful to follow the flow of the code. You can access it from the Visual Mode by typing `V`:
+Radare2提供了一种**图形模式**，对于遵循代码流非常有用。 您可以通过在视觉模式下输入`V`来访问它：
 
 ![radare2 Graph Mode - VV](Images/Chapters/0x05b/r2_graphmode.png)
 
-This is only a selection of some radare2 commands to start getting some basic information from Android binaries. Radare2 is very powerful and has dozens of commands that you can find on the [radare2 command documentation](https://radare.gitbooks.io/radare2book/basic_commands/intro.html "radare2 command documentation"). Radare2 will be used throughout the guide for different purposes such as reversing code, debugging or performing binary analysis. We will also use it in combination with other frameworks, especially Frida (see the r2frida section for more information).
+这只是一些radare2命令的选择，可以开始从Android二进制文件中获取一些基本信息。 Radare2非常强大，可以在[radare2命令文档](https://radare.gitbooks.io/radare2book/basic_commands/intro.html "radare2 command documentation")中找到许多命令。 在本指南中，将Radare2用于不同目的，例如反转代码，调试或执行二进制分析。 我们还将其与其他框架（尤其是Frida）结合使用（有关更多信息，请参见r2frida部分）。
 
-Please refer to the chapter "Tampering and Reverse Engineering on Android" for more detailed use of radare2 on Android, especially when analyzing native libraries.
+请参阅“ Android上的篡改和逆向工程”一章，以获取Android上radar2的更多详细用法，尤其是在分析本机库时。
 
 ##### r2frida
 
-[r2frida](https://github.com/nowsecure/r2frida "r2frida on Github") is a project that allows radare2 to connect to Frida, effectively merging the powerful reverse engineering capabilities of radare2 with the dynamic instrumentation toolkit of Frida. R2frida allows you to:
+[r2frida](https://github.com/nowsecure/r2frida "r2frida on Github") 是一个项目，它允许radare2连接到Frida，有效地将radare2的强大逆向工程能力与Frida的动态仪表工具包合并。 R2frida允许您：
 
-- Attach radare2 to any local process or remote frida-server via USB or TCP.
-- Read/Write memory from the target process.
-- Load Frida information such as maps, symbols, imports, classes and methods into radare2.
-- Call r2 commands from Frida as it exposes the r2pipe interface into the Frida Javascript API.
+- 通过USB或TCP将radare2附加到任何本地进程或远程frida服务器。
+- 从目标进程读取/写入内存。
+- 将Frida信息（例如地图，符号，导入，类和方法）加载到radare2中。
+- 从Frida调用r2命令，因为它将r2pipe接口公开到Frida Javascript API中。
 
-###### Installing r2frida
+###### 安装 r2frida
 
-Please refer to [r2frida's official installation instructions](https://github.com/nowsecure/r2frida/blob/master/README.md#installation "r2frida installation instructions").
+请参考[r2frida的官方安装说明](https://github.com/nowsecure/r2frida/blob/master/README.md#installation "r2frida installation instructions").
 
-###### Using r2frida
+###### 使用 r2frida
 
-With frida-server running, you should now be able to attach to it using the pid, spawn path, host and port, or device-id. For example, to attach to PID 1234:
+随着frida-server的运行，您现在应该可以使用pid，生成路径，主机和端口或设备ID附加到它。 例如，要附加到PID 1234：
 
 ```shell
 $ r2 frida://1234
 ```
 
-For more examples on how to connect to frida-server, [see the usage section in the r2frida's README page](https://github.com/nowsecure/r2frida/blob/master/README.md#usage "r2frida usage").
+有关如何连接到frida-server的更多示例，请参阅[r2frida的README页面中的用法部分](https://github.com/nowsecure/r2frida/blob/master/README.md#usage "r2frida usage").
 
-Once attached, you should see the r2 prompt with the device-id. r2frida commands must start with `\` or `=!`. For example, you may retrieve target information with the command `\i`:
+连接后，您应该会看到带有设备ID的r2提示符。 r2frida命令必须以`\`或`=！`开头。 例如，您可以使用命令\ i检索目标信息：
 
 ```shell
 [0x00000000]> \i
@@ -1070,7 +1071,7 @@ codeSigningPolicy   optional
 isDebuggerAttached  false
 ```
 
-To search in memory for a specific keyword, you may use the search command `\/`:
+要在内存中搜索特定的关键字，可以使用search命令 `\/`:
 
 ```shell
 [0x00000000]> \/ unacceptable
@@ -1083,7 +1084,7 @@ hits: 23
 0x561f0732a91a hit12_1 unacceptableSearching 12 bytes: 75 6e 61 63 63 65 70 74 61
 ```
 
-To output the search results in JSON format, we simply add `j` to our previous search command (just as we do in the r2 shell). This can be used in most of the commands:
+要以JSON格式输出搜索结果，我们只需在先前的搜索命令中添加“ j”即可（就像在r2 shell中一样）。 这可以在大多数命令中使用：
 
 ```shell
 [0x00000000]> \/j unacceptable
@@ -1096,7 +1097,7 @@ hits: 23
 ...
 ```
 
-To list the loaded libraries use the command `\il` and filter the results using the internal grep from radare2 with the command `~`. For example, the following command will list the loaded libraries matching the keywords `keystore`, `ssl` and `crypto`:
+要列出加载的库，请使用命令`\ il`，并使用radar2的内部grep和命令 `〜` 过滤结果。 例如，以下命令将列出与关键字 `keystore`，`ssl` 和 `crypto` 匹配的已加载库：
 
 ```shell
 [0x00000000]> \il~keystore,ssl,crypto
@@ -1104,7 +1105,7 @@ To list the loaded libraries use the command `\il` and filter the results using 
 0x00007f3357716000 libcrypto.so.1.1
 ```
 
-Similarly, to list the exports and filter the results by a specific keyword:
+同样，要列出导出并通过特定关键字过滤结果：
 
 ```shell
 [0x00000000]> \iE libssl.so.1.1~CIPHER
@@ -1121,13 +1122,13 @@ Similarly, to list the exports and filter the results by a specific keyword:
 0x7f3357bb7f10 f SSL_CIPHER_get_id
 ```
 
-To list or set a breakpoint use the command db. This is useful when analyzing/modifying memory:
+要列出或设置断点，请使用命令db。 这在分析/修改内存时很有用：
 
 ```shell
 [0x00000000]> \db
 ```
 
-Finally, remember that you can also run Frida JavaScript code with `\.` plus the name of the script:
+最后，请记住，您还可以使用带有 `\` 加上脚本名称的Frida JavaScript代码来运行：
 
 ```shell
 [0x00000000]> \. agent.js
@@ -1135,25 +1136,25 @@ Finally, remember that you can also run Frida JavaScript code with `\.` plus the
 
 You can find more examples on [how to use r2frida](https://github.com/enovella/r2frida-wiki "Using r2frida") on their Wiki project.
 
-### Basic Testing Operations
+### 基本测试操作
 
-#### Accessing the Device Shell
+#### 访问设备 Shell
 
-One of the most common things you do when testing an app is accessing the device shell. In this section we'll see how to access the Android shell both remotely from your host computer with/without a USB cable and locally from the device itself.
+测试应用程序时，您要做的最常见的事情之一就是访问设备外壳。 在本节中，我们将介绍如何通过USB电缆（不带USB电缆）从主机远程访问Android Shell，以及从设备本身本地访问Android Shell。
 
 ##### Remote Shell
 
-In order to connect to the shell of an Android device from your host computer, [adb](https://developer.android.com/studio/command-line/adb "Android Debug Bridge") is usually your tool of choice (unless you prefer to use remote SSH access, e.g. [via Termux](https://wiki.termux.com/wiki/Remote_Access#Using_the_SSH_server "Using the SSH server")).
+为了从您的主机连接到Android设备的外壳，通常选择[adb](https://developer.android.com/studio/command-line/adb "Android Debug Bridge") 除非您更喜欢使用远程SSH访问，例如[通过Termux](https://wiki.termux.com/wiki/Remote_Access#Using_the_SSH_server "Using the SSH server")).
 
-For this section we assume that you've properly enabled Developer Mode and USB debugging as explained in "Testing on a Real Device". Once you've connected your Android device via USB, you can access the remote device's shell by running:
+对于本节，我们假设您已按照“在真实设备上测试”中所述正确启用了开发人员模式和USB调试。 通过USB连接Android设备后，您可以通过运行以下命令访问远程设备的外壳程序：
 
 ```shell
 $ adb shell
 ```
 
-> press Control + D or type `exit` to quit
+>按 Control + D 或输入 `exit` 退出
 
-If your device is rooted or you're using the emulator, you can get root access by running `su` once in the remote shell:
+如果您的设备已植根或正在使用仿真器，则可以通过在远程Shell中运行一次 `su` 来获得root访问权限：
 
 ```shell
 $ adb shell
@@ -1162,11 +1163,11 @@ bullhead:/ # id
 uid=0(root) gid=0(root) groups=0(root) context=u:r:su:s0
 ```
 
-> Only if you're working with an emulator you may alternatively restart adb with root permissions with the command `adb root` so next time you enter `adb shell` you'll have root access already. This also allows to transfer data bidirectionally between your workstation and the Android file system, even with access to locations where only the root user has access to (via `adb push/pull`). See more about data transfer in section "[Host-Device Data Transfer](#host-device-data-transfer "Host-Device Data Transfer")" below.
+> 仅当您使用仿真器时，才可以使用命令 `adb root` 以root权限重新启动adb，因此，下次输入 `adb shell` 时，您将已经具有root用户访问权限。 这也允许在工作站和Android文件系统之间双向传输数据，即使可以访问只有root用户才可以访问的位置（通过 `adb push / pull`）。 在部分中详细了解数据传输 "[主机设备数据传输](#host-device-data-transfer "Host-Device Data Transfer")".
 
-###### Connect to Multiple Devices
+###### 连接到多个设备
 
-If you have more than one device, remember to include the `-s` flag followed by the device serial ID on all your `adb` commands (e.g. `adb -s emulator-5554 shell` or `adb -s 00b604081540b7c6 shell`). You can get a list of all connected devices and their serial IDs by using the following command:
+如果您有多个设备，请记住在所有“ adb”命令中都包含“ -s”标志和设备序列号（例如，“ adb -s emulator-5554 shell”或“ adb -s 00b604081540b7c6 shell”） 。 您可以使用以下命令获取所有已连接设备及其序列号的列表：
 
 ```shell
 $ adb devices
@@ -1175,60 +1176,60 @@ List of devices attached
 emulator-5554    device
 ```
 
-###### Connect to a Device over Wi-Fi
+###### 通过Wi-Fi连接到设备
 
-You can also access your Android device without using the USB cable. For this you'll have to connect both your host computer and your Android device to the same Wi-Fi network and follow the next steps:
+您也可以在不使用USB电缆的情况下访问Android设备。 为此，您必须将主机和Android设备都连接到同一Wi-Fi网络，然后执行以下步骤：
 
-- Connect the device to the host computer with a USB cable and set the target device to listen for a TCP/IP connection on port 5555: `adb tcpip 5555`.
-- Disconnect the USB cable from the target device and run `adb connect <device_ip_address>`. Check that the device is now available by running `adb devices`.
-- Open the shell with `adb shell`.
+- 使用USB电缆将设备连接到主机，并将目标设备设置为侦听端口5555上的TCP / IP连接：`adb tcpip 5555`。
+- 从目标设备上断开USB电缆的连接，然后运行 `adb connect <device_ip_address>`。 通过运行 `adb devices` 来检查设备是否可用。
+- 用`adb shell`打开外壳。
 
-However, notice that by doing this you leave your device open to anyone being in the same network and knowing the IP address of your device. You may rather prefer using the USB connection.
+但是，请注意，这样做会使您的设备向处于同一网络且知道设备IP地址的任何人开放。 您可能更喜欢使用USB连接。
 
-> For example, on a Nexus device, you can find the IP address at **Settings** -> **System** -> **About phone** -> **Status** -> **IP address** or by going to the **Wi-Fi** menu and tapping once on the network you're connected to.
+> 例如，在Nexus设备上，您可以在 **Settings** -> **System** -> **About phone** -> **Status** -> **IP Address** 中找到IP地址或转到 **Wi-Fi** 菜单，然后在您所连接的网络上点击一次。
 
-See the full instructions and considerations in the [Android Developers Documentation](https://developer.android.com/studio/command-line/adb#wireless "Connect to a device over Wi-Fi").
+请参阅中的完整说明和注意事项 [Android开发者文档](https://developer.android.com/studio/command-line/adb#wireless "Connect to a device over Wi-Fi").
 
-###### Connect to a Device via SSH
+###### 通过SSH连接到设备
 
-If you prefer, you can also enable SSH access. A convenient option is to use Termux, which you can easily [configure to offer SSH access](https://wiki.termux.com/wiki/Remote_Access#Using_the_SSH_server "Using the SSH server") (with password or public key authentication) and start it with the command `sshd` (starts by default on port 8022). In order to connect to the Termux via SSH you can simply run the command `ssh -p 8022 <ip_address>` (where `ip_address` is the actual remote device IP). This option has some additional benefits as it allows to access the file system via SFTP also on port 8022.
+如果愿意，还可以启用SSH访问。 一个方便的选择是使用Termux，您可以轻松地[配置为提供SSH访问权限](https://wiki.termux.com/wiki/Remote_Access#Using_the_SSH_server "Using the SSH server") （具有密码或公钥身份验证） 并使用命令“ sshd”启动它（默认在端口8022上启动）。 为了通过SSH连接到Termux，您只需运行命令ssh -p 8022 <ip_address>（其中ip_address是实际的远程设备IP）。 此选项还有一些其他好处，因为它允许通过端口8022上的SFTP访问文件系统。
 
-##### On-device Shell App
+##### 设备上的Shell应用程序
 
-While usually using an on-device shell (terminal emulator) might be very tedious compared to a remote shell, it can prove handy for debugging in case of, for example, network issues or check some configuration.
+尽管与远程外壳程序相比，通常使用设备上外壳程序（终端仿真器）可能很繁琐，但在例如网络问题或检查某些配置的情况下，调试调试起来很方便。
 
-Termux is a terminal emulator for Android that provides a Linux environment that works directly with or without rooting and with no setup required. The installation of additional packages is a trivial task thanks to its own APT package manager (which makes a difference in comparison to other terminal emulator apps). You can search for specific packages by using the command `pkg search <pkg_name>` and install packages with `pkg install <pkg_name>`. You can install Termux straight from [Google Play](https://play.google.com/store/apps/details?id=com.termux "Install Termux").
+Termux是适用于Android的终端仿真器，它提供Linux环境，该环境可以在有或没有root的情况下直接工作，而无需任何设置。 多亏了它自己的APT软件包管理器（与其他终端仿真器应用程序相比有所不同），附加软件包的安装是一项繁琐的任务。 您可以使用命令 `pkg search <pkg_name>` 来搜索特定的软件包，并使用 `pkg install <pkg_name>` 来安装软件包。 您可以直接从[Google Play](https://play.google.com/store/apps/details?id=com.termux "Install Termux").
 
-#### Host-Device Data Transfer
+#### 主机设备数据传输
 
-##### Using adb
+##### 使用 adb
 
-You can copy files to and from a device by using the commands `adb pull <remote> <local>` and `adb push <local> <remote>` [commands](https://developer.android.com/studio/command-line/adb#copyfiles "Copy files to/from a device"). Their usage is very straightforward. For example, the following will copy `foo.txt` from your current directory (local) to the `sdcard` folder (remote):
+您可以使用命令`adb pull <remote> <local>`和`adb push <local> <remote>`[命令](https://developer.android.com/studio/command-line/adb#copyfiles "Copy files to/from a device"). 它们的用法非常简单。 例如，下面的代码会将foo.txt从当前目录（本地）复制到sdcard文件夹（远程）：
 
 ```shell
 $ adb push foo.txt /sdcard/foo.txt
 ```
 
-This approach is commonly used when you know exactly what you want to copy and from/to where and also supports bulk file transfer, e.g. you can pull (copy) a whole directory from the Android device to your workstation.
+当您确切地知道要复制的内容以及从/复制到何处并且还支持批量文件传输时，通常使用此方法。 您可以将整个目录从Android设备拉（复制）到工作站。
 
 ```shell
 $ adb pull /sdcard
 /sdcard/: 1190 files pulled. 14.1 MB/s (304526427 bytes in 20.566s)
 ```
 
-##### Using Android Studio Device File Explorer
+##### 使用Android Studio设备文件资源管理器
 
-Android Studio has a [built-in Device File Explorer](https://developer.android.com/studio/debug/device-file-explorer "Device File Explorer") which you can open by going to **View** -> **Tool Windows** -> **Device File Explorer**.
+Android Studio有一个[内置设备文件资源管理器](https://developer.android.com/studio/debug/device-file-explorer "Device File Explorer") 您可以通过转到 **View** 打开 -> **Tool Windows** -> **Device file Explorer**。
 
-![Android Studio Device File Explorer](Images/Chapters/0x05b/android-studio-file-device-explorer.png)
+![Android Studio设备文件资源管理器](Images/Chapters/0x05b/android-studio-file-device-explorer.png)
 
-If you're using a rooted device you can now start exploring the whole file system. However, when using a non-rooted device accessing the app sandboxes won't work unless the app is debuggable and even then you are "jailed" within the app sandbox.
+如果您使用的是有ROOT设备，则现在可以开始浏览整个文件系统。 但是，如果使用非root用户的设备访问应用程序沙箱，则除非该应用程序是可调试的，否则您将被 “囚禁” 在应用程序沙箱中，否则将无法正常工作。
 
-##### Using objection
+##### 使用 objection
 
-This option is useful when you are working on a specific app and want to copy files you might encounter inside its sandbox (notice that you'll only have access to the files that the target app has access to). This approach works without having to set the app as debuggable, which is otherwise required when using Android Studio's Device File Explorer.
+当您在特定应用程序上工作并希望复制其沙箱中可能会遇到的文件时，此选项很有用（请注意，您只能访问目标应用程序有权访问的文件）。 这种方法无需将应用程序设置为可调试即可使用，否则在使用Android Studio的设备文件资源管理器时需要这样做。
 
-First, connect to the app with Objection as explained in "Recommended Tools - Objection". Then, use `ls` and `cd` as you normally would on your terminal to explore the available files:
+首先，按照 "推荐工具 - Objection". 然后，像平常在终端上那样使用 `ls` 和 `cd` 来浏览可用文件：
 
 ```shell
 $ frida-ps -U | grep -i owasp
@@ -1254,7 +1255,7 @@ Directory  ...  databases
 Readable: True  Writable: True
 ```
 
-One you have a file you want to download you can just run `file download <some_file>`. This will download that file to your working directory. The same way you can upload files using `file upload`.
+如果您有要下载的文件，则可以运行 `file download <some_file>`。 这会将文件下载到您的工作目录。 您可以使用 `file upload`来上传文件。
 
 ```shell
 ...[usb] # ls
@@ -1271,11 +1272,11 @@ Successfully downloaded ... to sg.vp.owasp_mobile.omtg_android_preferences.xml
 
 ```
 
-The downside is that, at the time of this writing, objection does not support bulk file transfer yet, so you're restricted to copy individual files. Still, this can come handy in some scenarios where you're already exploring the app using objection anyway and find some interesting file. Instead of e.g. taking note of the full path of that file and use `adb pull <path_to_some_file>` from a separate terminal, you might just want to directly do `file download <some_file>`.
+不利之处在于，在撰写本文时，异议尚不支持批量文件传输，因此只能复制单个文件。 不过，在某些情况下，这已经很方便了，在这些情况下，您已经无论如何都使用反对来探索应用程序并找到一些有趣的文件。 而不是例如 记下该文件的完整路径，并在单独的终端上使用 `adb pull <path_to_some_file>`，您可能只想直接执行 `file download <some_file>`.
 
-##### Using Termux
+##### 使用 Termux
 
-If you have a rooted device and have [Termux](https://play.google.com/store/apps/details?id=com.termux "Termux on Google Play") installed and have [properly configured SSH access](https://wiki.termux.com/wiki/Remote_Access#Using_the_SSH_server "Using the SSH server") on it, you should have an SFTP (SSH File Transfer Protocol) server already running on port 8022. You may access it from your terminal:
+如果您拥有root用户的设备并安装了[Termux](https://play.google.com/store/apps/details?id=com.termux "Termux on Google Play") 并具有[正确配置的SSH访问权限](https://wiki.termux.com/wiki/Remote_Access#Using_the_SSH_server "Using the SSH server") 您应该已经在端口8022上运行了SFTP（SSH文件传输协议）服务器。您可以从终端访问它 ：
 
 ```shell
 $ sftp -P 8022 root@localhost
@@ -1288,30 +1289,30 @@ sg.vantagepoint.uncrackable1
 sg.vp.owasp_mobile.omtg_android
 ```
 
-Or simply by using an SFTP-capable client like [FileZilla](https://filezilla-project.org/download.php "Download FileZilla"):
+或者简单地通过使用具有SFTP功能的客户端 [FileZilla](https://filezilla-project.org/download.php "Download FileZilla"):
 
 ![SFTP Access](Images/Chapters/0x05b/sftp-with-filezilla.png)
 
-Check the [Termux Wiki](https://wiki.termux.com/wiki/Remote_Access "Termux Remote Access") to learn more about remote file access methods.
+检查 [Termux Wiki](https://wiki.termux.com/wiki/Remote_Access "Termux Remote Access") 以了解有关远程文件访问方法的更多信息。
 
-#### Obtaining and Extracting Apps
+#### 获取和提取应用程序
 
-There are several ways of extracting APK files from a device. You will need to decide which one is the easiest method depending if the app is public or private.
+有几种从设备中提取APK文件的方法。 您需要根据应用程序是公开的还是私有的来决定哪一种是最简单的方法。
 
-##### Alternative App Stores
+##### 替代应用商店
 
-One of the easiest options is to download the APK from websites that mirror public applications from the Google Play Store. However, keep in mind that these sites are not official and there is no guarantee that the application hasn't been repackaged or contain malware. A few reputable websites that host APKs and are not known for modifying apps and even list SHA-1 and SHA-256 checksums of the apps are:
+最简单的选择之一是从镜像Google Play商店中公共应用程序的网站下载APK。 但是，请记住，这些站点不是官方站点，并且不能保证该应用程序没有重新包装或包含恶意软件。 一些举世闻名的网站，它们托管APK，并且不知道其用于修改应用，甚至列出应用的SHA-1和SHA-256校验和。
 
 - [APKMirror](https://apkmirror.com "APKMirror")
 - [APKPure](https://apkpure.com "APKPure")
 
-Beware that you do not have control over these sites and you cannot guarantee what they do in the future. Only use them if it's your only option left.
+请注意，您无法控制这些站点，并且不能保证它们将来会做什么。 仅在剩下的唯一选择时使用它们。
 
-##### Using gplaycli
+##### 使用 gplaycli
 
-[gplaycli](https://github.com/matlink/gplaycli "gplaycli") is a Python based CLI tool to search, install and update Android applications from the Google Play Store. Follow the [installation steps](https://github.com/matlink/gplaycli#installation "gplaycli Installation") and you're ready to run it. gplaycli offers several options, please refer to its help (`-h`) for more information.
+[gplaycli](https://github.com/matlink/gplaycli "gplaycli") 是基于Python的CLI工具，用于从Google Play商店搜索，安装和更新Android应用程序。 遵循[安装步骤](https://github.com/matlink/gplaycli#installation "gplaycli Installation") 您就可以运行它了。 gplaycli提供了多个选项，请参阅其帮助（`-h`）以获取更多信息。
 
-If you're unsure about the package name (or AppID) of an app, you may perform a keyword based search for APKs (`-s`):
+如果不确定应用程序的软件包名称（或AppID），则可以对APK（`-s`）进行基于关键字的搜索：
 
 ```bash
 $ gplaycli -s "google keep"
@@ -1323,9 +1324,9 @@ Maps - Navigate & Explore      Google LLC  35.25MB   16 May 2019  com.google.and
 Google                         Google LLC  82.57MB   30 Aug 2019  com.google.android.googlequicksearchbox  301008048
 ```
 
-> Note that regional (Google Play) restrictions apply when using gplaycli. In order to access apps that are restricted in your country you can use alternative app stores such as the ones described in "[Alternative App Stores](#alternative-app-stores "Alternative App Stores")".
+> 请注意，使用gplaycli时会受到区域（Google Play）限制。 为了访问您所在国家/地区限制的应用，您可以使用其他应用商店，例如“ [替代应用商店](#alternative-app-stores "Alternative App Stores")".
 
-Next, you can download (`-d`) the selected APK by specifying its AppID (add `-p` to show a progress bar and `-v` for verbosity):
+接下来，您可以通过指定所选APK的AppID来下载（`-d`）（添加 `-p` 以显示进度条，并添加 `-v` 以表示详细程度）：
 
 ```bash
 $ gplaycli -p -v -d com.google.android.keep
@@ -1339,60 +1340,60 @@ $ gplaycli -p -v -d com.google.android.keep
 [INFO] Download complete
 ```
 
-The `com.google.android.keep.apk` file will be in your current directory. As you might imagine, this approach is a very convenient way to download APKs, especially with regards to automation.
+`com.google.android.keep.apk` 文件将位于您当前的目录中。 您可能会想到，这种方法是下载APK的非常方便的方法，尤其是在自动化方面。
 
-> You may use your own Google Play credentials or token. By default, gplaycli will use [an internally provided token](https://github.com/matlink/gplaycli/blob/3.26/gplaycli/gplaycli.py#L106 "gplaycli Fallback Token").  
+>您可以使用自己的Google Play凭据或令牌。 默认情况下，gplaycli将使用[内部提供的令牌](https://github.com/matlink/gplaycli/blob/3.26/gplaycli/gplaycli.py#L106 "gplaycli Fallback Token").  
 
-##### Extracting the App Package from the Device
+##### 从设备中提取应用程序包
 
-Obtaining app packages from the device is the recommended method as we can guarantee the app hasn't been modified by a third-party. To obtain applications from a rooted or non-rooted device, you can use the following methods:
+从设备获取应用程序包是推荐的方法，因为我们可以保证该应用程序未被第三方修改。 要从有根或无根设备获取应用程序，可以使用以下方法：
 
-Use `adb pull` to retrieve the APK. If you don't know the package name, the first step is to list all the applications installed on the device:
+使用 `adb pull` 检索APK。 如果您不知道软件包名称，则第一步是列出设备上安装的所有应用程序：
 
 ```shell
 $ adb shell pm list packages
 ```
 
-Once you have located the package name of the application, you need the full path where it is stored on the system to download it.
+找到应用程序的程序包名称后，您需要将其存储在系统上的完整路径才能下载它。
 
 ```shell
 $ adb shell pm path <package name>
 ```
 
-With the full path to the APK, you can now simply use `adb pull` to extract it.
+有了APK的完整路径，您现在可以简单地使用 `adb pull` 来提取它。
 
 ```shell
 $ adb pull <apk path>
 ```
 
-The APK will be downloaded in your working directory.
+APK将下载到您的工作目录中。
 
-Alternatively, there are also apps like [APK Extractor](https://play.google.com/store/apps/details?id=com.ext.ui "APK Extractor") that do not require root and can even share the extracted APK via your preferred method. This can be useful if you don't feel like connecting the device or setting up adb over the network to transfer the file.
+另外，也有[APK提取器](https://play.google.com/store/apps/details?id=com.ext.ui "APK Extractor") 之类的应用程序，它们不需要root甚至可以共享 通过您的首选方法提取了APK。 如果您不想通过网络连接设备或设置adb来传输文件，这将很有用。
 
-#### Installing Apps
+#### 安装应用程序
 
-Use `adb install` to install an APK on an emulator or connected device.
+使用 `adb install` 在模拟器或连接的设备上安装APK。
 
 ```bash
 adb install path_to_apk
 ```
 
-Note that if you have the original source code and use Android Studio, you do not need to do this because Android Studio handles the packaging and installation of the app for you.
+请注意，如果您拥有原始源代码并使用Android Studio，则无需执行此操作，因为Android Studio会为您处理应用程序的打包和安装。
 
-#### Information Gathering
+#### 信息收集
 
-One fundamental step when analyzing apps is information gathering. This can be done by inspecting the app package on your workstation or remotely by accessing the app data on the device. You'll find more advanced techniques in the subsequent chapters but, for now, we will focus on the basics: getting a list of all installed apps, exploring the app package and accessing the app data directories on the device itself. This should give you a bit of context about what the app is all about without even having to reverse engineer it or perform more advanced analysis. We will be answering questions such as:
+分析应用程序时的基本步骤之一是信息收集。 这可以通过检查工作站上的应用程序包来完成，也可以通过访问设备上的应用程序数据来远程完成。 在随后的章节中，您将找到更高级的技术，但是，现在，我们将重点关注基础知识：获取所有已安装应用程序的列表，浏览应用程序包以及访问设备本身上的应用程序数据目录。 这应该为您提供有关应用程序的全部内容的上下文，而无需进行反向工程或执行更高级的分析。 我们将回答以下问题：
 
-- Which files are included in the package?
-- Which native libraries does the app use?
-- Which app components does the app define? Any services or content providers?
-- Is the app debuggable?
-- Does the app contain a network security policy?
-- Does the app create any new files when being installed?
+- 包中包含哪些文件？
+- 该应用程序使用哪些本机库？
+- 该应用定义了哪些应用组件？ 任何服务或内容提供商？
+- 该应用程序可调试吗？
+- 该应用程序是否包含网络安全政策？
+- 该应用在安装时会创建任何新文件吗？
 
-##### Listing Installed Apps
+##### 列出已安装的应用
 
-When targeting apps that are installed on the device, you'll first have to figure out the correct package name of the application you want to analyze. You can retrieve the installed apps either by using `pm` (Android Package Manager) or by using `frida-ps`:
+针对安装在设备上的应用程序时，首先必须找出要分析的应用程序的正确软件包名称。 您可以使用 `pm`（Android软件包管理器）或 `frida-ps` 来检索已安装的应用程序：
 
 ```bash
 $ adb shell pm list packages
@@ -1403,7 +1404,7 @@ package:org.teamsik.apps.hackingchallenge.hard
 package:sg.vp.owasp_mobile.omtg_android
 ```
 
-You can include flags to show only third party apps (`-3`) and the location of their APK file (`-f`), which you can use afterwards to download it via `adb pull`:
+您可以包含仅显示第三方应用程序（`-3`）及其APK文件（`-f`）位置的标志，然后可以通过 `adb pull` 下载这些文件：
 
 ```bash
 $ adb shell pm list packages -3 -f
@@ -1414,14 +1415,14 @@ package:/data/app/org.teamsik.apps.hackingchallenge.hard-1/base.apk=org.teamsik.
 package:/data/app/sg.vp.owasp_mobile.omtg_android-kR0ovWl9eoU_yh0jPJ9caQ==/base.apk=sg.vp.owasp_mobile.omtg_android
 ```
 
-This is the same as running `adb shell pm path <app_package_id>` on an app package ID:
+这与在应用程序包ID上运行 `adb shell pm path <app_package_id>` 相同：
 
 ```bash
 $ adb shell pm path sg.vp.owasp_mobile.omtg_android
 package:/data/app/sg.vp.owasp_mobile.omtg_android-kR0ovWl9eoU_yh0jPJ9caQ==/base.apk
 ```
 
-Use `frida-ps -Uai` to get all apps (`-a`) currently installed (`-i`) on the connected USB device (`-U`):
+使用 `frida-ps -Uai` 来获取连接的USB设备（`-U`）上当前安装的所有应用程序（`-i`）：
 
 ```bash
 $ frida-ps -Uai
@@ -1434,7 +1435,7 @@ $ frida-ps -Uai
     -  drozer Agent                              com.mwr.dz
 ```
 
-Note that this also shows the PID of the apps that are running at the moment. Take a note of the "Identifier" and the PID if any as you'll need them afterwards.
+请注意，这还显示了当前正在运行的应用程序的PID。 记下 `Identifier` 和PID（如果有），因为以后需要它们。
 
 ##### Exploring the App Package
 
