@@ -344,29 +344,29 @@ PortSwigger提供了很好的 [设置Android设备以与Burp配合使用的教�
 
 ###### Using Drozer
 
-Before you can start using drozer, you'll also need the drozer agent that runs on the Android device itself. Download the latest drozer agent [from the releases page](https://github.com/mwrlabs/drozer/releases/ "drozer GitHub releases") and install it with `adb install drozer.apk`.
+在开始使用drozer之前，您还需要在Android设备本身上运行的drozer代理。 从发布页面下载[最新的drozer代理](https://github.com/mwrlabs/drozer/releases/ "drozer GitHub releases") 并使用`adb install drozer.apk`进行安装。
 
-Once the setup is completed you can start a session to an emulator or a device connected per USB by running `adb forward tcp:31415 tcp:31415` and `drozer console connect`. See the full instructions [here](https://mobiletools.mwrinfosecurity.com/Starting-a-session/ "Starting a Session").
+设置完成后，您可以通过运行“ adb forward tcp：31415 tcp：31415”和“ drozer console connect”来启动与仿真器或通过USB连接的设备的会话。 请参阅的完整说明[此处](https://mobiletools.mwrinfosecurity.com/Starting-a-session/ "开始会话").
 
-Now you are ready to begin analyzing apps. A good first step is to enumerate the attack surface of an app which can be done easily with the following command:
+现在您可以开始分析应用程序了。 一个好的第一步是枚举应用程序的受攻击面，可以使用以下命令轻松完成：
 
 ```shell
 $ dz> run app.package.attacksurface <package>
 ```
 
-Again, without drozer this would have required several steps. The module `app.package.attacksurface` lists activities, broadcast receivers, content providers and services that are exported, hence, they are public and can be accessed through other apps. Once we have identified our attack surface, we can interact with the IPC endpoints through drozer without having to write a separate standalone app as it would be required for certain tasks such as communicating with a content provider.
+同样，如果没有催干器，这将需要几个步骤。 “ app.package.attacksurface”模块列出了活动，广播接收者，内容提供者和导出的服务，因此，它们是公共的，可以通过其他应用程序进行访问。 一旦确定了攻击面，就可以通过drozer与IPC端点进行交互，而无需编写单独的独立应用程序，因为某些任务（例如与内容提供商进行通信）将需要它。
 
-For example, if the app has an exported Activity that leaks sensitive information we can invoke it with the Drozer module `app.activity.start`:
+例如，如果应用程序的导出活动泄漏了敏感信息，我们可以使用Drozer模块app.activity.start来调用它：
 
 ```shell
 $ dz> run app.activity.start --component <package> <component name>
 ```
 
-This previous command will start the activity, hopefully leaking some sensitive information. Drozer has modules for every type of IPC mechanism. Download [InsecureBankv2](https://github.com/dineshshetty/Android-InsecureBankv2 "InsecureBankv2 APK") if you would like to try the modules with an intentionally vulnerable application that illustrates common problems related to IPC endpoints. Pay close attention to the modules in the scanner category as they are very helpful automatically detecting vulnerabilities even in system packages, specially if you are using a ROM provided by your cellphone company. Even [SQL injection vulnerabilities in system packages by Google](https://issuetracker.google.com/u/0/issues/36965126 "SQL injection in Android") have been identified in the past with drozer.
+先前的命令将启动活动，希望泄漏一些敏感信息。 Drozer具有适用于每种IPC机制的模块。 如果您想尝试使用一个故意易受攻击的应用程序来说明这些模块来说明与IPC端点相关的常见问题，请下载[InsecureBankv2](https://github.com/dineshshetty/Android-InsecureBankv2 "InsecureBankv2 APK") 请密切注意扫描仪类别中的模块，因为它们对于自动检测漏洞（甚至是系统软件包中的漏洞）也非常有帮助，尤其是在您使用手机公司提供的ROM的情况下。 甚至在过去也已经使用drozer识别了[Google所提供系统包中的SQL注入漏洞](https://issuetracker.google.com/u/0/issues/36965126 "SQL injection in Android").
 
-###### Other Drozer commands
+###### 其他 Drozer 命令
 
-Here's a non-exhaustive list of commands you can use to start exploring on Android:
+以下是命令的详尽列表，可用于在Android上开始探索：
 
 ```shell
 # List all the installed packages
@@ -397,71 +397,71 @@ $ dz> run app.broadcast.send --action (broadcast receiver name) -- extra (number
 $ dz> run scanner.provider.injection -a (package name)
 ```
 
-###### Other Drozer resources
+###### 其他 Drozer 资源
 
-Other resources where you might find useful information are:
+您可能会找到有用信息的其他资源包括：
 
-- [official Drozer User Guide](https://labs.mwrinfosecurity.com/assets/BlogFiles/mwri-drozer-user-guide-2015-03-23.pdf "Drozer User Guide").
-- [drozer GitHub page](https://github.com/mwrlabs/drozer "GitHub repo")
+- [官方Drozer用户指南](https://labs.mwrinfosecurity.com/assets/BlogFiles/mwri-drozer-user-guide-2015-03-23.pdf "Drozer User Guide").
+- [drozer GitHub 页面](https://github.com/mwrlabs/drozer "GitHub repo")
 - [drozer Wiki](https://github.com/mwrlabs/drozer/wiki "drozer Wiki")
-- [Command Reference](https://mobiletools.mwrinfosecurity.com/Command-Reference/ "drozer's Command Reference")
-- [Using drozer for application security assessments](https://mobiletools.mwrinfosecurity.com/Using-Drozer-for-application-security-assessments/ "Using drozer for application security assessments")
-- [Exploitation features in drozer](https://mobiletools.mwrinfosecurity.com/Exploitation-features-in-drozer/ "Exploitation features in drozer")
-- [Using modules](https://mobiletools.mwrinfosecurity.com/Installing-modules/)
+- [命令参考](https://mobiletools.mwrinfosecurity.com/Command-Reference/ "drozer's Command Reference")
+- [使用drozer 进行应用程序安全评估](https://mobiletools.mwrinfosecurity.com/Using-Drozer-for-application-security-assessments/ "Using drozer for application security assessments")
+- [Drozer 中的利用功能](https://mobiletools.mwrinfosecurity.com/Exploitation-features-in-drozer/ "Exploitation features in drozer")
+- [使用模块](https://mobiletools.mwrinfosecurity.com/Installing-modules/)
 
 ##### Frida
 
-[Frida](https://www.frida.re "Frida") is a free and open-source dynamic code instrumentation toolkit that lets you execute snippets of JavaScript into your native apps. It was already introduced in the chapter "[Tampering and Reverse Engineering](0x04c-Tampering-and-Reverse-Engineering.md#frida "Frida")" of the general testing guide.
+[Frida](https://www.frida.re "Frida") 是一个免费的开源动态代码检测工具包，可让您在本地应用程序中执行JavaScript片段。它已在一般测试指南的“ [篡改和逆向工程](0x04c-Tampering-and-Reverse-Engineering.md#frida "Frida")" 一章中进行介绍。
 
-Frida supports interaction with the Android Java runtime though the [Java API](https://www.frida.re/docs/javascript-api/#java "Frida - Java API"). You'll be able to hook and call both Java and native functions inside the process and its native libraries. Your JavaScript snippets have full access to memory, e.g. to read and/or write any structured data.
+Frida通过[Java API](https://www.frida.re/docs/javascript-api/#java "Frida - Java API")支持与Android Java运行时的交互。您将能够在流程及其本机库中挂钩并调用Java和本机函数。您的JavaScript代码段具有对内存的完全访问权限，例如读取和/或写入任何结构化数据。
 
-Here are some tasks that Frida APIs offers and are relevant or exclusive on Android:
+以下是Frida API提供的一些任务，这些任务与Android相关或不相关：
 
-- Instantiate Java objects and call static and non-static class methods ([Java API](https://www.frida.re/docs/javascript-api/#java "Frida - Java API")).
-- Replace Java method implementations ([Java API](https://www.frida.re/docs/javascript-api/#java "Frida - Java API")).
-- Enumerate live instances of specific classes by scanning the Java heap ([Java API](https://www.frida.re/docs/javascript-api/#java "Frida - Java API")).
-- Scan process memory for occurrences of a string ([Memory API](https://www.frida.re/docs/javascript-api/#memory "Frida - Memory API")).
-- Intercept native function calls to run your own code at function entry and exit ([Interceptor API](https://www.frida.re/docs/javascript-api/#interceptor "Frida - Interceptor API")).
+- 实例化Java对象并调用静态和非静态类方法（[Java API](https://www.frida.re/docs/javascript-api/#java "Frida - Java API")).
+- 替换Java方法的实现 ([Java API](https://www.frida.re/docs/javascript-api/#java "Frida - Java API")).
+- 通过扫描Java堆来枚举特定类的实时实例 ([Java API](https://www.frida.re/docs/javascript-api/#java "Frida - Java API")).
+- 扫描进程内存中是否出现字符串 ([Memory API](https://www.frida.re/docs/javascript-api/#memory "Frida - Memory API")).
+- 拦截本机函数调用以在函数入口和出口运行您自己的代码 ([Interceptor API](https://www.frida.re/docs/javascript-api/#interceptor "Frida - Interceptor API")).
 
-Remember that on Android, you can also benefit from the built-in tools provided when installing Frida, that includes the Frida CLI (`frida`), `frida-ps`, `frida-ls-devices` and `frida-trace`, to name some of them.
+请记住，在Android上，您还可以从安装Frida时使用的内置工具中受益，其中包括Frida CLI（`frida`），`frida-ps`，`frida-ls-devices`和`frida-trace` ，以列举其中的一些。
 
-Frida is often compared to Xposed, however this comparison is far from fair as both frameworks were designed with different goals in mind. This is important to understand as an app security tester so that you can know which framework to use in which situation:
+Frida通常与Xposed相提并论，但是，由于两个框架在设计时都考虑了不同的目标，因此这种比较并不公平。作为应用程序安全测试人员，了解这一点很重要，这样您就可以知道在哪种情况下使用哪个框架：
 
-- Frida is standalone, all you need is to run the frida-server binary from a known location in your target Android device (see "Installing Frida" below). This means that, in contrast to Xposed, it is not _deep_ installed in the target OS.
-- Reversing an app is an iterative process. As a consequence of the previous point, you obtain a shorter feedback loop when testing as you don't need to (soft) reboot to apply or simply update your hooks. So you might prefer to use Xposed when implementing more permanent hooks.
-- You may inject and update your Frida JavaScript code on the fly at any point during the runtime of your process (similarly to Cycript on iOS). This way you can perform the so-called _early instrumentation_ by letting Frida spawn your app or you may prefer to attach to a running app that you might have brought to a certain state.
-- Frida is able to handle both Java as well as native code (JNI), allowing you to modify both of them. This is unfortunately a limitation of Xposed which lacks of native code support.
+- Frida是独立的，您所需要做的就是从目标Android设备中的已知位置运行frida-server二进制文件（请参阅下面的“安装Frida”）。这意味着，与Xposed相比，它没有在目标OS中“深安装”。
+- 撤消应用程序是一个反复的过程。由于上一点，测试时您不需要（软）重新启动即可应用或简单地更新钩子，因此获得的反馈循环更短。因此，在实现更多永久性挂钩时，您可能更喜欢使用Xposed。
+- 您可以在流程运行期间的任何时候动态注入和更新Frida JavaScript代码（类似于iOS上的Cycript）。这样，您可以通过让Frida生成您的应用程序来执行所谓的_early instrumentation_，或者您可能更喜欢将其附加到正在运行的应用程序中，而该应用程序可能已使其处于某种状态。
+- Frida能够处理Java以及本机代码（JNI），使您能够修改它们。不幸的是，这是Xposed的局限性，缺乏本地代码支持。
 
-> Note that Xposed, as of early 2019, does not work on Android 9 (API level 28) yet.
+>请注意，截至2019年初，Xposed尚不适用于Android 9（API级别28）。
 
-###### Installing Frida
+###### 安装 Frida
 
-To install Frida locally, simply run:
+要在本地安装Frida，只需运行：
 
 ```shell
 $ pip install frida-tools
 ```
 
-Or refer to the [installation page](https://www.frida.re/docs/installation/ "Frida Installation") for more details.
+或参阅[安装页面](https://www.frida.re/docs/installation/ "Frida Installation") 了解更多详细信息。
 
-The next step is to set up Frida on your Android device:
+下一步是在您的Android设备上设置Frida：
 
-- If your device is not rooted, you can also use Frida, please refer to section "[Dynamic Analysis on Non-Rooted Devices](0x05c-Reverse-Engineering-and-Tampering.md#dynamic-analysis-on-non-rooted-devices "Dynamic Analysis on Non-Rooted Devices")" of the "Reverse Engineering and Tampering" chapter.
-- If you have a rooted device, simply follow the [official instructions](https://www.frida.re/docs/android/ "Frida - Setting up your Android device") or follow the hints below.
+- 如果您的设备未植根，则也可以使用Frida，请参阅“ [非根植设备上的动态分析](0x05c-Reverse-Engineering-and-Tampering.md#dynamic-analysis-on-non-rooted-devices "Dynamic Analysis on Non-Rooted Devices")" 部分设备“逆向工程和篡改”一章中的“非根设备的动态分析”）。
+- 如果您的设备已植根，只需按照[官方说明](https://www.frida.re/docs/android/ "Frida - Setting up your Android device") 或按照以下提示进行操作。
 
-We assume a rooted device here unless otherwise noted. Download the frida-server binary from the [Frida releases page](https://github.com/frida/frida/releases). Make sure that you download the right frida-server binary for the architecture of your Android device or emulator: x86, x86_64, arm or arm64. Make sure that the server version (at least the major version number) matches the version of your local Frida installation. PyPI usually installs the latest version of Frida. If you're unsure which version is installed, you can check with the Frida command line tool:
+除非另有说明，否则我们在这里假设有根设备。从[Frida版本页面](https://github.com/frida/frida/releases). 下载frida-server二进制文件。确保为您的Android设备或仿真器的架构下载正确的frida服务器二进制文件：x86，x86_64，arm或arm64。确保服务器版本（至少是主版本号）与本地Frida安装的版本匹配。 PyPI通常会安装最新版本的Frida。如果不确定安装哪个版本，可以使用Frida命令行工具进行检查：
 
 ```shell
 $ frida --version
 ```
 
-Or you can run the following command to automatically detect Frida version and download the right frida-server binary:
+或者，您可以运行以下命令来自动检测Frida版本并下载正确的frida-server二进制文件：
 
 ```shell
 $ wget https://github.com/frida/frida/releases/download/$(frida --version)/frida-server-$(frida --version)-android-arm.xz
 ```
 
-Copy frida-server to the device and run it:
+将frida-server复制到设备并运行它：
 
 ```shell
 $ adb push frida-server /data/local/tmp/
@@ -469,9 +469,9 @@ $ adb shell "chmod 755 /data/local/tmp/frida-server"
 $ adb shell "su -c /data/local/tmp/frida-server &"
 ```
 
-###### Using Frida on Android
+###### 在Android上使用Frida
 
-With frida-server running, you should now be able to get a list of running processes with the following command (use the `-U` option to indicate Frida to use a connected USB devices or emulator):
+随着frida-server的运行，您现在应该可以使用以下命令获取正在运行的进程的列表（使用-U选项指示Frida使用已连接的USB设备或仿真器）：
 
 ```shell
 $ frida-ps -U
@@ -491,7 +491,7 @@ $ frida-ps -U
 (...)
 ```
 
-Or restrict the list with the `-Uai` flag combination to get all apps (`-a`) currently installed (`-i`) on the connected USB device (`-U`):
+或使用-Uai标志组合限制列表，以获取连接的USB设备（-U）上当前安装的所有应用程序（-i）：
 
 ```bash
 $ frida-ps -Uai
@@ -504,35 +504,35 @@ $ frida-ps -Uai
     -  drozer Agent                              com.mwr.dz
 ```
 
-This will show the names and identifiers of all apps, if they are currently running it will also show their PIDs. Search for your app in the list and take a note of the PID or its name/identifier. From now on you'll refer to your app by using one of them. A recommendation is to use the identifiers, as the PIDs will change on each run of the app. For example let's take `com.android.chrome`. You can use this string now on all Frida tools, e.g. on the Frida CLI, on frida-trace or from a Python script.
+这将显示所有应用程序的名称和标识符，如果它们当前正在运行，它还将显示其PID。 在列表中搜索您的应用，并记下PID或其名称/标识符。 从现在开始，您将使用其中之一来引用您的应用程序。 建议使用标识符，因为PID会在每次运行该应用程序时更改。 例如，以“ com.android.chrome”为例。 您现在可以在所有Frida工具上使用此字符串，例如 在Frida CLI，frida-trace或Python脚本上。
 
-###### Tracing Native Libraries with frida-trace
+###### 使用 frida-trace 跟踪本地库
 
-To trace specific (low-level) library calls, you can use the `frida-trace` command line tool:
+要跟踪特定的（低级）库调用，可以使用`frida-trace`命令行工具：
 
 ```shell
 $ frida-trace -U com.android.chrome -i "open"
 ```
 
-This generates a little JavaScript in `__handlers__/libc.so/open.js`, which Frida injects into the process. The script traces all calls to the `open` function in `libc.so`. You can modify the generated script according to your needs with Frida [JavaScript API](https://www.frida.re/docs/javascript-api/).
+这将在 `__handlers__/libc.so/open.js`中生成一些JavaScript，Frida将其注入到该过程中。 该脚本将跟踪对`libc.so`中的`open`函数的所有调用。 您可以使用Frida 根据需要修改生成的脚本。[JavaScript API](https://www.frida.re/docs/javascript-api/).
 
-Unfortunately tracing high-level methods of Java classes is not yet supported (but might be [in the future](https://github.com/frida/frida-python/issues/70 "Support for tracing high-level methods of Java Classes via patterns")).
+不幸的是，尚不支持跟踪Java类的高级方法（但可能会[在将来](https://github.com/frida/frida-python/issues/70 "Support for tracing high-level methods of Java Classes via patterns")).
 
-###### Frida CLI and the Java API
+###### Frida CLI 和 Java API
 
-Use the Frida CLI tool (`frida`) to work with Frida interactively. It hooks into a process and gives you a command line interface to Frida's API.
+使用Frida CLI工具（`frida`）与Frida交互工作。 它挂接到一个进程中，并为您提供Frida API的命令行界面。
 
 ```shell
 $ frida -U com.android.chrome
 ```
 
-With the `-l` option, you can also use the Frida CLI to load scripts , e.g., to load `myscript.js`:
+使用`-l`选项，您还可以使用Frida CLI加载脚本，例如，加载 `myscript.js`：
 
 ```shell
 $ frida -U -l myscript.js com.android.chrome
 ```
 
-Frida also provides a [Java API](https://www.frida.re/docs/javascript-api/#java "Frida - Java API"), which is especially helpful for dealing with Android apps. It lets you work with Java classes and objects directly. Here is a script to overwrite the `onResume` function of an Activity class:
+Frida 还提供了[Java API](https://www.frida.re/docs/javascript-api/#java "Frida - Java API"), 这对于处理Android应用程序特别有用。 它使您可以直接使用Java类和对象。 这是一个覆盖Activity类的onResume函数的脚本：
 
 ```java
 Java.perform(function () {
@@ -544,9 +544,9 @@ Java.perform(function () {
 });
 ```
 
-The above script calls `Java.perform` to make sure that your code gets executed in the context of the Java VM. It instantiates a wrapper for the `android.app.Activity` class via `Java.use` and overwrites the `onResume` function. The new `onResume` function implementation prints a notice to the console and calls the original `onResume` method by invoking `this.onResume` every time an activity is resumed in the app.
+上面的脚本调用Java.perform来确保您的代码在Java VM的上下文中执行。 它通过Java.use实例化android.app.Activity类的包装器，并覆盖onResume函数。 新的onResume函数实现将通知打印到控制台，并在每次在应用中恢复活动时通过调用this.onResume调用原始onResume方法。
 
-Frida also lets you search for and work with instantiated objects that are on the heap. The following script searches for instances of `android.view.View` objects and calls their `toString` method. The result is printed to the console:
+Frida还允许您搜索并使用堆上的实例化对象。 以下脚本搜索android.view.View对象的实例，并调用其toString方法。 结果打印到控制台：
 
 ```java
 setImmediate(function() {
@@ -564,7 +564,7 @@ setImmediate(function() {
 });
 ```
 
-The output would look like this:
+输出如下所示：
 
 ```shell
 [*] Starting script
@@ -575,7 +575,7 @@ The output would look like this:
 [*] Finished heap search
 ```
 
-You can also use Java's reflection capabilities. To list the public methods of the `android.view.View` class, you could create a wrapper for this class in Frida and call `getMethods` from the wrapper's `class` property:
+您还可以使用Java的反射功能。 要列出`android.view.View`类的公共方法，您可以在`Frida`中为该类创建一个包装器，并从包装器的`class`属性调用`getMethods`：
 
 ```java
 Java.perform(function () {
@@ -587,7 +587,7 @@ Java.perform(function () {
 });
 ```
 
-This will print a very long list of methods to the terminal:
+这将向终端打印很长的方法列表：
 
 ```java
 public boolean android.view.View.canResolveLayoutDirection()
@@ -603,9 +603,9 @@ public final void android.view.View.cancelPendingInputEvents()
 
 ###### Frida Bindings
 
-In order to extend the scripting experience, Frida offers bindings to programming languages such as Python, C, NodeJS, and Swift.
+为了扩展脚本编写经验，Frida提供了与Python，C，NodeJS和Swift等编程语言的绑定。
 
-Taking Python as an example, the first thing to note is that no further installation steps are required. Start your Python script with `import frida` and you're ready to go. See the following script that simply runs the previous JavaScript snippet:
+以Python为例，首先要注意的是不需要进一步的安装步骤。 从“ import frida”开始您的Python脚本，您就可以开始了。 请参阅下面的脚本，该脚本仅运行先前的JavaScript代码段：
 
 ```python
 # frida_python.py
@@ -629,7 +629,7 @@ script.load()
 session.detach()
 ```
 
-In this case, running the Python script (`python3 frida_python.py`) has the same result as the previous example: it will print all methods of the `android.view.View` class to the terminal. However, you might want to work with that data from Python. Using `send` instead of `console.log` will send data in JSON format from JavaScript to Python. Please read the comments in the example below:
+在这种情况下，运行Python脚本（`python3 frida_python.py`）与上一个示例具有相同的结果：它将把`android.view.View`类的所有方法输出到终端。 但是，您可能希望使用Python中的数据。 使用`send`而不是`console.log`会将JSON格式的数据从JavaScript发送到Python。 请阅读以下示例中的注释：
 
 ```python
 # python3 frida_python_send.py
@@ -669,7 +669,7 @@ for method in android_view_methods:
 session.detach()
 ```
 
-This effectively filters the methods and prints only the ones containing the string "Text":
+这样可以有效地过滤方法，并仅打印包含字符串 “Text”的方法：
 
 ```java
 $ python3 frida_python_send.py
@@ -681,26 +681,26 @@ public void android.view.View.setTooltipText(java.lang.CharSequence)
 ...
 ```
 
-In the end, it is up to you to decide where would you like to work with the data. Sometimes it will be more convenient to do it from JavaScript and in other cases Python will be the best choice. Of course you can also send messages from Python to JavaScript by using `script.post`. Refer to the Frida docs for more information about [sending](https://www.frida.re/docs/messages/#sending-messages-from-a-target-process "Sending messages from a target process") and [receiving](https://www.frida.re/docs/messages/#receiving-messages-in-a-target-process "Receiving messages in a target process") messages.
+最后，由您决定要在哪里使用数据。 有时，使用JavaScript进行操作会更加方便，而在其他情况下，Python将是最佳选择。 当然，您也可以使用`script.post`将消息从Python发送到JavaScript。 有关[发送](https://www.frida.re/docs/messages/#sending-messages-from-a-target-process "Sending messages from a target process") 和 [接收](https://www.frida.re/docs/messages/#receiving-messages-in-a-target-process "Receiving messages in a target process") 消息。
 
 ##### Magisk
 
-`Magisk` ("Magic Mask") is one way to root your Android device. It's specialty lies in the way the modifications on the system are performed. While other rooting tools alter the actual data on the system partition, Magisk does not (which is called "systemless"). This enables a way to hide the modifications from root-sensitive applications (e.g. for banking or games) and allows using the official Android OTA upgrades without the need to unroot the device beforehand.
+`Magisk` ("Magic Mask") 是根植Android设备的一种方法。它的特色在于对系统进行修改的方式。尽管其他生根工具会更改系统分区上的实际数据，但Magisk不会（这称为“无系统”）。这样可以隐藏对根敏感的应用程序（例如银行或游戏）的修改，并允许使用官方的Android OTA升级而无需事先取消设备的根目录。
 
-You can get familiar with Magisk reading the official [documentation on GitHub](https://topjohnwu.github.io/Magisk/ "Magisk Documentation"). If you don't have Magisk installed, you can find installation instructions in [the documentation](https://topjohnwu.github.io/Magisk/install.html "Magisk Installation"). If you use an official Android version and plan to upgrade it, Magisk provides a [tutorial on GitHub](https://topjohnwu.github.io/Magisk/tutorials.html#ota-installation "OTA Installation").
+您可以通过阅读官方的[GitHub上的文档](https://topjohnwu.github.io/Magisk/ "Magisk Documentation")来熟悉Magisk。如果尚未安装Magisk，则可以在[文档](https://topjohnwu.github.io/Magisk/install.html "Magisk Installation")中找到安装说明。如果您使用官方Android版本并计划对其进行升级，则Magisk将提供[GitHub上的教程](https://topjohnwu.github.io/Magisk/tutorials.html#ota-installation "OTA Installation").
 
-Learn more about [rooting your device with Magisk](#rooting-with-magisk "Rooting with Magisk").
+L了解更多有关[使用Magisk Rooting 设备](#rooting-with-magisk "Rooting with Magisk").
 
 ##### MobSF
 
-[MobSF](https://github.com/MobSF/Mobile-Security-Framework-MobSF "MobSF") is an automated, all-in-one mobile application pentesting framework that also supports Android APK files. The easiest way of getting MobSF started is via Docker.
+[MobSF](https://github.com/MobSF/Mobile-Security-Framework-MobSF "MobSF") 是一个自动化的多合一移动应用程序渗透测试框架，还支持Android APK文件。 启动MobSF的最简单方法是通过Docker。
 
 ```shell
 $ docker pull opensecurity/mobile-security-framework-mobsf
 $ docker run -it -p 8000:8000 opensecurity/mobile-security-framework-mobsf:latest
 ```
 
-Or install and start it locally on your host computer by running:
+或通过运行以下命令在主机上本地安装并启动它：
 
 ```shell
 # Setup
@@ -714,44 +714,44 @@ setup.bat # For Windows
 run.bat # For Windows
 ```
 
-Once you have MobSF up and running you can open it in your browser by navigating to <http://127.0.0.1:8000>. Simply drag the APK you want to analyze into the upload area and MobSF will start its job.
+MobSF启动并运行后，可以通过导航到<http://127.0.0.1:8000>在浏览器中打开它。 只需将您要分析的APK拖到上传区域，MobSF将开始工作。
 
-After MobSF is done with its analysis, you will receive a one-page overview of all the tests that were executed. The page is split up into multiple sections giving some first hints on the attack surface of the application.
+在完成MobSF的分析之后，您将获得一页一页的所有已执行测试的概述。 该页面分为多个部分，在应用程序的受攻击面上提供了一些初步提示。
 
 <img src="Images/Chapters/0x05b/mobsf_android.png" alt="MobSF for Android">
 
-The following is displayed:
+显示以下内容：
 
-- Basic information about the app and its binary file.
-- Some options to:
-  - View the `AndroidManifest.xml` file.
-  - View the IPC components of the app.
-- Signer certificate.
-- App permissions.
-- A security analysis showing known defects e.g. if the app backups are enabled.
-- List of libraries used by the app binary and list of all files inside the unzipped APK.
-- Malware analysis that checks for malicious URLs.
+-有关该应用及其二进制文件的基本信息。
+-一些选项：
+   -查看“ AndroidManifest.xml”文件。
+   -查看应用程序的IPC组件。
+-签名者证书。
+- 应用权限。
+-显示已知缺陷的安全分析，例如 如果启用了应用程序备份。
+-应用程序二进制文件使用的库列表以及未压缩的APK内的所有文件的列表。
+-检查恶意URL的恶意软件分析。
 
-Refer to [MobSF documentation](https://github.com/MobSF/Mobile-Security-Framework-MobSF/wiki/1.-Documentation "MobSF documentation") for more details.
+有关更多详细信息，请参见[MobSF文档]（https://github.com/MobSF/Mobile-Security-Framework-MobSF/wiki/1.-文档“ MobSF文档”）。
 
 ##### Objection
 
-[Objection](https://github.com/sensepost/objection "Objection on GitHub") is a "runtime mobile exploration toolkit, powered by Frida". Its main goal is to allow security testing on non-rooted devices through an intuitive interface.
+[Objection](https://github.com/sensepost/objection "Objection on GitHub") 是“由Frida提供支持的运行时移动探索工具包”。 其主要目标是允许通过直观界面在非根设备上进行安全测试。
 
-Objection achieves this goal by providing you with the tools to easily inject the Frida gadget into an application by repackaging it. This way, you can deploy the repackaged app to the non-rooted device by sideloading it and interact with the application as explained in the previous section.
+Objection通过为您提供通过重新打包将Frida小工具轻松地注入到应用程序中的工具来实现此目标。这样，您可以通过旁加载将重新打包的应用程序部署到非root用户的设备，并按照上一节中的说明与该应用程序进行交互。
 
-However, Objection also provides a REPL that allows you to interact with the application, giving you the ability to perform any action that the application can perform. A full list of the features of Objection can be found on the project's homepage, but here are a few interesting ones:
+但是，Objection还提供了REPL，它允许您与应用程序进行交互，从而使您能够执行应用程序可以执行的任何操作。可以在项目的主页上找到Objection功能的完整列表，但是这里有一些有趣的功能：
 
-- Repackage applications to include the Frida gadget
-- Disable SSL pinning for popular methods
-- Access application storage to download or upload files
-- Execute custom Frida scripts
-- List the Activities, Services and Broadcast receivers
-- Start Activities
+- 重新打包应用程序以包括Frida小工具
+- 为流行方法禁用SSL固定
+- 访问应用程序存储以下载或上传文件
+- 执行自定义Frida脚本
+- 列出活动，服务和广播接收者
+- 开始活动
 
-The ability to perform advanced dynamic analysis on non-rooted devices is one of the features that makes Objection incredibly useful. An application may contain advanced RASP controls which detect your rooting method and injecting a frida-gadget may be the easiest way to bypass those controls. Furthermore, the included Frida scripts make it very easy to quickly analyze an application, or get around basic security controls.
+在无根设备上执行高级动态分析的能力是使Objection异常有用的功能之一。应用程序可能包含高级RASP控件，这些控件可以检测您的生根方法，而注入frida-gadget可能是绕过这些控件的最简单方法。此外，随附的Frida脚本使快速分析应用程序或解决基本安全控制变得非常容易。
 
-Finally, in case you do have access to a rooted device, Objection can connect directly to the running Frida server to provide all its functionality without needing to repackage the application.
+最后，如果您确实有权访问已植根的设备，则Objection可以直接连接到正在运行的Frida服务器，以提供其所有功能，而无需重新打包应用程序。
 
 ###### Installing Objection
 
