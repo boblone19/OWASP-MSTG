@@ -1,22 +1,22 @@
-## Testing Code Quality
+## 测试代码质量
 
-Mobile app developers use a wide variety of programming languages and frameworks. As such, common vulnerabilities such as SQL injection, buffer overflows, and cross-site scripting (XSS), may manifest in apps when neglecting secure programming practices.
+移动应用程序开发人员使用各种编程语言和框架。 因此，当忽略安全编程实践时，常见漏洞（例如SQL注入，缓冲区溢出和跨站点脚本（XSS））可能会出现在应用程序中。
 
-The same programming flaws may affect both Android and iOS apps to some degree, so we'll provide an overview of the most common vulnerability classes frequently in the general section of the guide. In later sections, we will cover OS-specific instances and exploit mitigation features.
+相同的编程漏洞可能在一定程度上影响Android和iOS应用程序，因此，我们将在指南的常规部分中概述最常见的漏洞类别。 在后面的部分中，我们将介绍特定于操作系统的实例并利用缓解功能。
 
-### Injection Flaws (MSTG-ARCH-2 and MSTG-PLATFORM-2)
+### 注射缺陷 (MSTG-ARCH-2 and MSTG-PLATFORM-2)
 
-An *injection flaw* describes a class of security vulnerability occurring when user input is inserted into backend queries or commands. By injecting meta-characters, an attacker can execute malicious code that is inadvertently interpreted as part of the command or query. For example, by manipulating a SQL query, an attacker could retrieve arbitrary database records or manipulate the content of the backend database.
+*注入漏洞*描述了将用户输入插入后端查询或命令时发生的一类安全漏洞。 通过注入元字符，攻击者可以执行无意中将其解释为命令或查询一部分的恶意代码。 例如，通过操纵SQL查询，攻击者可以检索任意数据库记录或操纵后端数据库的内容。
 
-Vulnerabilities of this class are most prevalent in server-side web services. Exploitable instances also exist within mobile apps, but occurrences are less common, plus the attack surface is smaller.
+此类漏洞在服务器端Web服务中最为普遍。 移动应用程序中也存在可利用的实例，但是这种情况很少见，而且攻击面更小。
 
-For example, while an app might query a local SQLite database, such databases usually do not store sensitive data (assuming the developer followed basic security practices). This makes SQL injection a non-viable attack vector. Nevertheless, exploitable injection vulnerabilities sometimes occur, meaning proper input validation is a necessary best practice for programmers.
+例如，虽然应用程序可能查询本地SQLite数据库，但此类数据库通常不存储敏感数据（假设开发人员遵循基本的安全惯例）。 这使SQL注入成为不可行的攻击手段。 但是，有时会出现可利用的注入漏洞，这意味着正确的输入验证对于程序员是必要的最佳实践。
 
-#### SQL Injection
+#### SQL注入
 
-A *SQL injection* attack involves integrating SQL commands into input data, mimicking the syntax of a predefined SQL command. A successful SQL injection attack allows the attacker to read or write to the database and possibly execute administrative commands, depending on the permissions granted by the server.
+“ SQL注入”攻击涉及将SQL命令集成到输入数据中，模仿预定义SQL命令的语法。 成功的SQL注入攻击使攻击者可以读取或写入数据库，并可能执行管理命令，具体取决于服务器授予的权限。
 
-Apps on both Android and iOS use SQLite databases as a means to control and organize local data storage. Assume an Android app handles local user authentication by storing the user credentials in a local database (a poor programming practice we’ll overlook for the sake of this example). Upon login, the app queries the database to search for a record with the username and password entered by the user:
+Android和iOS上的应用程序都使用SQLite数据库来控制和组织本地数据存储。 假设Android应用通过将用户凭据存储在本地数据库中来处理本地用户身份验证（在本示例中，我们将忽略这种不良的编程习惯）。 登录后，该应用程序查询数据库以搜索包含用户输入的用户名和密码的记录：
 
 ```java
 SQLiteDatabase db;
@@ -28,30 +28,30 @@ Cursor c = db.rawQuery( sql, null );
 return c.getCount() != 0;
 ```
 
-Let's further assume an attacker enters the following values into the "username" and "password" fields:
+让我们进一步假设攻击者在“用户名”和“密码”字段中输入以下值：
 
 ```sql
 username = 1' or '1' = '1
 password = 1' or '1' = '1
 ```
 
-This results in the following query:
+这将导致以下查询：
 
 ```sql
 SELECT * FROM users WHERE username='1' OR '1' = '1' AND Password='1' OR '1' = '1'
 ```
 
-Because the condition `'1' = '1'` always evaluates as true, this query return all records in the database, causing the login function to return `true` even though no valid user account was entered.
+因为条件'1'='1'始终计算为true，所以此查询返回数据库中的所有记录，即使没有输入有效的用户帐户，登录函数也将返回true。
 
-Ostorlab exploited the sort parameter of [Yahoo's weather mobile application](https://blog.ostorlab.co/android-sql-contentProvider-sql-injections.html "Android, SQL and ContentProviders or Why SQL injections aren't dead yet ?") with adb using this SQL injection payload.
+Ostorlab利用了的sort参数[Yahoo的天气移动应用程序](https://blog.ostorlab.co/android-sql-contentProvider-sql-injections.html "Android, SQL and ContentProviders or Why SQL injections aren't dead yet ?") 使用此SQL注入有效负载的adb。
 
-Another real-world instance of client-side SQL injection was discovered by Mark Woods within the "Qnotes" and "Qget" Android apps running on QNAP NAS storage appliances. These apps exported content providers vulnerable to SQL injection, allowing an attacker to retrieve the credentials for the NAS device. A detailed description of this issue can be found on the [Nettitude Blog](https://blog.nettitude.com/uk/qnap-android-dont-provide "Nettitude Blog - QNAP Android: Don't Over Provide").
+Mark Woods在运行于QNAP NAS存储设备上的“ Qnotes”和“ Qget” Android应用程序中发现了客户端SQL注入的另一个实际实例。 这些应用程序导出了容易受到SQL注入攻击的内容提供程序，从而使攻击者可以检索NAS设备的凭据。 有关此问题的详细说明，请参见[Nettitude博客](https://blog.nettitude.com/uk/qnap-android-dont-provide "Nettitude Blog - QNAP Android: Don't Over Provide").
 
-#### XML Injection
+#### XML注入
 
-In a *XML injection* attack, the attacker injects XML meta-characters to structurally alter XML content. This can be used to either compromise the logic of an XML-based application or service, as well as possibly allow an attacker to exploit the operation of the XML parser processing the content.
+在 *XML注入* 攻击中，攻击者注入XML元字符以在结构上更改XML内容。 这可以用来破坏基于XML的应用程序或服务的逻辑，也可以允许攻击者利用XML解析器处理内容的操作。
 
-A popular variant of this attack is [XML eXternal Entity (XXE)](https://www.owasp.org/index.php/XML_External_Entity_%28XXE%29_Processing "XML eXternal Entity attack (XXE)"). Here, an attacker injects an external entity definition containing an URI into the input XML. During parsing, the XML parser expands the attacker-defined entity by accessing the resource specified by the URI. The integrity of the parsing application ultimately determines capabilities afforded to the attacker, where the malicious user could do any (or all) of the following: access local files, trigger HTTP requests to arbitrary hosts and ports, launch a [cross-site request forgery (CSRF)](https://goo.gl/UknMCj "Cross-Site Request Forgery (CSRF)") attack, and cause a denial-of-service condition. The OWASP web testing guide contains the [following example for XXE](https://goo.gl/QGQkEX "Testing for XML Injection (OTG-INPVAL-008)"):
+此攻击的一个流行变种是[XML eXternal Entity（XXE）](https://www.owasp.org/index.php/XML_External_Entity_%28XXE%29_Processing "XML eXternal Entity attack (XXE)"). 在这里，攻击者将包含URI的外部实体定义注入到输入XML中。 在解析期间，XML解析器通过访问URI指定的资源来扩展攻击者定义的实体。 解析应用程序的完整性最终决定了提供给攻击者的功能，恶意用户可以执行以下任何（或全部）操作：访问本地文件，触发对任意主机和端口的HTTP请求，启动[跨站点请求伪造 （CSRF）](https://goo.gl/UknMCj "Cross-Site Request Forgery (CSRF)") 攻击，并导致拒绝服务状况。 OWASP Web测试指南包含[XXE的以下示例](https://goo.gl/QGQkEX "Testing for XML Injection (OTG-INPVAL-008)"):
 
 ```xml
 <?xml version="1.0" encoding="ISO-8859-1"?>
@@ -60,50 +60,50 @@ A popular variant of this attack is [XML eXternal Entity (XXE)](https://www.owas
   <!ENTITY xxe SYSTEM "file:///dev/random" >]><foo>&xxe;</foo>
 ```
 
-In this example, the local file `/dev/random` is opened where an endless stream of bytes is returned, potentially causing a denial-of-service.
+在此示例中，打开了本地文件“ / dev / random”，并在其中返回了无尽的字节流，这有可能导致拒绝服务。
 
-The current trend in app development focuses mostly on REST/JSON-based services as XML is becoming less common. However, in the rare cases where user-supplied or otherwise untrusted content is used to construct XML queries, it could be interpreted by local XML parsers, such as NSXMLParser on iOS. As such, said input should always be validated and meta-characters should be escaped.
+随着XML越来越不普遍，应用程序开发中的当前趋势主要集中在基于REST / JSON的服务上。 但是，在极少数情况下，使用用户提供的内容或其他不受信任的内容来构造XML查询时，可以由本地XML解析器（例如iOS上的NSXMLParser）解释。 这样，所述输入应该总是被验证并且元字符应该被转义。
 
-#### Injection Attack Vectors
+#### 注入攻击向量
 
-The attack surface of mobile apps is quite different from typical web and network applications. Mobile apps don't often expose services on the network, and viable attack vectors on an app's user interface are rare. Injection attacks against an app are most likely to occur through inter-process communication (IPC) interfaces, where a malicious app attacks another app running on the device.
+移动应用程序的攻击面与典型的Web和网络应用程序完全不同。移动应用程序并不经常在网络上公开服务，并且在应用程序用户界面上可行的攻击媒介很少见。对应用程序的注入攻击最有可能通过进程间通信（IPC）界面发生，恶意应用程序在该接口上攻击设备上运行的另一个应用程序。
 
-Locating a potential vulnerability begins by either:
+查找潜在漏洞的方法之一是：
 
-- Identifying possible entry points for untrusted input then tracing from those locations to see if the destination contains potentially vulnerable functions.
-- Identifying known, dangerous library / API calls (e.g. SQL queries) and then checking whether unchecked input successfully interfaces with respective queries.
+-确定不受信任的输入的可能入口点，然后从这些位置进行跟踪以查看目的地是否包含潜在的易受攻击的功能。
+-识别已知的，危险的库/ API调用（例如SQL查询），然后检查未检查的输入是否成功与相应的查询进行了接口。
 
-During a manual security review, you should employ a combination of both techniques. In general, untrusted inputs enter mobile apps through the following channels:
+在手动安全审查期间，您应该结合使用两种技术。通常，不受信任的输入通过以下渠道进入移动应用程序：
 
-- IPC calls
-- Custom URL schemes
-- QR codes
-- Input files received via Bluetooth, NFC, or other means
-- Pasteboards
-- User interface
+- IPC通话
+- 自定义网址方案
+- QR码
+- 通过蓝牙，NFC或其他方式接收的输入文件
+- 粘贴板
+- 用户界面
 
-Verify that the following best practices have been followed:
+验证是否遵循以下最佳做法：
 
-- Untrusted inputs are type-checked and/or validated using a white-list of acceptable values.
-- Prepared statements with variable binding (i.e. parameterized queries) are used when performing database queries. If prepared statements are defined, user-supplied data and SQL code are automatically separated.
-- When parsing XML data, ensure the parser application is configured to reject resolution of external entities in order to prevent XXE attack.
-- When working with x509 formatted certificate data, ensure that secure parsers are used. For instance Bouncy Castle below version 1.6 allows for Remote Code Execution by means of unsafe reflection.
+-使用可接受值的白名单对不可信输入进行类型检查和/或验证。
+-执行数据库查询时，使用具有变量绑定的预准备语句（即参数化查询）。如果定义了准备好的语句，则用户提供的数据和SQL代码将自动分离。
+-解析XML数据时，请确保将解析器应用程序配置为拒绝外部实体的解析，以防止XXE攻击。
+-使用x509格式的证书数据时，请确保使用安全的解析器。例如，低于1.6版的Bouncy Castle允许通过不安全的反射进行远程代码执行。
 
-We will cover details related to input sources and potentially vulnerable APIs for each mobile OS in the OS-specific testing guides.
+我们将在特定于操作系统的测试指南中介绍与每个移动操作系统的输入源和潜在易受攻击的API相关的详细信息。
 
-### Cross-Site Scripting Flaws (MSTG-PLATFORM-2)
+### 跨站点脚本缺陷 (MSTG-PLATFORM-2)
 
-Cross-site scripting (XSS) issues allow attackers to inject client-side scripts into web pages viewed by users. This type of vulnerability is prevalent in web applications. When a user views the injected script in a browser, the attacker gains the ability to bypass the same origin policy, enabling a wide variety of exploits (e.g. stealing session cookies, logging key presses, performing arbitrary actions, etc.).
+跨站点脚本（XSS）问题使攻击者可以将客户端脚本注入用户查看的网页中。 此类漏洞在Web应用程序中很普遍。 当用户在浏览器中查看注入的脚本时，攻击者可以获得绕过同一原始策略的能力，从而可以进行多种利用（例如，窃取会话Cookie，记录按键，执行任意操作等）。
 
-In the context of *native apps*, XSS risks are far less prevalent for the simple reason these kinds of applications do not rely on a web browser. However, apps using WebView components, such as `WKWebView` or the deprecated `UIWebView` on iOS and `WebView` on Android, are potentially vulnerable to such attacks.
+在“本机应用程序”的上下文中，由于此类应用程序不依赖于Web浏览器的简单原因，XSS风险远不那么普遍。 但是，使用WebView组件（例如iOS上的“ WKWebView”或已弃用的“ UIWebView”和Android上的“ WebView”）的应用可能容易受到此类攻击。
 
-An older but well-known example is the [local XSS issue in the Skype app for iOS, first identified by Phil Purviance](https://superevr.com/blog/2011/xss-in-skype-for-ios "XSS in Skype for iOS"). The Skype app failed to properly encode the name of the message sender, allowing an attacker to inject malicious JavaScript to be executed when a user views the message. In his proof-of-concept, Phil showed how to exploit the issue and steal a user's address book.
+一个较老但众所周知的例子是[Phil Purviance首次发现的iOS版Skype应用中的本地XSS问题](https://superevr.com/blog/2011/xss-in-skype-for-ios "XSS in Skype for iOS"). Skype应用程序未能正确编码消息发件人的名称，从而使攻击者可以在用户查看消息时注入恶意JavaScript来执行。 在概念验证中，Phil展示了如何利用此问题并窃取用户的通讯簿。
 
-#### Static Analysis
+#### 静态分析
 
-Take a close look at any WebViews present and investigate for untrusted input rendered by the app.
+仔细查看存在的所有WebView，并调查该应用提供的不受信任的输入。
 
-XSS issues may exist if the URL opened by WebView is partially determined by user input. The following example is from an XSS issue in the [Zoho Web Service, reported by Linus Särud](https://labs.detectify.com/2015/02/20/finding-an-xss-in-an-html-based-android-application/ "Finding an XSS in an HTML-based Android application").
+如果WebView打开的URL部分由用户输入确定，则可能存在XSS问题。 下面的XSS问题示例来自[LinusSärud报告的[Zoho Web服务](https://labs.detectify.com/2015/02/20/finding-an-xss-in-an-html-based-android-application/ "Finding an XSS in an HTML-based Android application").
 
 Java
 
@@ -117,7 +117,7 @@ Kotlin
 webView.loadUrl("javascript:initialize($myNumber);")
 ```
 
-Another example of XSS issues determined by user input is public overridden methods.
+由用户输入确定的XSS问题的另一个示例是公共重写方法。
 
 Java
 
@@ -140,7 +140,7 @@ Kotlin
     }
 ```
 
-Sergey Bobrov was able to take advantage of this in the following [HackerOne report](https://hackerone.com/reports/189793 "[Android] XSS via start ContentActivity"). Any input to the HTML parameter would be trusted in Quora's ActionBarContentActivity. Payloads were successful using adb, clipboard data via ModalContentActivity, and Intents from 3rd party applications.
+Sergey Bobrov 可以利用此优势 [HackerOne报告](https://hackerone.com/reports/189793 "[Android] XSS via start ContentActivity"). Quora的ActionBarContentActivity中将信任HTML参数的任何输入。 使用adb，通过ModalContentActivity的剪贴板数据以及来自第三方应用程序的Intents成功完成了有效负载。
 
 - ADB
 
@@ -178,14 +178,14 @@ Sergey Bobrov was able to take advantage of this in the following [HackerOne rep
   view.context.startActivity(i)
   ```
 
-If a WebView is used to display a remote website, the burden of escaping HTML shifts to the server side. If an XSS flaw exists on the web server, this can be used to execute script in the context of the WebView. As such, it is important to perform static analysis of the web application source code.
+如果使用WebView来显示远程网站，则转义HTML的负担将转移到服务器端。 如果Web服务器上存在XSS漏洞，则可以使用它在WebView上下文中执行脚本。 因此，对Web应用程序源代码执行静态分析非常重要。
 
-Verify that the following best practices have been followed:
+验证是否遵循以下最佳做法：
 
-- No untrusted data is rendered in HTML, JavaScript or other interpreted contexts unless it is absolutely necessary.
-- Appropriate encoding is applied to escape characters, such as HTML entity encoding. Note: escaping rules become complicated when HTML is nested within other code, for example, rendering a URL located inside a JavaScript block.
+-除非绝对必要，否则不会在HTML，JavaScript或其他解释的上下文中呈现不受信任的数据。
+-适当的编码应用于转义字符，例如HTML实体编码。 注意：当HTML嵌套在其他代码中时，例如，呈现位于JavaScript块内的URL，转义规则变得复杂。
 
-Consider how data will be rendered in a response. For example, if data is rendered in a HTML context, six control characters that must be escaped:
+考虑如何在响应中呈现数据。 例如，如果数据是在HTML上下文中呈现的，则必须转义六个控制字符：
 
 | Character  | Escaped      |
 | :-------------: |:-------------:|
@@ -196,38 +196,38 @@ Consider how data will be rendered in a response. For example, if data is render
 | ' | &amp;#x27;|
 | / | &amp;#x2F;|
 
-For a comprehensive list of escaping rules and other prevention measures, refer to the [OWASP XSS Prevention Cheat Sheet](https://goo.gl/motVKX "OWASP XSS Prevention Cheat Sheet").
+有关转义规则和其他预防措施的完整列表，请参阅[OWASP XSS预防备忘单](https://goo.gl/motVKX "OWASP XSS Prevention Cheat Sheet").
 
-#### Dynamic Analysis
+#### 动态分析
 
-XSS issues can be best detected using manual and/or automated input fuzzing, i.e. injecting HTML tags and special characters into all available input fields to verify the web application denies invalid inputs or escapes the HTML meta-characters in its output.
+可以使用手动和/或自动输入模糊测试来最好地检测XSS问题，即将HTML标签和特殊字符注入所有可用的输入字段中，以验证Web应用程序拒绝无效输入或在其输出中转义HTML元字符。
 
-A [reflected XSS attack](https://goo.gl/eqqiHV "Testing for Reflected Cross site scripting (OTG-INPVAL-001)") refers to an exploit where malicious code is injected via a malicious link. To test for these attacks, automated input fuzzing is considered to be an effective method. For example, the [BURP Scanner](https://portswigger.net/burp/ "Burp Suite") is highly effective in identifying reflected XSS vulnerabilities. As always with automated analysis, ensure all input vectors are covered with a manual review of testing parameters.
+[反映的XSS攻击](https://goo.gl/eqqiHV "Testing for Reflected Cross site scripting (OTG-INPVAL-001)") 指通过恶意链接注入恶意代码的攻击。 为了测试这些攻击，自动输入模糊测试被认为是一种有效的方法。 例如，[BURP扫描仪](https://portswigger.net/burp/ "Burp Suite") 在识别反映的XSS漏洞方面非常有效。 与自动分析一样，请确保手动检查测试参数覆盖所有输入向量。
 
-### Memory Corruption Bugs (MSTG-CODE-8)
+### 内存损坏错误 (MSTG-CODE-8)
 
-Memory corruption bugs are a popular mainstay with hackers. This class of bug results from a programming error that causes the program to access an unintended memory location. Under the right conditions, attackers can capitalize on this behavior to hijack the execution flow of the vulnerable program and execute arbitrary code. This kind of vulnerability occurs in a number of ways:
+内存损坏错误是黑客流行的中流main柱。此类错误是由于编程错误导致的，该错误导致程序访问意外的内存位置。在适当的条件下，攻击者可以利用此行为劫持易受攻击的程序的执行流并执行任意代码。此类漏洞通过多种方式发生：
 
-- Buffer overflows: This describes a programming error where an app writes beyond an allocated memory range for a particular operation. An attacker can use this flaw to overwrite important control data located in adjacent memory, such as function pointers. Buffer overflows were formerly the most common type of memory corruption flaw, but have become less prevalent over the years due to a number of factors. Notably, awareness among developers of the risks in using unsafe C library functions is now a common best practice plus, catching buffer overflow bugs is relatively simple. However, it is still worth testing for such defects.
+- 缓冲区溢出：这描述了编程错误，其中应用程序为特定操作写入了超出分配的内存范围的内容。攻击者可以利用此漏洞覆盖位于相邻内存中的重要控制数据，例如函数指针。缓冲区溢出以前是最常见的内存损坏缺陷类型，但是由于许多因素，近年来它们的流行程度有所降低。值得注意的是，开发人员之间意识到使用不安全的C库函数的风险现在已成为常见的最佳实践，此外，捕获缓冲区溢出错误也相对简单。但是，仍然值得对这些缺陷进行测试。
 
-- Out-of-bounds-access: Buggy pointer arithmetic may cause a pointer or index to reference a position beyond the bounds of the intended memory structure (e.g. buffer or list). When an app attempts to write to an out-of-bounds address, a crash or unintended behavior occurs. If the attacker can control the target offset and manipulate the content written to some extent, [code execution exploit is likely possible](https://www.zerodayinitiative.com/advisories/ZDI-17-110/ "Adobe Flash Mediaplayer example").
+- 越界访问：错误的指针算法可能导致指针或索引引用超出预期内存结构（例如缓冲区或列表）范围的位置。当应用尝试写入越界地址时，会发生崩溃或意外行为。如果攻击者可以控制目标偏移量并在一定程度上操纵写入的内容，则[可能执行代码执行漏洞](https://www.zerodayinitiative.com/advisories/ZDI-17-110/ "Adobe Flash Mediaplayer example").
 
-- Dangling pointers: These occur when an object with an incoming reference to a memory location is deleted or deallocated, but the object pointer is not reset. If the program later uses the *dangling* pointer to call a virtual function of the already deallocated object, it is possible to hijack execution by overwriting the original vtable pointer. Alternatively, it is possible to read or write object variables or other memory structures referenced by a dangling pointer.
+- 悬空指针：当具有对内存位置的传入引用的对象被删除或释放，但对象指针未重置时，将发生这些情况。如果程序以后使用 *dangling*指针来调用已释放对象的虚函数，则可以通过覆盖原始vtable指针来劫持执行。或者，可以读取或写入对象变量或悬挂指针引用的其他存储结构。
 
-- Use-after-free: This refers to a special case of dangling pointers referencing released (deallocated) memory. After a memory address is cleared, all pointers referencing the location become invalid, causing the memory manager to return the address to a pool of available memory. When this memory location is eventually re-allocated, accessing the original pointer will read or write the data contained in the newly allocated memory. This usually leads to data corruption and undefined behavior, but crafty attackers can set up the appropriate memory locations to leverage control of the instruction pointer.
+- 释放后使用：这是指悬空指针引用已释放（释放）内存的特殊情况。清除内存地址后，所有引用该位置的指针都将变为无效，从而导致内存管理器将地址返回到可用内存池中。当最终重新分配此内存位置时，访问原始指针将读取或写入新分配的内存中包含的数据。这通常会导致数据损坏和不确定的行为，但是狡猾的攻击者可以设置适当的内存位置，以利用对指令指针的控制。
 
-- Integer overflows: When the result of an arithmetic operation exceeds the maximum value for the integer type defined by the programmer, this results in the value "wrapping around" the maximum integer value, inevitably resulting in a small value being stored. Conversely, when the result of an arithmetic operation is smaller than the minimum value of the integer type, an *integer underflow* occurs where the result is larger than expected. Whether a particular integer overflow/underflow bug is exploitable depends on how the integer is used – for example, if the integer type were to represent the length of a buffer, this could create a buffer overflow vulnerability.
+- 整数溢出：当算术运算的结果超过程序员定义的整数类型的最大值时，这将导致值“环绕”最大整数值，不可避免地会导致存储一个较小的值。相反，当算术运算的结果小于整数类型的最小值时，在结果大于预期的情况下会发生“整数下溢”。是否可以利用特定的整数溢出/下溢错误取决于整数的使用方式-例如，如果整数类型表示缓冲区的长度，则可能会产生缓冲区溢出漏洞。
 
-- Format string vulnerabilities: When unchecked user input is passed to the format string parameter of the `printf` family of C functions, attackers may inject format tokens such as ‘%c’ and ‘%n’ to access memory. Format string bugs are convenient to exploit due to their flexibility. Should a program output the result of the string formatting operation, the attacker can read and write to memory arbitrarily, thus bypassing protection features such as ASLR.
+- 格式字符串漏洞：当未经检查的用户输入传递给C函数`printf`系列的格式字符串参数时，攻击者可能会注入诸如'％c'和'％n'之类的格式令牌来访问内存。格式字符串错误由于具有灵活性而很容易利用。如果程序输出字符串格式化操作的结果，则攻击者可以任意对内存进行读写，从而绕过了ASLR等保护功能。
 
-The primary goal in exploiting memory corruption is usually to redirect program flow into a location where the attacker has placed assembled machine instructions referred to as *shellcode*. On iOS, the data execution prevention feature (as the name implies) prevents execution from memory defined as data segments. To bypass this protection, attackers leverage return-oriented programming (ROP). This process involves chaining together small, pre-existing code chunks ("gadgets") in the text segment where these gadgets may execute a function useful to the attacker or, call `mprotect` to change memory protection settings for the location where the attacker stored the *shellcode*.
+利用内存破坏的主要目的通常是将程序流重定向到攻击者放置了汇编程序指令的位置，这些指令称为 *shellcode*。在iOS上，数据执行保护功能（顾名思义）可防止从定义为数据段的内存中执行数据。为了绕过这种保护，攻击者利用面向返回的编程（ROP）。此过程涉及将文本段中的小块预先存在的代码块（“小工具”）链接在一起，这些小工具可以执行对攻击者有用的功能，或者调用“ mprotect”更改攻击者存储位置的内存保护设置 *shellcode*。
 
-Android apps are, for the most part, implemented in Java which is inherently safe from memory corruption issues by design. However, native apps utilizing JNI libraries are susceptible to this kind of bug.
-Similarly, iOS apps can wrap C/C++ calls in Obj-C or Swift, making them susceptible to these kind of attacks.
+Android应用程序大多数情况下是用Java实现的，因此从本质上来说，它可以避免内存损坏问题。但是，利用JNI库的本机应用程序容易受到此类错误的影响。
+同样，iOS应用程序可以将C / C ++调用包装在Obj-C或Swift中，从而使它们容易受到此类攻击。
 
-#### Buffer and Integer Overflows
+#### 缓冲区和整数溢出
 
-The following code snippet shows a simple example for a condition resulting in a buffer overflow vulnerability.
+以下代码段显示了导致缓冲区溢出漏洞的条件的简单示例。
 
 ```c
  void copyData(char *userId) {  
@@ -236,7 +236,7 @@ The following code snippet shows a simple example for a condition resulting in a
  }  
 ```
 
-To identify potential buffer overflows, look for uses of unsafe string functions (`strcpy`, `strcat`, other functions beginning with the “str” prefix, etc.) and potentially vulnerable programming constructs, such as copying user input into a limited-size buffer. The following should be considered red flags for unsafe string functions:
+为了确定潜在的缓冲区溢出情况，请寻找不安全的字符串函数（“ strcpy”，“ strcat”，其他以“ str”前缀开头的函数等）的使用以及可能存在漏洞的编程构造，例如将用户输入复制到 大小缓冲区。 对于不安全的字符串函数，应将以下内容视为危险信号：
 
 - `strcat`
 - `strcpy`
@@ -248,30 +248,30 @@ To identify potential buffer overflows, look for uses of unsafe string functions
 - `snprintf`
 - `gets`
 
-Also, look for instances of copy operations implemented as “for” or “while” loops and verify length checks are performed correctly.
+另外，查找实现为“ for”或“ while”循环的复制操作实例，并验证长度检查是否正确执行。
 
-Verify that the following best practices have been followed:
+验证是否遵循以下最佳做法：
 
-- When using integer variables for array indexing, buffer length calculations, or any other security-critical operation, verify that unsigned integer types are used and perform precondition tests are performed to prevent the possibility of integer wrapping.
-- The app does not use unsafe string functions such as `strcpy`, most other functions beginning with the “str” prefix, `sprint`, `vsprintf`, `gets`, etc.;
-- If the app contains C++ code, ANSI C++ string classes are used;
-- In case of `memcpy`, make sure you check that the target buffer is at least of equal size as the source and that both buffers are not overlapping.
-- iOS apps written in Objective-C use NSString class. C apps on iOS should use CFString, the Core Foundation representation of a string.
-- No untrusted data is concatenated into format strings.
+- 将整数变量用于数组索引，缓冲区长度计算或任何其他对安全性要求较高的操作时，请验证是否使用了无符号整数类型并执行前提条件测试以防止整数包装的可能性。
+- 该应用程序不使用不安全的字符串函数，例如`strcpy`，大多数其他以“ str”前缀，`sprint`，`vsprintf`，`gets`等开头的函数；
+- 如果应用包含C ++代码，则使用ANSI C ++字符串类；
+- 如果是`memcpy`，请确保检查目标缓冲区的大小至少与源缓冲区大小相等，并且两个缓冲区没有重叠。
+- 用Objective-C编写的iOS应用使用NSString类。 iOS上的C应用程序应使用CFString（字符串的核心基础表示形式）。
+- 不会将任何不受信任的数据连接到格式字符串中。
 
-#### Static Analysis
+#### 静态分析
 
-Static code analysis of low-level code is a complex topic that could easily fill its own book. Automated tools such as [RATS](https://code.google.com/archive/p/rough-auditing-tool-for-security/downloads "RATS - Rough auditing tool for security") combined with limited manual inspection efforts are usually sufficient to identify low-hanging fruits. However, memory corruption conditions often stem from complex causes. For example, a use-after-free bug may actually be the result of an intricate, counter-intuitive race condition not immediately apparent. Bugs manifesting from deep instances of overlooked code deficiencies are generally discovered through dynamic analysis or by testers who invest time to gain a deep understanding of the program.
+低级代码的静态代码分析是一个复杂的主题，可以轻松地填满自己的书。 自动化工具，例如 [RATS](https://code.google.com/archive/p/rough-auditing-tool-for-security/downloads "RATS - Rough auditing tool for security") 结合有限的人工检查工作，通常足以识别低垂的果实。 但是，内存损坏情况通常是由复杂的原因引起的。 例如，释放后使用的错误实际上可能是由于复杂的，违反直觉的竞态条件并未立即显现而导致的。 通常，通过动态分析或测试人员投入大量时间来深入了解该程序，从而发现了被忽视的代码缺陷的深层实例所导致的错误。
 
-#### Dynamic Analysis
+#### 动态分析
 
-Memory corruption bugs are best discovered via input fuzzing: an automated black-box software testing technique in which malformed data is continually sent to an app to survey for potential vulnerability conditions. During this process, the application is monitored for malfunctions and crashes. Should a crash occur, the hope (at least for security testers) is that the conditions creating the crash reveal an exploitable security flaw.
+最好通过输入模糊检测来发现内存损坏错误：这是一种自动化的黑盒软件测试技术，该技术将格式错误的数据连续发送到应用程序以调查潜在的漏洞状况。在此过程中，将监视应用程序的故障和崩溃。如果发生崩溃，（至少对于安全测试人员而言）希望造成崩溃的条件揭示出可利用的安全漏洞。
 
-Fuzz testing techniques or scripts (often called "fuzzers") will typically generate multiple instances of structured input in a semi-correct fashion. Essentially, the values or arguments generated are at least partially accepted by the target application, yet also contain invalid elements, potentially triggering input processing flaws and unexpected program behaviors. A good fuzzer exposes a substantial amount of possible program execution paths (i.e. high coverage output). Inputs are either generated from scratch ("generation-based") or derived from mutating known, valid input data ("mutation-based").
+模糊测试技术或脚本（通常称为“模糊器”）通常会以半正确的方式生成结构化输入的多个实例。本质上，生成的值或自变量至少部分地被目标应用程序接受，但还包含无效元素，从而可能触发输入处理缺陷和意外的程序行为。一个好的模糊器会暴露大量可能的程序执行路径（即高覆盖率输出）。输入要么从头开始生成（“基于生成”），要么从已知的有效输入数据变异（“基于突变”）派生。
 
-For more information on fuzzing, refer to the [OWASP Fuzzing Guide](https://www.owasp.org/index.php/Fuzzing "OWASP Fuzzing Guide").
+有关模糊测试的更多信息，请参阅[OWASP Fuzzing Guide](https://www.owasp.org/index.php/Fuzzing "OWASP Fuzzing Guide").
 
-### References
+### 参考文献
 
 #### OWASP Mobile Top 10 2016
 
