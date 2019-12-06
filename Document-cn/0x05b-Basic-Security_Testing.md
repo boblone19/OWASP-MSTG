@@ -1,31 +1,31 @@
-## Android Basic Security Testing
+## Android 基本安全性测试
 
-### Basic Android Testing Setup
+### 基本的 Android 测试设置
 
-By now, you should have a basic understanding of the way Android apps are structured and deployed. In this chapter, we'll talk about setting up a security testing environment and describe basic testing processes you'll be using. This chapter is the foundation for the more detailed testing methods discussed in later chapters.
+到目前为止，您应该对Android应用程序的结构和部署方式有基本的了解。 在本章中，我们将讨论设置安全测试环境并描述您将使用的基本测试过程。 本章是后面各章中讨论的更详细的测试方法的基础。
 
-You can set up a fully functioning test environment on almost any machine running Windows, Linux, or Mac OS.
+您几乎可以在运行Windows，Linux或Mac OS的任何计算机上设置功能全面的测试环境。
 
-#### Host Device
+#### 主机设备
 
-At the very least, you'll need [Android Studio](https://developer.android.com/studio/index.html "Android Studio") (which comes with the Android SDK) platform tools, an emulator, and an app to manage the various SDK versions and framework components. Android Studio also comes with an Android Virtual Device (AVD) Manager application for creating emulator images. Make sure that the newest [SDK tools](https://developer.android.com/studio/index.html#downloads) and [platform tools](https://developer.android.com/studio/releases/platform-tools.html) packages are installed on your system.
+至少，您需要[Android Studio](https://developer.android.com/studio/index.html "Android Studio") （Android SDK随附）平台工具，仿真器和 应用来管理各种SDK版本和框架组件。 Android Studio还附带了用于创建模拟器映像的Android虚拟设备（AVD）管理器应用程序。 确保最新的[SDK工具](https://developer.android.com/studio/index.html#downloads) 和[平台工具](https://developer.android.com/studio/releases/platform-tools.html) 软件包已安装在您的系统上。
 
-In addition, you may want to complete your host setup by installing the [Android NDK](https://developer.android.com/ndk "Android NDK") if you're planing to work with apps containing native libraries (it will be also relevant in the chapter "Tampering and Reverse Engineering on Android").
+另外，如果您打算使用包含本机库的应用程序，它将通过安装[Android NDK](https://developer.android.com/ndk "Android NDK") 来完成主机设置。 也与“ Android上的篡改和逆向工程”一章相关。）
 
-##### Setting up the Android SDK
+##### 设置 Android SDK
 
-Local Android SDK installations are managed via Android Studio. Create an empty project in Android Studio and select **Tools** -> **Android** -> **SDK Manager** to open the SDK Manager GUI. The **SDK Platforms** tab is where you install SDKs for multiple API levels. Recent API levels are:
+本地Android SDK安装通过Android Studio进行管理。 在Android Studio中创建一个空项目，然后选择 **Tools**-> **Android**-> **SDK Manager** 以打开SDK管理器GUI。 在 **SDK Platforms**标签中，可以安装用于多个API级别的SDK。 最近的API级别是：
 
 - Android 9.0 (API level 28)
 - Android 8.1 (API level 27)
 - Android 8.0 (API level 26)
 - Android 7.1 (API level 25)
 
-An overview of all Android codenames, their version number and API levels can be found in the [Android Developer Documentation](https://source.android.com/setup/start/build-numbers "Codenames, Tags, and Build Numbers").
+有关所有Android代号，其版本号和API级别的概述，请参见[Android开发者文档](https://source.android.com/setup/start/build-numbers "Codenames, Tags, and Build Numbers").
 
 <img src="Images/Chapters/0x05c/sdk_manager.jpg" alt="SDK Manager">
 
-Installed SDKs are on the following paths:
+已安装的SDK包含以下路径：
 
 Windows:
 
@@ -39,7 +39,7 @@ MacOS:
 /Users/<username>/Library/Android/sdk
 ```
 
-Note: On Linux, you need to choose an SDK directory. `/opt`, `/srv`, and `/usr/local` are common choices.
+注意：在Linux上，您需要选择一个SDK目录。 / opt，/ srv和/ usr / local是常见的选择。
 
 ##### Setting up the Android NDK
 
