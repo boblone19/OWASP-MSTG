@@ -1437,11 +1437,11 @@ $ frida-ps -Uai
 
 请注意，这还显示了当前正在运行的应用程序的PID。 记下 `Identifier` 和PID（如果有），因为以后需要它们。
 
-##### Exploring the App Package
+##### 探索应用程序包
 
-Once you have collected the package name of the application you want to target, you'll want to start gathering information about it. First, retrieve the APK as explained in "Basic Testing Operations - Obtaining and Extracting Apps".
+收集了要定位的应用程序的程序包名称后，就需要开始收集有关它的信息。 首先，按照“基本测试操作-获取和提取应用程序”中的说明检索APK。
 
-APK files are actually ZIP files that can be unpacked using a standard unarchiver:
+APK文件实际上是ZIP文件，可以使用标准的未存档程序将其解压缩：
 
 ```shell
 $ unzip base.apk
@@ -1455,20 +1455,20 @@ drwxr-xr-x  27 sven  staff   918B Dec  5 16:17 res
 -rw-r--r--   1 sven  staff   241K Dec  5 14:45 resources.arsc
 ```
 
-The following files are unpacked:
+解压缩了以下文件：
 
-- AndroidManifest.xml: contains the definition of the app's package name, target and minimum [API level](https://developer.android.com/guide/topics/manifest/uses-sdk-element#ApiLevels "API Levels"), app configuration, app components, permissions, etc.
-- META-INF: contains the app's metadata
-  - MANIFEST.MF: stores hashes of the app resources
-  - CERT.RSA: the app's certificate(s)
-  - CERT.SF: list of resources and the SHA-1 digest of the corresponding lines in the MANIFEST.MF file
-- assets: directory containing app assets (files used within the Android app, such as XML files, JavaScript files, and pictures), which the [AssetManager](https://developer.android.com/reference/android/content/res/AssetManager "AssetMaanger") can retrieve
-- classes.dex: classes compiled in the DEX file format, the Dalvik virtual machine/Android Runtime can process. DEX is Java bytecode for the Dalvik Virtual Machine. It is optimized for small devices
-- lib: directory containing 3rd party libraries that are part of the APK.
-- res: directory containing resources that haven't been compiled into resources.arsc
-- resources.arsc: file containing precompiled resources, such as XML files for the layout
+- AndroidManifest.xml：包含应用程序包名称，目标和最低[API级别]的定义(https://developer.android.com/guide/topics/manifest/uses-sdk-element#ApiLevels "API Levels"), 应用程序配置，应用程序组件，权限等。
+- META-INF: 包含应用程序的元数据
+  - MANIFEST.MF: 存储应用程序资源的哈希值
+  - CERT.RSA: 应用程序的证书
+  - CERT.SF: MANIFEST.MF文件中的资源列表和相应行的SHA-1摘要
+- assets: 包含应用程序资产（Android应用程序中使用的文件，例如XML文件，JavaScript文件和图片）的目录，[AssetManager](https://developer.android.com/reference/android/content/res/AssetManager "AssetMaanger") 可以检索
+- classes.dex: 以DEX文件格式编译的类，Dalvik虚拟机/ Android Runtime可以处理。 DEX是Dalvik虚拟机的Java字节码。针对小型设备进行了优化
+- lib: 包含作为APK一部分的第三方库的目录。
+- res: 包含尚未编译为resources.arsc的资源的目录
+- resources.arsc: 包含预编译资源的文件，例如用于布局的XML文件
 
-As unzipping with the standard `unzip` utility leaves some files such as the `AndroidManifest.xml` unreadable, you better unpack the APK using apktool as described in "Recommended Tools - apktool". The unpacking results into:
+由于使用标准的`unzip`实用工具解压缩会导致某些文件（例如AndroidManifest.xml）无法读取，因此您最好使用apktool来解压缩APK，如“推荐工具-apktool”中所述。解压结果为：
 
 ```shell
 $ ls -alh
@@ -1484,28 +1484,28 @@ drwxr-xr-x  131 sven  staff   4.3K Dec  5 16:29 res
 drwxr-xr-x    9 sven  staff   306B Dec  5 16:29 smali
 ```
 
-###### The Android Manifest
+###### Android Manifest
 
-The Android Manifest is the main source of information, it includes a lot of interesting information such as the package name, the permissions, app components, etc.
+Android Manifest是信息的主要来源，它包含许多有趣的信息，例如程序包名称，权限，应用程序组件等。
 
-Here's a non-exhaustive list of some info and the corresponding keywords that you can easily search for in the Android Manifest by just inspecting the file or by using `grep -i <keyword> AndroidManifest.xml`:
+这是一些信息和相应关键字的详尽列表，您可以通过检查文件或使用`grep -i <keyword> AndroidManifest.xml`在Android Manifest中轻松搜索这些信息：
 
-- App permissions: `permission` (see "Android Platform APIs")
-- Backup allowance: `android:allowBackup` (see "Data Storage on Android")
-- App components: `activity`, `service`, `provider`, `receiver` (see "Android Platform APIs" and "Data Storage on Android")
-- Debuggable flag: `debuggable` (see "Code Quality and Build Settings of Android Apps")
+- 应用权限：`权限`（请参阅`Android平台API`）
+- 备用配额：`android：allowBackup`（请参阅 `Android上的数据存储`）
+- 应用程序组件：`活动`，`服务`，`提供者`，`接收者`（请参阅`Android平台API` 和 `Android上的数据存储`）
+- 可调试标志：`可调试`（请参见 `Android应用的代码质量和构建设置`）
 
-Please refer to the mentioned chapters to learn more about how to test each of these points.
+请参考上述章节，以了解有关如何测试这些要点的更多信息。
 
-###### App Binary
+###### 应用程式二进位
 
-As seen above in "[Exploring the App Package](#exploring-the-app-package "Exploring the App Package")", the app binary (`classes.dex`) can be found in the root directory of the app package. It is a so-called DEX (Dalvik Executable) file that contains compiled Java code. Due to its nature, after applying some conversions you'll be able to use a decompiler to produce Java code. We've also seen the folder `smali` that was obtained after we run apktool. This contains the disassembled Dalvik bytecode in an intermediate language called smali, which is a human-readable representation of the Dalvik executable.
+如上文“ [探索应用程序包](#exploring-the-app-package "Exploring the App Package")", 所示，应用程序二进制文件（`classes.dex`）可以在应用程序包的根目录中找到 。 这是一个包含已编译Java代码的DEX（Dalvik可执行文件）文件。 由于其性质，在进行了一些转换之后，您将能够使用反编译器来生成Java代码。 我们还看到了运行apktool之后获得的文件夹“ smali”。 它包含一种称为smali的中间语言的反汇编Dalvik字节码，该语言是Dalvik可执行文件的可读格式。
 
-Refer to the section "[Reviewing Decompiled Java Code](0x05c-Reverse-Engineering-and-Tampering.md#reviewing-decompiled-java-code "Reviewing Decompiled Java Code")" in the chapter "Tampering and Reverse Engineering on Android" for more information about how to reverse engineer DEX files.
+请参阅“ Android上的篡改和反向工程”一章中的“ [查看反编译的Java代码](0x05c-Reverse-Engineering-and-Tampering.md#reviewing-decompiled-java-code "Reviewing Decompiled Java Code")" 部分。 有关如何反向工程 DEX 文件的更多信息。
 
-###### Native Libraries
+###### 原生 Libraries
 
-You can inspect the `lib` folder in the APK:
+您可以检查APK中的 `lib` 文件夹：
 
 ```shell
 $ ls -1 lib/armeabi/
@@ -1515,7 +1515,7 @@ libsqlcipher_android.so
 libstlport_shared.so
 ```
 
-or from the device with objection:
+或有异议的设备：
 
 ```shell
 ...g.vp.owasp_mobile.omtg_android on (google: 8.1.0) [usb] # ls lib
