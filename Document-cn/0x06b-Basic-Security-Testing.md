@@ -1,33 +1,33 @@
-## iOS Basic Security Testing
+## iOS 基本安全性测试
 
-In the previous chapter, we provided an overview of the iOS platform and described the structure of iOS apps. In this chapter, we'll introduce basic processes and techniques you can use to test iOS apps for security flaws. These basic processes are the foundation for the test cases outlined in the following chapters.
+在上一章中，我们提供了iOS平台的概述，并描述了iOS应用程序的结构。 在本章中，我们将介绍可用于测试iOS应用程序的安全漏洞的基本过程和技术。 这些基本过程是以下各章概述的测试用例的基础。
 
-### iOS Testing Setup
+### iOS 测试设置
 
-#### Host Device
+#### 主机设备
 
-Although you can use a Linux or Windows machine for testing, you'll find that many tasks are difficult or impossible on these platforms. In addition, the Xcode development environment and the iOS SDK are only available for macOS. This means that you'll definitely want to work on macOS for source code analysis and debugging (it also makes black box testing easier).
+尽管您可以使用Linux或Windows机器进行测试，但是您会发现在这些平台上很多任务是困难的或不可能的。 此外，Xcode开发环境和iOS SDK仅适用于macOS。 这意味着您肯定要在macOS上进行源代码分析和调试（这也使黑盒测试更加容易）。
 
-The following is the most basic iOS app testing setup:
+以下是最基本的iOS应用测试设置：
 
-- Ideally macOS machine with admin rights.
-- Wi-Fi network that permits client-to-client traffic.
-- At least one jailbroken iOS device (of the desired iOS version).
-- Burp Suite or other interception proxy tool.
+- 理想情况下，具有管理员权限的macOS计算机。
+- 允许客户端到客户端流量的Wi-Fi网络。
+- 至少一台越狱的iOS设备（所需的iOS版本）。
+- Burp Suite或其他拦截代理工具。
 
-##### Setting up Xcode and Command Line Tools
+##### 设置Xcode和命令行工具
 
-Xcode is an Integrated Development Environment (IDE) for macOS that contains a suite of tools for developing software for macOS, iOS, watchOS, and tvOS. You can [download Xcode for free from the official Apple website](https://developer.apple.com/xcode/ide/ "Apple Xcode IDE"). Xcode will offer you different tools and functions to interact with an iOS device that can be helpful during a penetration test, such as analyzing logs or sideloading of apps.
+Xcode是用于macOS的集成开发环境（IDE），其中包含用于开发用于macOS，iOS，watchOS和tvOS的软件的一组工具。您可以[从Apple官方网站免费下载Xcode](https://developer.apple.com/xcode/ide/ "Apple Xcode IDE"). Xcode将为您提供与iOS设备进行交互的不同工具和功能，这在渗透测试（例如分析日志或应用的侧载）期间可能会有所帮助。
 
-All development tools are already included within Xcode, but they are not available within your terminal. In order to make them available systemwide, it is recommended to install the Command Line Tools package. This will be handy during testing of iOS apps as some of the tools you will be using later (e.g. objection) are also relying on the availability of this package. You can [download it from the official Apple website](https://developer.apple.com/download/more/ "Apple iOS SDK") or install it straight away from your terminal:
+所有开发工具已经包含在Xcode中，但是您的终端中不可用。为了使它们在系统范围内可用，建议安装命令行工具包。在测试iOS应用程序时，这将非常方便，因为您稍后将使用的某些工具（例如，异议）也依赖于此软件包的可用性。您可以[从Apple官方网站下载](https://developer.apple.com/download/more/ "Apple iOS SDK") 或直接从终端安装它：
 
 ```shell
 $ xcode-select --install
 ```
 
-#### Testing Device
+#### 测试装置
 
-##### Getting the UDID of an iOS device
+##### 获取iOS设备的UDID
 
 The UDID is a 40-digit unique sequence of letters and numbers to identify an iOS device. You can find the [UDID of your iOS device via iTunes](http://www.iclarified.com/52179/how-to-find-your-iphones-udid "How to Find Your iPhone's UDID"), by selecting your device and clicking on "Serial Number" in the summary tab. When clicking on this you will iterate through different meta-data of the iOS device including its UDID.
 
@@ -62,32 +62,32 @@ It is also possible to get the UDID via various command line tools while the dev
     $ instruments -s devices
     ```
 
-##### Testing on a real device (Jailbroken)
+##### 在真实设备上测试（越狱）
 
-You should have a jailbroken iPhone or iPad for running tests. These devices allow root access and tool installation, making the security testing process more straightforward. If you don't have access to a jailbroken device, you can apply the workarounds described later in this chapter, but be prepared for a more difficult experience.
+您应该拥有一部越狱的 iPhone 或 iPad 才能运行测试。 这些设备允许root访问和工具安装，从而使安全测试过程更加简单。 如果您无权使用越狱设备，则可以应用本章后面介绍的解决方法，但要准备好接受更艰难的体验。
 
-##### Testing on the iOS Simulator
+##### 在 iOS 模拟器上测试
 
-Unlike the Android emulator, which fully emulates the hardware of an actual Android device, the iOS SDK simulator offers a higher-level *simulation* of an iOS device. Most importantly, emulator binaries are compiled to x86 code instead of ARM code. Apps compiled for a real device don't run, making the simulator useless for black box analysis and reverse engineering.
+与完全模拟实际Android设备的硬件的Android仿真器不同，iOS SDK仿真器提供了iOS设备的更高级别的 *仿真*。 最重要的是，仿真器二进制文件被编译为x86代码而不是ARM代码。 为真实设备编译的应用程序无法运行，从而使模拟器无法用于黑匣子分析和逆向工程。
 
-##### Getting Privileged Access
+##### 获取特权访问
 
-iOS jailbreaking is often compared to Android rooting, but the process is actually quite different. To explain the difference, we'll first review the concepts of "rooting" and "flashing" on Android.
+通常将iOS越狱与Android扎根相比，但过程实际上是完全不同的。 为了解释差异，我们将首先回顾Android上“roting”和“flashing”的概念。
 
-- **Rooting**: This typically involves installing the `su` binary on the system or replacing the whole system with a rooted custom ROM. Exploits aren't required to obtain root access as long as the bootloader is accessible.
-- **Flashing custom ROMs**: This allows you to replace the OS that's running on the device after you unlock the bootloader. The bootloader may require an exploit to unlock it.
+- **Rooting**: 这通常涉及在系统上安装`su`二进制文件，或用有根的自定义ROM替换整个系统。只要引导加载程序是可访问的，就不需要利用漏洞来获得root访问权限。
+- **Flashing custom ROMs**: 解锁引导加载程序后，这可让您替换设备上正在运行的操作系统。引导加载程序可能需要利用漏洞才能解锁。
 
-On iOS devices, flashing a custom ROM is impossible because the iOS bootloader only allows Apple-signed images to be booted and flashed. This is why even official iOS images can't be installed if they aren't signed by Apple, and it makes iOS downgrades only possible for as long as the previous iOS version is still signed.
+在iOS设备上，无法刷新自定义ROM，因为iOS引导加载程序仅允许引导和刷新Apple签名的图像。这就是为什么即使未通过Apple签署也无法安装正式的iOS映像的原因，并且这使得iOS降级仅在以前的iOS版本仍被签署的情况下才可能进行。
 
-The purpose of jailbreaking is to disable iOS protections (Apple's code signing mechanisms in particular) so that arbitrary unsigned code can run on the device. The word "jailbreak" is a colloquial reference to all-in-one tools that automate the disabling process.
+越狱的目的是禁用iOS保护（尤其是Apple的代码签名机制），以便可以在设备上运行任意未签名的代码。 “越狱”一词是通俗地说是自动禁用过程的多合一工具。
 
-Cydia is an alternative app store developed by Jay Freeman (aka "saurik") for jailbroken devices. It provides a graphical user interface and a version of the Advanced Packaging Tool (APT). You can easily access many "unsanctioned" app packages through Cydia. Most jailbreaks install Cydia automatically.
+Cydia是由Jay Freeman（又名“ saurik”）为越狱设备开发的替代应用程序商店。它提供了图形用户界面和高级打包工具（APT）的版本。您可以通过Cydia轻松访问许多“未经批准”的应用程序包。大多数越狱都会自动安装Cydia。
 
-Since iOS 11 jailbreaks are introducing [Sileo](https://cydia-app.com/sileo/ "Sileo"), which is a new jailbreak app-store for iOS devices. The jailbreak [Chimera](https://chimera.sh/ "Chimera") for iOS 12 is also relying on Sileo as a package manager.
+由于iOS 11越狱引入了[Sileo](https://cydia-app.com/sileo/ "Sileo"), 这是针对iOS设备的新越狱应用程序商店。 iOS 12的越狱[Chimera](https://chimera.sh/ "Chimera") 也依靠Sileo作为程序包管理器。
 
-Developing a jailbreak for a given version of iOS is not easy. As a security tester, you'll most likely want to use publicly available jailbreak tools. Still, we recommend studying the techniques that have been used to jailbreak various versions of iOS-you'll encounter many interesting exploits and learn a lot about OS internals. For example, Pangu9 for iOS 9.x [exploited at least five vulnerabilities](https://www.theiphonewiki.com/wiki/Jailbreak_Exploits "Jailbreak Exploits"), including a use-after-free kernel bug (CVE-2015-6794) and an arbitrary file system access vulnerability in the Photos app (CVE-2015-7037).
+为给定版本的iOS开发越狱并不容易。作为安全测试人员，您很可能希望使用公开可用的越狱工具。尽管如此，我们还是建议您研究用于越狱各种版本的iOS的技术-您将遇到许多有趣的漏洞，并了解许多有关OS内部的知识。例如，适用于iOS 9.x的Pangu9 [至少利用了五个漏洞](https://www.theiphonewiki.com/wiki/Jailbreak_Exploits "Jailbreak Exploits"), 其中包括免后使用内核错误（CVE-2015- 6794）和“照片”应用中的任意文件系统访问漏洞（CVE-2015-7037）。
 
-Some apps attempt to detect whether the iOS device on which they're running is jailbroken. This is because jailbreaking deactivates some of iOS' default security mechanisms. However, there are several ways to get around these detections, and we'll introduce them in the chapters "Reverse Engineering and Tampering on iOS" and "Testing Anti-Reversing Defenses on iOS".
+某些应用尝试检测运行它们的iOS设备是否已越狱。这是因为越狱会停用某些iOS的默认安全机制。但是，有几种方法可以解决这些检测问题，我们将在 “iOS上的逆向工程和篡改” 和 “在iOS上测试反反向防御” 一章中介绍它们。
 
 ###### Benefits of Jailbreaking
 
