@@ -47,7 +47,7 @@
 
 ## 书籍
 
-- [DevOps中的动手安全性]（https://books.google.co.uk/books?id=bO1mDwAAQBAJ&pg=PA40&lpg=PA40&dq=owasp+mobile+security+testing+guide&source=bl&ots=pHhAasVgeC&sig=ACfU3UAHeSytjxb1t=2 X＆ved = 2ahUKEwio2umM8tbiAhXgVBUIHehnAEU4UBDoATAIegQICRAB＃v = onepage＆q = owasp％20mobile％20security％20testing％20guide＆f = false“ Google图书DevOps中的动手安全性”）
+- [DevOps中的动手安全性](https://books.google.co.uk/books?id=bO1mDwAAQBAJ&pg=PA40&lpg=PA40&dq=owasp+mobile+security+testing+guide&source=bl&ots=pHhAasVgeC&sig=ACfU3U0yodcqH0O8Sjx3ADTN2m1tbHeCsg&hl=nl&sa=X&ved=2ahUKEwio2umM8tbiAhXgVBUIHehnAEU4UBDoATAIegQICRAB#v=onepage&q=owasp%20mobile%20security%20testing%20guide&f=false)
 
 ## 征集用户
 
