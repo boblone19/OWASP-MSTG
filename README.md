@@ -41,7 +41,7 @@ MSTG 和 MASVS 正被许多公司、标准和各种组织采用。想了解更�
 - [Android 上的本地身份验证](Document-cn/0x05f-Testing-Local-Authentication.md)
 - [Android 网络 APIs](Document-cn/0x05g-Testing-Network-Communication.md)
 - [Android 平台 APIs](Document-cn/0x05h-Testing-Platform-Interaction.md)
-- [Android 应用的代码质量和构建设置](Document-cn/0x05i-Testing-Code-Quality-and-Build-Settings.md)
+- [Android 代码质量和构建设置](Document-cn/0x05i-Testing-Code-Quality-and-Build-Settings.md)
 - [Android 上的篡改和反向工程](Document-cn/0x05c-Reverse-Engineering-and-Tampering.md)
 - [Android 防逆转防御](Document-cn/0x05j-Testing-Resiliency-Against-Reverse-Engineering.md)
 
@@ -54,7 +54,7 @@ MSTG 和 MASVS 正被许多公司、标准和各种组织采用。想了解更�
 - [iOS 上的本地身份验证](Document-cn/0x06f-Testing-Local-Authentication.md)
 - [iOS 网络 APIs](Document-cn/0x06g-Testing-Network-Communication.md)
 - [iOS 平台 APIs](Document-cn/0x06h-Testing-Platform-Interaction.md)
-- [iOS 应用的代码质量和构建设置](Document-cn/0x06i-Testing-Code-Quality-and-Build-Settings.md)
+- [iOS 代码质量和构建设置](Document-cn/0x06i-Testing-Code-Quality-and-Build-Settings.md)
 - [iOS 上的篡改和反向工程](Document-cn/0x06c-Reverse-Engineering-and-Tampering.md)
 - [iOS 防逆防御](Document-cn/0x06j-Testing-Resiliency-Against-Reverse-Engineering.md)
 
