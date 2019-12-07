@@ -69,26 +69,28 @@ if(error==nil){
 
 ##### 检查协议处理程序
 
-您可以通过尝试打开Cydia URL来检查协议处理程序。 Cydia应用商店（实际上，每个越狱工具都会默认安装）会安装cydia://协议处理程序。
+您可以通过尝试打开Cydia URL来检查协议处理程序。 Cydia应用商店(实际上，每个越狱工具都会默认安装)会安装cydia://协议处理程序。
 
 ```objc
+#Objective-C
 if([[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"cydia://package/com.example.package"]]){
 ```
 
-##### Calling System APIs
+##### 调用系统 API
 
-Calling the `system` function with a "NULL" argument on a non-jailbroken device will return "0"; doing the same thing on a jailbroken device will return "1". This difference is due to the function's checking for access to `/bin/sh` on jailbroken devices only.
+在非越狱设备上使用`NULL`参数调用`system`函数将返回`0`; 在越狱设备上执行相同的操作将返回`1`。 这种差异是由于该功能仅检查越狱设备上对/bin/sh的访问。
 
-#### Bypassing Jailbreak Detection
+#### 绕过越狱检测
 
-Once you start an application that has jailbreak detection enabled on a jailbroken device, you'll notice one of the following things:
+一旦应用程序启动越狱检测功能并且在越狱设备上启动了，您将注意到以下情况之一：
 
-1. The application closes immediately, without any notification.
-2. A pop-up window indicates that the application won't run on a jailbroken device.
+1. 该应用程序立即关闭，恕不另行通知。
+2. 一个弹出窗口指示该应用程序不会在越狱设备上运行。
 
-In the first case, make sure the application is fully functional on non-jailbroken devices. The application may be crashing or it may have a bug that causes it to terminate. This may happen while you're testing a preproduction version of the application.
+在第一种情况下，请确保该应用程序在非越狱设备上可以正常运行。该应用程序可能崩溃了，或者存在导致其终止的错误。在测试应用程序的预生产版本时，可能会发生这种情况。
 
-Let's look at bypassing jailbreak detection using the Damn Vulnerable iOS application as an example again. After loading the binary into Hopper, you need to wait until the application is fully disassembled (look at the top bar to check the status). Then look for the "jail" string in the search box. You'll see two classes: `SFAntiPiracy` and `JailbreakDetectionVC`. You may want to decompile the functions to see what they are doing and, in particular, what they return.
+让我们再次以Damn Vulnerable iOS应用程序为例，绕过越狱检测。将二进制文件加载到Hopper中后，您需要等待直到应用程序完全反汇编（查看顶部栏以检查状态）。然后在搜索框中查找"jail"字符串。您将看到两个类:`SFAntiPiracy`和`JailbreakDetectionVC`。您可能需要反编译这些函数，以查看它们在做什么，尤其是它们返回什么。
+
 
 ![Disassembling with Hopper](Images/Chapters/0x06b/HopperDisassembling.png) ![Decompiling with Hopper](Images/Chapters/0x06b/HopperDecompile.png)
 
