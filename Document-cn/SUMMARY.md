@@ -1,6 +1,6 @@
-# 总结
+# 摘要
 
-- [变更日志](CHANGELOG.md)
+- [更新日志](CHANGELOG.md)
 - [标题页](0x02-Frontispiece.md)
 
 ## 概述
