@@ -27,9 +27,9 @@
 - [Android 上的本地身份验证](0x05f-Testing-Local-Authentication.md)
 - [Android 网络API](0x05g-Testing-Network-Communication.md)
 - [Android 平台API](0x05h-Testing-Platform-Interaction.md)
-- [Android 应用程序的代码质量和构建设置](0x05i-Testing-Code-Quality-and-Build-Settings.md)
+- [Android 的代码质量和构建设置](0x05i-Testing-Code-Quality-and-Build-Settings.md)
 - [Android 上的篡改和逆向工程](0x05c-Reverse-Engineering-and-Tampering.md)
-- [Android 防倒退防御](0x05j-Testing-Resiliency-Against-Reverse-Engineering.md)
+- [Android 反逆向防御](0x05j-Testing-Resiliency-Against-Reverse-Engineering.md)
 
 ## iOS测试指南
 
@@ -42,7 +42,7 @@
 - [iOS 平台API](0x06h-Testing-Platform-Interaction.md)
 - [iOS 应用程序的代码质量和构建设置](0x06i-Testing-Code-Quality-and-Build-Settings.md)
 - [iOS 上的篡改和反向工程](0x06c-Reverse-Engineering-and-Tampering.md)
-- [iOS 防倒转防御](0x06j-Testing-Resiliency-Against-Reverse-Engineering.md)
+- [iOS 反逆向防御](0x06j-Testing-Resiliency-Against-Reverse-Engineering.md)
 
 ## 附录
 
