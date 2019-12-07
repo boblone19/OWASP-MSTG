@@ -1,146 +1,146 @@
-# Changelog
+＃变更日志
 
-This document is automatically generated at {{gitbook.time}}
+该文档是在{{gitbook.time}}自动生成的
 
-## v1.1.3 2 August 2019
+## v1.1.3 2019年8月2日
 
-- Updated Acknowledgments, with 2 new co-authors.
-- Translated various parts into Japanese.
-- A large restructuring of the general testing, platform specific testing and reverse-engineering chapters.
-- Updated description of many tools: Adb, Angr, APK axtractor, Apkx, Burp Suite, Drozer, ClassDump(Z/etc), Clutch, Drozer, Frida, Hopper, Ghidra, IDB, Ipa Installer, iFunBox, iOS-deploy, KeychainDumper, Mobile-Security-Framework, Nathan, Needle, Objection, Magisk, PassionFruit, Radare 2, Tableplus, SOcket CAT, Xposed, and others.
-- Updated most of the iOS hacking/verification techniques using iOS 12 or 11 as a base instead of iOS 9/10.
-- Removed tools which were no longer updated, such as introspy-Android and AndBug.
-- Added missing MASVS references from version 1.1.4: v1.X, V3.5, V5.6, V6.2-V6.5, V8.2-V8.6.
-- Rewrote device-binding explanation and testcases for Android.
-- Added parts on testing unmanaged code in Objective-C, Java, and C/C++.
-- Applied many spelling, punctuation and style-related fixes.
-- Updated many cryptography related parts.
-- Added testaces for upgrade-mechanism verification for apps.
-- Updated Readme, Code of Conduct, Contribution guidelines, verification, funding link, and generation scripts.
-- Added ISBN as the book is now available at Hulu.
-- Added various fixes for the .epub format.
-- Added testcases on Android and iOS backup verification.
-- Improved key-attestation related explanation for Android.
-- Restructured OWASP Mobile Wiki.
-- Removed Yahoo Weather app and simplified reference on using SQL injection.
-- Improve explanation for iOS app sideloading to include various available methods.
-- Added explanation on using ADB and device shell for Android.
-- Added explanation on using device shell for iOS.
-- Provided comparison for using emulators/simulators and real devices for iOS/Android.
-- Fixed Uncrackable Level 3 for Android.
-- Improved explanation on how to exfiltrate data and apps on iOS 12 and Android 8.
-- Improved/updated explanation on SSL-pinning.
-- Added list of adopters of the MASVS/MSTG.
-- Updated English, Japanese, French and Spanish checklists to be compatible with MSTG 1.1.2.
-- Added a small write-up on Adiantum for Google.
-- Added MSTG-ID to the paragraphs to create a link between MSTG paragraphs and MASVS requirements.
-- Added review criteria for Android instant apps and guidance for app-bundle evaluation.
-- Clarified the differences between various methods of dynamic analysis.
+- 更新了致谢，新增了2位共同作者。
+- 将各个部分翻译成日语。
+- 常规测试，特定于平台的测试和逆向工程各章的大型重组。
+- 更新了许多工具的说明：Adb，Angr，APK axtractor，Apkx，Burp Suite，Drozer，ClassDump（Z / etc），离合器，Drozer，Frida，Hopper，Ghidra，IDB，Ipa Installer，iFunBox，iOS- deploy，KeychainDumper ，移动安全框架，Nathan，Needle，异议，Magisk，PassionFruit，Rarare 2，Tableplus，SOcket CAT，Xposed等。
+- 更新了大多数以iOS 12或11为基础而不是iOS 9/10的iOS hacking /验证技术。
+- 删除了不再更新的工具，例如introspy- Android和AndBug。
+- 添加了版本1.1.4中缺少的MASVS参考：v1.X，V3.5，V5.6，V6.2- V6.5，V8.2- V8.6。
+- 重写了Android的设备绑定说明和测试用例。
+- 增加了有关在Objective- C，Java和C / C ++中测试非托管代码的部分。
+- 应用了许多与拼写，标点和样式相关的修复程序。
+- 更新了许多密码学相关的部分。
+- 为测试应用程序的升级机制添加了Testace。
+- 更新了自述文件，行为准则，贡献准则，验证，资金链接和生成脚本。
+- 添加了ISBN，因为该书现已在Hulu发行。
+- 为.epub格式添加了各种修复程序。
+- 在Android和iOS备份验证中添加了测试用例。
+- 改进了与Android有关的密钥证明相关的说明。
+- 重组的OWASP Mobile Wiki。
+- 删除了Yahoo Weather应用程序，并简化了有关使用SQL注入的参考。
+- 改进了有关iOS应用侧载的说明，以包括各种可用方法。
+- 添加了有关在Android上使用ADB和设备外壳的说明。
+- 添加了有关使用iOS设备外壳的说明。
+- 提供了在iOS / Android中使用模拟器/模拟器和真实设备的比较。
+- 修复了Android的Uncrackable Level 3。
+- 改进了有关如何在iOS 12和Android 8上泄露数据和应用程序的说明。
+- 改进/更新了关于SSL固定的说明。
+- 添加了MASVS / MSTG的采用者列表。
+- 更新了英语，日语，法语和西班牙语清单，以与MSTG 1.1.2兼容。
+- 在Adiantum上为Google添加了一些小文章。
+- 在段落中添加了MSTG- ID，以在MSTG段落和MASVS要求之间创建链接。
+- 添加了Android即时应用的审核标准和应用捆绑评价指南。
+- 阐明了各种动态分析方法之间的差异。
 
-## v1.1.2 12 May 2019
+## v1.1.2 2019年5月12日
 
-- Added missing mappings for MASVS V1.X.
-- Updated markdown throughout the English MSTG to be consistent.
-- Replaces some dead links.
-- Improvements for rendering as a book, including the ISBN number.
-- Updated the Excel: it is now available in Japanese as well!
-- Many punctuation corrections, spelling and grammar issues resolved.
-- Added missing iOS test case regarding memory corruption issues.
-- Added contributing, code of conduct, markdown linting and dead link detection.
+- 添加了MASVS V1.X缺少的映射。
+- 更新了整个英语MSTG的降价幅度，以保持一致。
+- 替换一些无效链接。
+- 改进了书籍的呈现方式，包括ISBN号。
+- 更新了Excel：它现在也以日语提供！
+- 解决了许多标点符号更正，拼写和语法问题。
+- 添加了有关内存损坏问题的丢失的iOS测试案例。
+- 增加了贡献，行为准则，降价线和死链接检测。
 
-## v1.1.1 7 May 2019
+## v1.1.1 2019年5月7日
 
-- Improvements on various tool related parts, such as how to use on-device console, adb, nscurl, Frida and Needle.
-- Updated 0x4e regarding SMS communication.
-- Many grammar/style updates.
-- Added Android description regarding MASVS requirement 7.8.
-- Updated contributor list.
-- Various updates on instructions regarding TLS and encryption.
-- Removed some erroneous information.
-- Fixed parts of the alignment of the MASVS requirements with the MSTG.
-- Updated information on various topics such as jailbreaking and network interception on both iOS and Android.
-- Added some steps for Frida detection.
-- Added write-ups on Android changes, regarding permissions, application signing, device identifiers, key attestation and more.
-- Extended guidance on SafetyNet attestation.
-- Added information on Magisk.
-- Added Firebase misconfiguration information.
-- Added references to more testing tools.
-- Updated contributor list.
-- Added a lot of information to iOS platform testing.
-- Added a lot of fixes for our book-release.
+- 改进了与工具相关的各个部分，例如如何使用设备上的控制台，adb，nscurl，Frida和Needle。
+- 更新了有关SMS通讯的0x4e。
+- 许多语法/样式更新。
+- 添加了有关MASVS要求7.8的Android说明。
+- 更新了参与者列表。
+- 有关TLS和加密的说明的各种更新。
+- 删除了一些错误的信息。
+- MASVS要求与MSTG对齐的固定部分。
+- 更新了有关各种主题的信息，例如iOS和Android上的越狱和网络拦截。
+- 添加了一些用于Frida检测的步骤。
+- 增加了有关Android更改的内容，包括权限，应用程序签名，设备标识符，密钥证明等。
+- 关于SafetyNet认证的扩展指南。
+- 添加了有关Magisk的信息。
+- 添加了Firebase错误配置信息。
+- 添加了对更多测试工具的引用。
+- 更新了参与者列表。
+- 为iOS平台测试添加了很多信息。
+- 为我们的图书发行版添加了许多修复程序。
 
-## v1.1.0 30 Nov 2018
+## v1.1.0 2018年11月30日
 
-- Added more samples in Kotlin.
-- Simplified leanpub and gitbook publishing.
-- A lot of QA improvements.
-- Added deserialization test cases for iOS, including input sanitization.
-- Added test cases regarding device-access-security policies and data storage on iOS.
-- Added test cases regarding session invalidation.
-- Improved cryptography and key management test cases on both Android and iOS.
-- Started adding various updates in the test cases introduced by Android Oreo and Android Pie.
-- Refreshed the Testing Tools section: removed some of the lesser maintained tools, added new tools.
-- Fixed some of the markdown issues.
-- Updated license to CC 4.0.
-- Started Japanese translation.
-- Updated references to OWASP Mobile Top 10.
-- Updated Android Crackmes.
-- Fixed some of the anti-reverse-engineering test cases.
-- Added debugging test case for iOS.
+- 在Kotlin中添加了更多示例。
+- 简化的leanpub和gitbook发布。
+- 许多质量检查改进。
+- 为iOS添加了反序列化测试用例，包括输入清理。
+- 添加了有关iOS设备访问安全策略和数据存储的测试用例。
+- 添加了有关会话无效的测试用例。
+- 改进了Android和iOS上的加密和密钥管理测试用例。
+- 开始在Android Oreo和Android Pie引入的测试用例中添加各种更新。
+- 刷新了“测试工具”部分：删除了一些维护较少的工具，添加了新工具。
+- 修复了某些降价问题。
+- 将许可证更新为CC 4.0。
+- 开始日语翻译。
+- 更新了对OWASP Mobile Top 10的引用。
+- 更新了Android Crackmes。
+- 修复了一些反逆向工程测试用例。
+- 添加了针对iOS的调试测试用例。
 
-## v1.0.2 13 Oct 2018
+## v1.0.2
 
-- Updated guiding documentation (README).
-- Improved automated build of the pdf, epub and mobi.
-- Updated Frontispiece (given new contributor stats).
-- Added attack surface sections for Android and various.
-- Added vulnerable apps for testing skills.
-- Improved sections for testing App permissions for Android (given android Oreo/Pie), added section for testing permissions on iOS.
-- Added fix for Fragment Injection on older Android versions.
-- Improved sections on iOS WebView related testing.
+-  更新了指导文档（README）。
+- 改进了pdf，epub和mobi的自动化构建。
+- 更新了Frontispiece（提供了新的贡献者统计信息）。
+- 添加了适用于Android和其他设备的攻击面部分。
+- 添加了易受攻击的应用程序以测试技能。
+- 改进了用于测试Android（给定的Android Oreo / Pie）的应用程序权限的部分，并添加了用于测试iOS权限的部分。
+- 添加了对旧版Android上的片段注入的修复。
+- 改进了有关iOS WebView相关测试的部分。
 
-## v1.0.1 17 Sept 2018
+## v1.0.1 2018年9月17日
 
-- Updated guiding documentation (README, PR templates, improved style guide, issue templates).
-- Added automated build of the pdf and DocX.
-- Updated Frontispiece (given new contributor stats).
-- Updated Crackmes and guiding documentation.
-- Updated tooling commands (adb, ABE, iMazing, Needle, IPAinstaller, etc.).
-- Added first Russian translations of the 1.0 documents for iOS.
-- Improved URLs for GitBook using goo.gl in case of URLs with odd syntax.
-- Updated Frontispiece to give credit to all that have helped out for this version.
-- Clarified the app taxonomy & security testing sections by a rewrite.
-- Added sections for network testing, certificate verification & SSL pinning for Cordova, WebView, Xamarin, React-Native and updated the public key pinning sections.
-- Removed no longer working guides (e.g. using iTunes to install apps).
-- Updated a lot of URLs (using TLS wherever possible).
-- Updated tests regarding WebViews.
-- Added new testing tool suites in the tools section, such as the mobile hack tools and various dependency checkers.
-- Updated test cases regarding protocol handlers (added missing MASVS 6.6 for iOS).
-- Many small updates in terms of wording, spelling/typos, updated code segments and grammar.
-- Added missing test cases for MASVS 2.11, 4.7, 7.5 and 4.11.
-- Updated the XLS Checklist given MASVS 1.1.0.
-- Removed the clipboard test from iOS and Android.
-- Removed duplicates on local storage testing and updated data storage test cases.
-- Added write-ups from the mobile security sessions at the OWASP summit.
-- Added anti-debugging bypass section for iOS.
-- Added SQL injection & XML injection samples and improved mitigation documentation.
-- Added Needle documentation for iOS.
-- Added fragment injection documentation.
-- Updated IPA installation process guidance.
-- Added XSS sample for Android.
-- Added improved documentation for certificate installation on Android devices.
-- Updated Frida & Fridump related documentation.
-- Added sections about in-memory data analysis in iOS.
-- Updated software development and related supporting documentation.
-- Updated (anti) reverse-engineering sections for Android and iOS.
-- Updated data storage chapters given newer tooling.
-- Merged SDLC and security testing chapters.
-- Updated cryptography and key-management testing sections for both Android and iOS (up to Android Nougat/iOS 11).
-- Updated general overview chapters for Android and iOS.
-- Updated Android and iOS IPC testing.
-- Added missing overviews, references, etc. to various sections such as 0x6i.
-- Updated local authentication chapters and the authentication & session management chapters.
-- Updated test cases for sensitive data in memory.
-- Added code quality sections.
+- 更新了指导文档（自述文件，PR模板，改进的样式指南，问题模板）。
+- 添加了pdf和DocX的自动生成。
+- 更新了Frontispiece（提供了新的贡献者统计信息）。
+- 更新了Crackmes和指导文档。
+- 更新了工具命令（adb，ABE，iMazing，Needle，IPAinstaller等）。
+- 添加了iOS的1.0文档的第一批俄语翻译。
+- 如果网址的语法奇怪，则使用goo.gl改进了GitBook的网址。
+- 更新了Frontispiece，以感谢所有为此版本提供帮助的人。
+- 通过重写澄清了应用程序分类和安全测试部分。
+- 添加了用于Cordova，WebView，Xamarin，React- Native的网络测试，证书验证和SSL固定的部分，并更新了公钥固定的部分。
+- 删除了不再有效的指南（例如，使用iTunes安装应用程序）。
+- 更新了许多URL（尽可能使用TLS）。
+- 更新了有关WebView的测试。
+- 在“工具”部分添加了新的测试工具套件，例如移动黑客工具和各种依赖项检查器。
+- 更新了有关协议处理程序的测试用例（添加了缺少的iOS MASVS 6.6）。
+- 在措辞，拼写/错别字，更新的代码段和语法方面进行了许多小的更新。
+- 添加了缺少的MASVS 2.11、4.7、7.5和4.11测试用例。
+- 更新了给出MASVS 1.1.0的XLS检查表。
+- 从iOS和Android中删除了剪贴板测试。
+- 删除了本地存储测试中的重复项，并更新了数据存储测试用例。
+- 增加了OWASP峰会上的移动安全会议的写作。
+- 添加了iOS的反调试绕过部分。
+- 添加了SQL注入和XML注入示例，并改进了缓解文档。
+- 添加了iOS版Needle文档。
+- 添加了片段注入文档。
+- 更新了IPA安装过程指南。
+- 添加了适用于Android的XSS示例。
+- 添加了改进的文档，用于在Android设备上安装证书。
+- 更新了Frida和Fridump相关文档。
+- 添加了有关iOS中内存数据分析的部分。
+- 更新了软件开发和相关的支持文档。
+- 更新了（反）针对Android和iOS的反向工程部分。
+- 更新了数据存储章节，提供了更新的工具。
+- 合并了SDLC和安全测试章节。
+- 更新了适用于Android和iOS（最高适用于Android Nougat / iOS 11）的加密和密钥管理测试部分。
+- 更新了Android和iOS的常规概述章节。
+- 更新了Android和iOS IPC测试。
+- 在各个部分（例如0x6i）中添加了缺少的概述，参考资料等。
+- 更新了本地身份验证章节以及身份验证和会话管理章节。
+- 更新了内存中敏感数据的测试用例。
+- 添加了代码质量部分。
 
-## v1.0 15 Jun 2018 (First release)
+## v1.0 2018年6月15日（第一版）
