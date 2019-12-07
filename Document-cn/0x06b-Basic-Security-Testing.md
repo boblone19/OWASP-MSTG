@@ -89,174 +89,176 @@ Cydia是由Jay Freeman（又名“ saurik”）为越狱设备开发的替代应
 
 某些应用尝试检测运行它们的iOS设备是否已越狱。这是因为越狱会停用某些iOS的默认安全机制。但是，有几种方法可以解决这些检测问题，我们将在 “iOS上的逆向工程和篡改” 和 “在iOS上测试反反向防御” 一章中介绍它们。
 
-###### Benefits of Jailbreaking
+###### 越狱的好处
 
-End users often jailbreak their devices to tweak the iOS system's appearance, add new features, and install third-party apps from unofficial app stores. For a security tester, however, jailbreaking an iOS device has even more benefits. They include, but aren't limited to, the following:
+最终用户经常越狱设备以调整iOS系统的外观，添加新功能以及从非官方应用程序商店安装第三方应用程序。但是，对于安全测试人员来说，越狱iOS设备会带来更多好处。它们包括但不限于以下内容：
 
-- Root access to the file system.
-- Possibility of executing applications that haven't been signed by Apple (which includes many security tools).
-- Unrestricted debugging and dynamic analysis.
-- Access to the Objective-C or Swift runtime.
+- 根访问文件系统。
+- 可以执行未经Apple签名的应用程序（包括许多安全工具）。
+- 无限制的调试和动态分析。
+- 访问运行时 Objective-C 或 Swift。
 
-###### Jailbreak Types
+###### 越狱类型
 
-There are *tethered*, *semi-tethered*, *semi-untethered*, and *untethered* jailbreaks.
+有 *系留*，*半系留*，*半系留* 和 *未系留*越狱。
 
-- Tethered jailbreaks don't persist through reboots, so re-applying jailbreaks requires the device to be connected (tethered) to a computer during every reboot. The device may not reboot at all if the computer is not connected.
+- 捆绑越狱不会在重新启动后持续存在，因此要重新应用越狱，需要在每次重新启动期间将设备连接（捆绑）到计算机上。如果未连接计算机，则设备可能根本不会重启。
 
-- Semi-tethered jailbreaks can't be re-applied unless the device is connected to a computer during reboot. The device can also boot into non-jailbroken mode on its own.
+- 除非重新启动期间将设备连接到计算机，否则无法重新应用半栓式越狱。该设备还可以自行启动进入非越狱模式。
 
-- Semi-untethered jailbreaks allow the device to boot on its own, but the kernel patches (or user-land modifications) for disabling code signing aren't applied automatically. The user must re-jailbreak the device by starting an app or visiting a website (not requiring a connection to a computer, hence the term untethered).
+- 半捆绑式越狱允许设备自行启动，但是用于禁用代码签名的内核补丁（或用户域修改）不会自动应用。用户必须通过启动应用程序或访问网站来重新越狱设备（不需要连接到计算机，因此不受限制）。
 
-- Untethered jailbreaks are the most popular choice for end users because they need to be applied only once, after which the device will be permanently jailbroken.
+- 不受限制的越狱是最终用户的最普遍选择，因为仅需应用一次，此后设备将被永久越狱。
 
-###### Caveats and Considerations
+###### 注意事项 和 注意事项
 
-Jailbreaking an iOS device is becoming more and more complicated because Apple keeps hardening the system and patching the exploited vulnerabilities. Jailbreaking has become a very time-sensitive procedure because Apple stops signing these vulnerable versions relatively soon after releasing a fix (unless the jailbreak benefits from hardware-based vulnerabilities, such as the [limera1n exploit](https://www.theiphonewiki.com/wiki/Limera1n "limera1n exploit") affecting the BootROM of the iPhone 4 and iPad 1). This means that you can't downgrade to a specific iOS version once Apple stops signing the firmware.
+越狱越狱的iOS设备变得越来越复杂，因为Apple不断强化系统并修补已利用的漏洞。越狱已成为一个非常时间敏感的过程，因为苹果公司在发布修复程序后相对较快地停止对这些易受攻击的版本进行签名（除非越狱得益于基于硬件的漏洞，例如[limera1n漏洞利用](https://www.theiphonewiki.com/wiki/Limera1n "limera1n exploit") 的BootROM。这意味着一旦Apple停止对固件进行签名，便无法降级到特定的iOS版本。
 
-If you have a jailbroken device that you use for security testing, keep it as is unless you're 100% sure that you can re-jailbreak it after upgrading to the latest iOS version. Consider getting one (or multiple) spare device(s) (which will be updated with every major iOS release) and waiting for a jailbreak to be released publicly. Apple is usually quick to release a patch once a jailbreak has been released publicly, so you have only a couple of days to downgrade (if it is still signed by Apple) to the affected iOS version and apply the jailbreak.
+如果您拥有用于安全测试的越狱设备，请保持其原样，除非您100％确信在升级到最新的iOS版本后可以将其重新越狱。考虑获得一个（或多个）备用设备（将在每个主要的iOS版本中更新），并等待越狱公开发布。公开发布越狱文件后，Apple通常会很快发布补丁程序，因此您只有几天的时间（如果它仍由Apple签署）降级到受影响的iOS版本并应用越狱程序。
 
-iOS upgrades are based on a challenge-response process (generating as a result the named SHSH blobs). The device will allow the OS installation only if the response to the challenge is signed by Apple. This is what researchers call a "signing window", and it is the reason you can't simply store the OTA firmware package you downloaded via iTunes and load it onto the device whenever you want to. During minor iOS upgrades, two versions may both be signed by Apple (the latest one, and the previous iOS version). This is the only situation in which you can downgrade the iOS device. You can check the current signing window and download OTA firmware from the [IPSW Downloads website](https://ipsw.me "IPSW Downloads").
+iOS升级基于质询-响应过程（因此产生了命名为SHSH的斑点）。仅当对挑战的响应由Apple签署时，设备才允许安装操作系统。这就是研究人员所说的“签名窗口”，这就是为什么您不能简单地存储通过iTunes下载的OTA固件包并在需要时将其加载到设备上的原因。在进行较小的iOS升级期间，Apple可能会同时签署两个版本（最新版本和先前的iOS版本）。这是唯一可以降级iOS设备的情况。您可以检查当前的签名窗口并从[IPSW下载网站](https://ipsw.me "IPSW Downloads")下载OTA固件。.
 
-###### Which Jailbreaking Tool to Use
+###### 使用哪个越狱工具
 
-Different iOS versions require different jailbreaking techniques. [Determine whether a public jailbreak is available for your version of iOS](https://canijailbreak.com/ "Can I Jailbreak"). Beware of fake tools and spyware, which are often hiding behind domain names that are similar to the name of the jailbreaking group/author.
+不同的iOS版本需要不同的越狱技术。 [确定您的iOS版本是否可以使用公共越狱](https://canijailbreak.com/ "Can I Jailbreak"). 提防假冒工具和间谍软件，它们通常藏在与越狱组/作者的名称相似的域名后面。
 
-The jailbreak Pangu 1.3.0 is available for 64-bit devices running iOS 9.0. If you have a device that's running an iOS version for which no jailbreak is available, you can still jailbreak the device if you downgrade or upgrade to the target _jailbreakable_ iOS version (via IPSW download and iTunes). However, this may not be possible if the required iOS version is no longer signed by Apple.
+越狱的Pangu 1.3.0适用于运行iOS 9.0的64位设备。如果您的设备运行的iOS版本没有越狱功能，那么如果您降级或升级到目标_jailbreakable_ iOS版本（通过IPSW下载和iTunes），仍然可以越狱该设备。但是，如果所需的iOS版本不再由Apple签名，则可能无法实现。
 
-The iOS jailbreak scene evolves so rapidly that providing up-to-date instructions is difficult. However, we can point you to some sources that are currently reliable.
+iOS越狱场景发展如此之快，以至于很难提供最新的说明。但是，我们可以为您指出一些目前可靠的资源。
 
-- [Can I Jailbreak?](https://canijailbreak.com/ "Can I Jailbreak?")
+- [我可以越狱吗？](https://canijailbreak.com/ "Can I Jailbreak?")
 - [The iPhone Wiki](https://www.theiphonewiki.com/ "The iPhone Wiki")
 - [Redmond Pie](https://www.redmondpie.com/ "Redmone Pie")
-- [Reddit Jailbreak](https://www.reddit.com/r/jailbreak/ "Reddit Jailbreak")
+- [Reddit 越狱](https://www.reddit.com/r/jailbreak/ "Reddit Jailbreak")
 
-> Note that any modification you make to your device is at your own risk. While jailbreaking is typically safe, things can go wrong and you may end up bricking your device. No other party except yourself can be held accountable for any damage.
+> 请注意，您对设备进行的任何修改均需自担风险。通常情况下，越狱是安全的，但事情可能会出错，并且最终可能会使设备变砖。除您以外的任何一方均不承担任何责任。
 
-#### Recommended Tools - iOS Device
+#### 推荐工具 - iOS设备
 
-Many tools on a jailbroken device can be installed by using Cydia, which is the unofficial AppStore for iOS devices and allows you to manage repositories. In Cydia you should add (if not already done by default) the following repositories by navigating to **Sources** -> **Edit**, then clicking **Add** in the top left:
+可以使用Cydia安装越狱设备上的许多工具，该设备是iOS设备的非官方AppStore，可让您管理存储库。在Cydia中，您应该通过导航到 **Sources** -> **Edit**，然后单击左上方的 **Add**，添加（如果默认情况下尚未完成）以下存储库：
 
-- <http://apt.thebigboss.org/repofiles/cydia/>: One of the most popular repositories is BigBoss, which contains various packages, such as the BigBoss Recommended Tools package.
-- <http://repo.hackyouriphone.org>: Add the HackYouriPhone repository to get the AppSync package.
-- <https://build.frida.re>: Install Frida by adding the repository to Cydia.
-- <http://mobiletools.mwrinfosecurity.com/cydia/>: The Needle agent, has its own repository as well and should be added.
-- <https://repo.chariz.io>: Useful when managing your jailbreak on iOS 11.
-- <https://apt.bingner.com/>: Another repository, with quiet a few good tools, is Elucubratus, which gets installed when you install Cydia on iOS 12 using Unc0ver.
-- <https://coolstar.org/publicrepo/>: For Needle you should consider adding the Coolstar repo, to install Darwin CC Tools.
+- <http://apt.thebigboss.org/repofiles/cydia/>: 最受欢迎的存储库之一是BigBoss，其中包含各种软件包，例如BigBoss推荐工具软件包。
+- <http://repo.hackyouriphone.org>: 添加HackYouriPhone存储库以获取AppSync包。
+- <https://build.frida.re>: 通过将存储库添加到Cydia来安装Frida。
+- <http://mobiletools.mwrinfosecurity.com/cydia/>: Needle代理也有自己的存储库，应添加。
+- <https://repo.chariz.io>: 在iOS 11上管理越狱时很有用。
+- <https://apt.bingner.com/>: Elucubratus是另一个存储库，它具有一些不错的安静工具，当您使用Unc0ver在iOS 12上安装Cydia时，将安装该存储库。
+- <https://coolstar.org/publicrepo/>: 对于Needle，您应该考虑添加Coolstar存储库以安装Darwin CC Tools。
 
-> In case you are using the Sileo App Store, please keep in mind that the Sileo Compatibility Layer shares your sources between Cydia and Sileo, however, Cydia is unable to remove sources added in Sileo, and [Sileo is unable to remove sources added in Cydia](https://www.idownloadblog.com/2019/01/11/install-sileo-package-manager-on-unc0ver-jailbreak/ "You can now install the Sileo package manager on the unc0ver jailbreak"). Keep this in mind when you’re trying to remove sources.
+> 如果您使用的是Sileo App Store，请记住，Seoo兼容层在Cydia和Sileo之间共享您的源，但是，Cydia无法删除在Sileo中添加的源，并且[Sileo无法删除在Sileo中添加的源。 Cydia](https://www.idownloadblog.com/2019/01/11/install-sileo-package-manager-on-unc0ver-jailbreak/ "You can now install the Sileo package manager on the unc0ver jailbreak"). 当您尝试删除来源时，请记住这一点。
 
 After adding all the suggested repositories above you can install the following useful packages from Cydia to get started:
 
-- adv-cmds: Advanced command line, which includes tools such as finger, fingerd, last, lsvfs, md, and ps.
-- AppList: Allows developers to query the list of installed apps and provides a preference pane based on the list.
-- Apt: Advanced Package Tool, which you can use to manage the installed packages similarly to DPKG, but in a more friendly way. This allows you to install, uninstall, upgrade, and downgrade packages from your Cydia repositories. Comes from Elucubratus.
-- AppSync Unified: Allows you to sync and install unsigned iOS applications.
-- BigBoss Recommended Tools: Installs many useful command line tools for security testing including standard Unix utilities that are missing from iOS, including wget, unrar, less, and sqlite3 client.
-- Class-dump: A command line tool for examining the Objective-C runtime information stored in Mach-O files and generates header files with class interfaces.
-- Class-dump-Z: A command line tool for examining the Swift runtime information stored in Mach-O files and generates header files with class interfaces. This is not available via Cydia, therefore please refer to [installation steps](https://iosgods.com/topic/6706-how-to-install-class-dump-z-on-any-64bit-idevices-how-to-use-it/ "Class-dump-Z installation steps") in order to get class-dump-z running on your iOS device.
-- Clutch: Used to decrypt an app executable.
-- Cycript: Is an inlining, optimizing, Cycript-to-JavaScript compiler and immediate-mode console environment that can be injected into running processes (associated to Substrate).
-- Cydia Substrate: A platform that makes developing third-party iOS add-ons easier via dynamic app manipulation or introspection.
-- cURL: Is a well known http client which you can use to download packages faster to your device. This can be a great help when you need to install different versions of Frida-server on your device for instance.
-- Darwin CC Tools: Install the Darwin CC Tools from the Coolstar repo as a dependency for Needle.
-- IPA Installer Console: Tool for installing IPA application packages from the command line. After installing two commands will be available `installipa` and `ipainstaller` which are both the same.
-- Frida: An app you can use for dynamic instrumentation. Please note that Frida has changed its implementation of its APIs over time, which means that some scripts might only work with specific versions of the Frida-server (which forces you to update/downgrade the version also on macOS). Running Frida Server installed via APT or Cydia is recommended. Upgrading/downgrading afterwards can be done, by following the instructions of [this Github issue](https://github.com/AloneMonkey/frida-ios-dump/issues/65#issuecomment-490790602 "Resolving Frida version").
-- Grep: Handy tool to filter lines.
-- Gzip: A well known ZIP utility.
-- Needle-Agent: This agent is part of the Needle framework and need to be installed on the iOS device.
-- Open for iOS 11: Tool required to make Needle Agent function.
-- PreferenceLoader: A Substrate-based utility that allows developers to add entries to the Settings application, similar to the SettingsBundles that App Store apps use.
-- SOcket CAT: a utility with which you can connect to sockets to read and write messages. This can come in handy if you want to trace the syslog on iOS 12 devices.
+在添加完上面所有建议的存储库后，您可以从Cydia安装以下有用的软件包以开始使用：
 
-Besides Cydia there are several other open source tools available and should be installed, such as [Introspy](https://github.com/iSECPartners/Introspy-iOS "Introspy-iOS").
+- adv-cmds：高级命令行，其中包括诸如finger，fingerd，last，lsvfs，md和ps之类的工具。
+- AppList：允许开发人员查询已安装应用程序的列表，并基于该列表提供首选项窗格。
+- Apt：高级软件包工具，您可以使用它来管理已安装的软件包，类似于DPKG，但以更友好的方式。这使您可以从Cydia存储库安装，卸载，升级和降级软件包。来自Elucubratus。
+- AppSync Unified：允许您同步和安装未签名的iOS应用程序。
+- BigBoss推荐工具：安装了许多用于安全测试的有用命令行工具，包括iOS缺少的标准Unix实用程序，包括wget，unrar，less和sqlite3客户端。
+- Class-dump：一种命令行工具，用于检查存储在Mach-O文件中的Objective-C运行时信息，并使用类接口生成头文件。
+- Class-dump-Z：一种命令行工具，用于检查存储在Mach-O文件中的Swift运行时信息，并使用类接口生成头文件。 Cydia无法提供此功能，因此请参考[安装步骤](https://iosgods.com/topic/6706-how-to-install-class-dump-z-on-any-64bit-idevices-how-to-use-it/ "Class-dump-Z installation steps") 以使class-dump-z在您的iOS设备上运行。
+- Clutch: 用于解密应用程序可执行文件。
+- Cycript: 是一种内联的，优化的，Cycript-to-JavaScript编译器和即时模式控制台环境，可以将其注入正在运行的进程中（与Substrate相关）。
+- Cydia Substrate：通过动态应用程序操纵或自省使开发第三方iOS附加组件更加容易的平台。
+- cURL：是众所周知的http客户端，可用于将软件包更快地下载到设备。例如，当您需要在设备上安装不同版本的Frida-server时，这可能是一个很大的帮助。
+- Darwin CC Tools：从Coolstar存储库中安装Darwin CC Tools，作为对Needle的依赖。
+- IPA安装程序控制台：用于从命令行安装IPA应用程序包的工具。安装完两个命令后，`installipa`和`ipainstaller`将是相同的。
+- Frida：可用于动态检测的应用程序。请注意，Frida随着时间的推移更改了其API的实现，这意味着某些脚本可能仅适用于Frida-server的特定版本（这也迫使您在macOS上更新/降级该版本）。建议运行通过APT或Cydia安装的Frida Server。之后，可以按照[此Github问题](https://github.com/AloneMonkey/frida-ios-dump/issues/65#issuecomment-490790602 "Resolving Frida version").
+- Grep：方便的工具来过滤线。
+- Gzip：一种著名的ZIP实用程序。
+- Needle-Agent：此代理是Needle框架的一部分，需要安装在iOS设备上。
+- Open for iOS 11：启用Needle Agent功能所需的工具。
+- PreferenceLoader：一种基于底物的实用程序，允许开发人员将条目添加到“设置”应用程序，类似于App Store应用程序使用的SettingsBundles。
+- SOcket CAT：可用于连接套接字以读取和写入消息的实用程序。 如果您想在iOS 12设备上跟踪系统日志，这可能会派上用场。
 
-Besides Cydia you can also ssh into your iOS device and you can install the packages directly via apt-get, like for example adv-cmds.
+除了Cydia之外，还有其他几种可用的开源工具，应该安装它们，例如[Introspy](https://github.com/iSECPartners/Introspy-iOS "Introspy-iOS").
+
+除了Cydia之外，您还可以使用ssh进入iOS设备，并且可以直接通过apt-get安装软件包，例如adv-cmds。
 
 ```shell
 $ apt-get update
 $ apt-get install adv-cmds
 ```
 
-##### Small note on USB of an iDevice
+##### iDevice USB上的小提示
 
-On an iOS device you cannot make data connections anymore after 1 hour of being in a locked state, unless you unlock it again due to the USB Restricted Mode, which was introduced with iOS 11.4.1
+在iOS设备上，处于锁定状态1小时后，您无法再进行数据连接，除非由于iOS 11.4.1引入的USB受限模式而再次将其解锁
 
-#### Recommended Tools - Host Computer
+#### 推荐工具 - 主机
 
-In order to analyze iOS apps, you should install the following tools on your host computer. We'll be referring to them throughout the guide. Please note that a great number of them will require macOS in order to run and therefore using a macOS computer is normally the recommendation when dealing with iOS apps.
+为了分析iOS应用，您应该在主机上安装以下工具。 在整个指南中，我们将参考它们。 请注意，其中很多将需要macOS才能运行，因此在处理iOS应用程序时，通常建议使用macOS计算机。
 
 ##### Burp Suite
 
-[Burp Suite](https://portswigger.net/burp "Burp Suite") is an interception proxy that can be used to analyze the traffic between the app and the API it's talking to. Please refer to the section below "[Setting up an Interception Proxy](#setting-up-an-interception-proxy "Setting up an Interception Proxy")" for detailed instructions on how to set it up in an iOS environment.
+[Burp Suite](https://portswigger.net/burp "Burp Suite") 是一个拦截代理，可用于分析应用程序和与其交谈的API之间的流量。 有关如何在iOS环境中进行设置的详细说明，请参阅下面的“ [设置拦截代理](#setting-up-an-interception-proxy "Setting up an Interception Proxy")" 一节。
 
 ##### Frida
 
-[Frida](https://www.frida.re "Frida") is a free and open-source dynamic code instrumentation toolkit that lets you execute snippets of JavaScript into your native apps. It was already introduced in the chapter "[Tampering and Reverse Engineering](0x04c-Tampering-and-Reverse-Engineering.md#frida "Frida")" of the general testing guide. Frida is used in several of the following sections and chapters.
+[Frida](https://www.frida.re "Frida") 是一个免费的开源动态代码检测工具包，可让您在本地应用程序中执行JavaScript片段。它已在一般测试指南的“ [篡改和逆向工程](0x04c-Tampering-and-Reverse-Engineering.md#frida "Frida")" 一章中进行介绍。 Frida在以下几个部分和章节中使用。
 
-Frida supports interaction with the Objective-C runtime through the [ObjC API](https://www.frida.re/docs/javascript-api/#objc "Frida - ObjC API"). You'll be able to hook and call both Objective-C and native functions inside the process and its native libraries. Your JavaScript snippets have full access to memory, e.g. to read and/or write any structured data.
+Frida通过支持与Objective-C运行时进行交互[ObjC API](https://www.frida.re/docs/javascript-api/#objc "Frida - ObjC API"). 您将能够在流程及其本机库中挂钩并调用Objective-C和本机函数。您的JavaScript代码段具有对内存的完全访问权限，例如读取和/或写入任何结构化数据。
 
-Here are some tasks that Frida APIs offers and are relevant or exclusive on iOS:
+以下是Frida API提供的一些任务，这些任务在iOS上是相关的或专有的：
 
-- Instantiate Objective-C objects and call static and non-static class methods ([ObjC API](https://www.frida.re/docs/javascript-api/#objc "Frida - ObjC API")).
-- Trace Objective-C method calls and/or replace their implementations ([Interceptor API](https://www.frida.re/docs/javascript-api/#interceptor "Frida - Interceptor API")).
-- Enumerate live instances of specific classes by scanning the heap ([ObjC API](https://www.frida.re/docs/javascript-api/#objc "Frida - ObjC API")).
-- Scan process memory for occurrences of a string ([Memory API](https://www.frida.re/docs/javascript-api/#memory "Frida - Memory API")).
-- Intercept native function calls to run your own code at function entry and exit ([Interceptor API](https://www.frida.re/docs/javascript-api/#interceptor "Frida - Interceptor API")).
+- 实例化Objective-C对象并调用静态和非静态类方法（[ObjC API](https://www.frida.re/docs/javascript-api/#objc "Frida - ObjC API")).
+- 跟踪Objective-C方法调用和/或替换其实现 ([Interceptor API](https://www.frida.re/docs/javascript-api/#interceptor "Frida - Interceptor API")).
+- 通过扫描堆来枚举特定类的实时实例 ([ObjC API](https://www.frida.re/docs/javascript-api/#objc "Frida - ObjC API")).
+- 扫描进程内存中是否出现字符串 ([Memory API](https://www.frida.re/docs/javascript-api/#memory "Frida - Memory API")).
+- 拦截本机函数调用以在函数入口和出口运行您自己的代码 ([Interceptor API](https://www.frida.re/docs/javascript-api/#interceptor "Frida - Interceptor API")).
 
-Remember that on iOS, you can also benefit from the built-in tools provided when installing Frida, which include the Frida CLI (`frida`), `frida-ps`, `frida-ls-devices` and `frida-trace`, to name a few.
+请记住，在iOS上，您还可以从安装Frida时使用的内置工具中受益，其中包括Frida CLI（`frida`），`frida-ps`，`frida-ls-devices`和`frida-trace` ，仅举几例。
 
-There's a `frida-trace` feature exclusive on iOS worth highlighting: tracing Objective-C APIs using the `-m` flag and wildcards. For example, tracing all methods including "HTTP" in their name and belonging to any class whose name starts with "NSURL" is as easy as running:
+iOS上有一个值得强调的`frida-trace`功能：使用`-m`标志和通配符来跟踪Objective-C API。例如，跟踪名称中包括“ HTTP”并且属于名称以“ NSURL”开头的任何类的所有方法都非常容易运行：
 
 ```bash
 $ frida-trace -U YourApp -m "*[NSURL* *HTTP*]"
 ```
 
-For a quick start you can go through the [iOS examples](https://www.frida.re/docs/examples/ios/ "Frida iOS examples").
+为了快速入门，您可以阅读[iOS示例](https://www.frida.re/docs/examples/ios/ "Frida iOS examples").
 
 ##### Frida-ios-dump
 
-[Frida-ios-dump](https://github.com/AloneMonkey/frida-ios-dump "frida-ios-dump") allows you to pull a decrypted IPA from an iOS device. Please refer to the section ["Using Frida-ios-dump"](#frida-ios-dump "Using Frida-ios-dump") for detailed instructions on how to use it.
+[Frida-ios-dump](https://github.com/AloneMonkey/frida-ios-dump "frida-ios-dump") 允许您从iOS设备提取解密的IPA。有关如何使用它的详细说明，请参考[“使用Frida-ios-dump”](#frida-ios-dump "Using Frida-ios-dump") 
 
 ##### IDB
 
-[IDB](https://www.idbtool.com "IDBTool") is an open source tool to simplify some common tasks for iOS app security assessments and research. The [installation instructions for IDB](https://www.idbtool.com/installation/ "IDB Installation") are available in the documentation.
+[IDB](https://www.idbtool.com "IDBTool") 是一个开源工具，可简化iOS应用安全评估和研究的一些常见任务。文档中提供了[IDB的安装说明](https://www.idbtool.com/installation/ "IDB Installation").
 
-Once you click on the button **Connect to USB/SSH device** in IDB and key in the SSH password in the terminal where you started IDB is ready to go. You can now click on **Select App...**, select the app you want to analyze and get initial meta information of the app. Now you are able to do binary analysis, look at the local storage and investigate IPC.
+单击IDB中的 **连接到USB / SSH设备**按钮，然后在启动IDB的终端中键入SSH密码。现在，您可以单击**选择应用程序...**，选择要分析的应用程序并获取该应用程序的初始元信息。现在，您可以进行二进制分析，查看本地存储并调查IPC。
 
-Please keep in mind that IDB might be unstable and crash after selecting the app.
+请记住，选择应用程序后，IDB可能会不稳定并崩溃。
 
 ##### ios-deploy
 
-With [ios-deploy](https://github.com/ios-control/ios-deploy "ios-deploy") you can install and debug iOS apps from the command line, without using Xcode. It can be installed via brew on macOS:
+使用 [ios-deploy](https://github.com/ios-control/ios-deploy "ios-deploy") 您可以从命令行安装和调试iOS应用，而无需使用Xcode。可以通过brew在macOS上安装它：
 
 ```shell
 $ brew install ios-deploy
 ```
 
-For the usage please refer to the section "ios-deploy" below which is part of "[Installing Apps](#installing-apps "Installing Apps")".
+有关用法，请参阅下面的 "ios部署" 部分，该部分是"[安装应用程序](#installing-apps "Installing Apps")"的一部分.
 
 ##### iFunBox
 
-[iFunBox](http://www.i-funbox.com/ "iFunBox") is a file and app management tool that supports iOS. You can [download it for Windows and macOS](http://www.i-funbox.com/en_download.html "iFunBox").
+[iFunBox](http://www.i-funbox.com/ "iFunBox") 是支持iOS的文件和应用程序管理工具。您可以[在Windows和macOS上下载它](http://www.i-funbox.com/en_download.html "iFunBox").
 
-It has several features, like app installation, access the app sandbox without jailbreak and others.
+它具有多种功能，例如应用程序安装，无需越狱即可访问应用程序沙箱等。
 
 ##### Keychain-Dumper
 
-[Keychain-dumper](https://github.com/mechanico/Keychain-Dumper "keychain-dumper") is an iOS tool to check which keychain items are available to an attacker once an iOS device has been jailbroken. Please refer to the section "[Keychain-dumper (Jailbroken)](#keychain-dumper-jailbroken "Keychain-dumper (Jailbroken)")" for detailed instructions on how to use it.
+[Keychain-dumper](https://github.com/mechanico/Keychain-Dumper "keychain-dumper") 是一种iOS工具，用于在iOS设备越狱后检查哪些密钥链项目可供攻击者使用。请参阅“ [Keychain-dumper（Jailbroken）](#keychain-dumper-jailbroken "Keychain-dumper (Jailbroken)")" 部分以获取有关如何使用它的详细说明。
 
-##### Mobile-Security-Framework - MobSF
+##### 移动安全框架 - MobSF
 
-[MobSF](https://github.com/MobSF/Mobile-Security-Framework-MobSF "MobSF") is an automated, all-in-one mobile application pentesting framework that also supports iOS IPA files. The easiest way of getting MobSF started is via Docker.
+[MobSF](https://github.com/MobSF/Mobile-Security-Framework-MobSF "MobSF") 是一种自动化的多合一移动应用程序渗透测试框架，还支持iOS IPA文件。 启动MobSF的最简单方法是通过Docker。
 
 ```shell
 $ docker pull opensecurity/mobile-security-framework-mobsf
 $ docker run -it -p 8000:8000 opensecurity/mobile-security-framework-mobsf:latest
 ```
 
-Or install and start it locally on your host computer by running:
+或通过运行以下命令在主机上本地安装并启动它：
 
 ```shell
 # Setup
@@ -270,56 +272,56 @@ setup.bat # For Windows
 run.bat # For Windows
 ```
 
-> By running it locally on a macOS host you'll benefit from a slightly better class-dump output.
+> 通过在macOS主机上本地运行它，您将受益于稍微更好的类转储输出。
 
-Once you have MobSF up and running you can open it in your browser by navigating to <http://127.0.0.1:8000>. Simply drag the IPA you want to analyze into the upload area and MobSF will start its job.
+MobSF启动并运行后，可以通过导航到<http://127.0.0.1:8000>在浏览器中打开它。只需将要分析的IPA拖到上载区域，MobSF将开始工作。
 
-After MobSF is done with its analysis, you will receive a one-page overview of all the tests that were executed. The page is split up into multiple sections giving some first hints on the attack surface of the application.
+在完成MobSF的分析之后，您将获得一页一页的所有已执行测试的概述。该页面分为多个部分，在应用程序的受攻击面上提供了一些初步提示。
 
 <img src="Images/Chapters/0x06b/mobsf_ios.png" alt="MobSF for iOS">
 
-The following is displayed:
+显示以下内容：
 
-- Basic information about the app and its binary file.
-- Some options to:
-  - View the `Info.plist` file.
-  - View the strings contained in the app binary.
-  - Download a class-dump, if the app was written in Objective-C; if it is written in Swift no class-dump can be created.
-- List all Purpose Strings extracted from the `Info.plist` which give some hints on the app's permissions.
-- Exceptions in the App Transport Security (ATS) configuration will be listed.
-- A brief binary analysis showing if free binary security features are activated or e.g. if the binary makes use of banned APIs.
-- List of libraries used by the app binary and list of all files inside the unzipped IPA.
+- 有关该应用及其二进制文件的基本信息。
+- 一些选项：
+  - 查看“ Info.plist”文件。
+  - 查看应用程序二进制文件中包含的字符串。
+  - 如果应用是用Objective-C编写的，请下载类转储；如果使用Swift编写，则无法创建类转储。
+- 列出从“ Info.plist”中提取的所有用途字符串，这些字符串会提示应用程序的权限。
+- 将列出App Transport Security（ATS）配置中的例外情况。
+- 简要的二进制分析，显示是否激活了免费的二进制安全功能，例如如果二进制文件使用了禁止的API。
+- 应用程序二进制文件使用的库列表，以及未压缩IPA中所有文件的列表。
 
-> In contrast to the Android use case, MobSF does not offer any dynamic analysis features for iOS apps.
+> 与Android用例相反，MobSF不为iOS应用程序提供任何动态分析功能。
 
-Refer to [MobSF documentation](https://github.com/MobSF/Mobile-Security-Framework-MobSF/wiki/1.-Documentation "MobSF documentation") for more details.
+有关更多详细信息，请参见[MobSF文档](https://github.com/MobSF/Mobile-Security-Framework-MobSF/wiki/1.-Documentation "MobSF documentation") for more details.
 
 ##### Needle
 
-[Needle](https://github.com/mwrlabs/needle "Needle") is an all-in-one iOS security assessment framework, which you can compare to as a "Metasploit" for iOS. The [installation guide](https://github.com/mwrlabs/needle/wiki/Installation-Guide "Needle Installation Guide") in the Github wiki contains all the information needed on how to prepare your Kali Linux or macOS and how to install the Needle Agent on your iOS device.
+[Needle](https://github.com/mwrlabs/needle "Needle") 是一个多合一的iOS安全评估框架，您可以将其作为iOS的“ Metasploit”进行比较。 Github Wiki中的[安装指南](https://github.com/mwrlabs/needle/wiki/Installation-Guide "Needle Installation Guide") 包含有关如何准备Kali Linux或macOS以及如何进行安装的所有信息以及在您的iOS设备上安装Needle Agent。
 
-Please also ensure that you install the Darwin CC Tools from the Coolstar repository, to get Needle to work on iOS 12.
+还请确保您从Coolstar存储库安装了Darwin CC Tools，以使Needle在iOS 12上运行。
 
-In order to configure Needle read the [Quick Start Guide](https://github.com/mwrlabs/needle/wiki/Quick-Start-Guide "Quick Start Guide") and go through the [Command Reference of Needle](https://github.com/mwrlabs/needle/wiki/Command-Reference "Command Reference of Needle") to get familiar with it.
+为了配置Needle，请阅读[快速入门指南](https://github.com/mwrlabs/needle/wiki/Quick-Start-Guide "Quick Start Guide") 并阅读[Needle命令参考](https://github.com/mwrlabs/needle/wiki/Command-Reference "Command Reference of Needle") 来熟悉它。
 
-> There are known issues with Needle when running on iOS devices that are [jailbroken with Chimera](https://github.com/mwrlabs/needle/issues/273 "Many modules dont work with chimera jail break"). Instead, the unc0ver jailbreak should be used.
+> 在的iOS设备上运行时，Needle存在已知问题[与Chimera越狱](https://github.com/mwrlabs/needle/issues/273 "Many modules dont work with chimera jail break"). 相反，应该使用unc0ver越狱。
 
 ##### Objection
 
-[Objection](https://github.com/sensepost/objection "Objection on GitHub") is a "runtime mobile exploration toolkit, powered by Frida". Its main goal is to allow security testing on non-rooted or jailbroken devices through an intuitive interface.
+[Objection](https://github.com/sensepost/objection "Objection on GitHub") 是“由Frida提供支持的运行时移动探索工具包”。它的主要目标是通过直观的界面允许对非root用户或越狱设备进行安全测试。
 
-Objection achieves this goal by providing you with the tools to easily inject the Frida gadget into an application by repackaging it. This way, you can deploy the repackaged app to the non-jailbroken device by sideloading it and interact with the application as explained in the previous section.
+Objection通过为您提供通过重新打包将Frida小工具轻松地注入到应用程序中的工具来实现此目标。这样，您可以通过侧面加载重新打包的应用程序将其部署到非越狱设备，并按照上一节中的说明与应用程序进行交互。
 
-However, Objection also provides a REPL that allows you to interact with the application, giving you the ability to perform any action that the application can perform. A full list of the features of Objection can be found on the project's homepage, but here are a few interesting ones:
+但是，Objection还提供了REPL，它允许您与应用程序进行交互，从而使您能够执行应用程序可以执行的任何操作。可以在项目的主页上找到Objection功能的完整列表，但是这里有一些有趣的功能：
 
-- Repackage applications to include the Frida gadget
-- Disable SSL pinning for popular methods
-- Access application storage to download or upload files
-- Execute custom Frida scripts
-- Dump the Keychain
-- Read plist files
+- 重新打包应用程序以包括Frida小工具
+- 为流行方法禁用SSL固定
+- 访问应用程序存储以下载或上传文件
+- 执行自定义Frida脚本
+- 转存KeyChain数据
+- 读取plist文件
 
-All these tasks and more can be easily done by using the commands in objection's REPL. For example, you can obtain the classes used in an app, functions of classes or information about the bundles of an app by running:
+通过使用异议的REPL中的命令，可以轻松完成所有这些任务以及更多任务。例如，您可以通过运行以下命令获取应用程序中使用的类，类的功能或有关应用程序包的信息：
 
 ```shell
 OWASP.iGoat-Swift on (iPhone: 12.0) [usb] # ios hooking list classes
@@ -327,13 +329,13 @@ OWASP.iGoat-Swift on (iPhone: 12.0) [usb] # ios hooking list class_methods <Clas
 OWASP.iGoat-Swift on (iPhone: 12.0) [usb] # ios bundles list_bundles
 ```
 
-The ability to perform advanced dynamic analysis on non-jailbroken devices is one of the features that makes Objection incredibly useful. It is not always possible to jailbreak the latest version of iOS, or you may have an application with advanced jailbreak detection mechanisms. Furthermore, the included Frida scripts make it very easy to quickly analyze an application, or get around basic security controls.
+在非越狱设备上执行高级动态分析的能力是使异议变得异常有用的功能之一。 始终无法越狱最新版本的iOS，或者您的应用程序可能具有先进的越狱检测机制。 此外，随附的Frida脚本使快速分析应用程序或解决基本安全控制变得非常容易。
 
-Finally, in case you do have access to a jailbroken device, Objection can connect directly to the running Frida server to provide all its functionality without needing to repackage the application.
+最后，如果您确实可以使用越狱设备，则Objection可以直接连接到正在运行的Frida服务器，以提供其所有功能，而无需重新包装应用程序。
 
-###### Installing Objection
+###### 安装 Objection
 
-Objection can be installed through pip as described on [Objection's Wiki](https://github.com/sensepost/objection/wiki/Installation "Objection Wiki - Installation").
+可以按照所述通过pip安装Objection [Objection's Wiki](https://github.com/sensepost/objection/wiki/Installation "Objection Wiki - Installation").
 
 ```shell
 
@@ -341,23 +343,23 @@ $ pip3 install objection
 
 ```
 
-If your device is jailbroken, you are now ready to interact with any application running on the device and you can skip to the "Using Objection" section below.
+如果您的设备已越狱，则现在可以与该设备上运行的任何应用程序进行交互，并且可以跳到下面的“使用异议”部分。
 
-However, if you want to test on a non-jailbroken device, you will first need to include the Frida gadget in the application. The [Objection Wiki](https://github.com/sensepost/objection/wiki/Patching-iOS-Applications "Patching iOS Applications") describes the needed steps in detail, but after making the right preparations, you'll be able to patch an IPA by calling the objection command:
+但是，如果要在非越狱设备上进行测试，则首先需要在应用程序中包括Frida小工具。 [Objection Wiki](https://github.com/sensepost/objection/wiki/Patching-iOS-Applications "Patching iOS Applications") 详细描述了所需的步骤，但是在进行了正确的准备后，您将能够 通过调用异议命令来修补IPA：
 
 ```shell
 $ objection patchipa --source my-app.ipa --codesign-signature 0C2E8200Dxxxx
 ```
 
-Finally, the application needs to be sideloaded and run with debugging communication enabled. Detailed steps can be found on the [Objection Wiki](https://github.com/sensepost/objection/wiki/Running-Patched-iOS-Applications "Running Patched iOS Applications"), but for macOS users it can easily be done by using ios-deploy:
+最后，该应用程序需要加载并在启用调试通信的情况下运行。 可以在[Objection Wiki](https://github.com/sensepost/objection/wiki/Running-Patched-iOS-Applications "Running Patched iOS Applications"), 上找到详细步骤，但是对于macOS用户，可以轻松完成此操作 通过使用ios-deploy：
 
 ```shell
 $ ios-deploy --bundle Payload/my-app.app -W -d
 ```
 
-###### Using Objection
+###### 使用 Objection
 
-Starting up Objection depends on whether you've patched the IPA or whether you are using a jailbroken device running Frida-server. For running a patched IPA, objection will automatically find any attached devices and search for a listening frida gadget. However, when using frida-server, you need to explicitly tell frida-server which application you want to analyze.
+启动Objection取决于您是否已修补IPA或使用的是运行Frida服务器的越狱设备。 为了运行修补的IPA，Objection将自动找到所有连接的设备并搜索可收听的frida小工具。 但是，在使用frida-server时，您需要明确告诉frida-server您要分析哪个应用程序。
 
 ```shell
 # Connecting to a patched IPA
@@ -371,7 +373,7 @@ $ frida-ps -Ua | grep -i Telegram
 $ objection --gadget="Telegram" explore
 ```
 
-Once you are in the Objection REPL, you can execute any of the available commands. Below is an overview of some of the most useful ones:
+进入Objection REPL后，您可以执行任何可用的命令。 以下是一些最有用的概述：
 
 ```shell
 # Show the different storage locations belonging to the app
@@ -391,11 +393,11 @@ $ ios plist cat <myfile.plist>
 
 ```
 
-More information on using the Objection REPL can be found on the [Objection Wiki](https://github.com/sensepost/objection/wiki/Using-objection "Using Objection")
+有关使用Objection REPL的更多信息，请参见[Objection Wiki](https://github.com/sensepost/objection/wiki/Using-objection "Using Objection")
 
 ##### Passionfruit
 
-[Passionfruit](https://github.com/chaitin/passionfruit/ "Passionfruit") is an iOS app blackbox assessment tool that is using the Frida server on the iOS device and visualizes many standard app data via Vue.js-based GUI. It can be installed with npm.
+[Passionfruit](https://github.com/chaitin/passionfruit/ "Passionfruit") 是一个iOS应用程序黑箱评估工具，它使用iOS设备上的Frida服务器，并通过基于Vue.js的GUI可视化许多标准应用程序数据。 可以使用npm安装。
 
 ```shell
 $ npm install -g passionfruit
@@ -403,44 +405,44 @@ $ passionfruit
 listening on http://localhost:31337
 ```
 
-When you execute the command `passionfruit` a local server will be started on port 31337. Connect your jailbroken device with the Frida server running, or a non-jailbroken device with a repackaged app including Frida to your macOS device via USB. Once you click on the "iPhone" icon you will get an overview of all installed apps:
+当您执行命令`passionfruit`时，将在端口31337上启动本地服务器。将已越狱的设备与正在运行的Frida服务器连接，或将已重新打包应用程序（包括Frida）的未越狱的设备通过USB连接到macOS设备。 单击`iPhone`图标后，您将获得所有已安装应用程序的概述：
 
 <img src="Images/Chapters/0x06b/Passionfruit.png" alt="Passionfruit" width="250">
 
-With Passionfruit it's possible to explore different kinds of information concerning an iOS app. Once you selected the iOS app you can perform many tasks such as:
+借助Passionfruit，可以探索有关iOS应用程序的各种信息。 选择iOS应用后，您可以执行许多任务，例如：
 
-- Get information about the binary
-- View folders and files used by the application and download them
-- Inspect the Info.plist
-- Get a UI Dump of the app screen shown on the iOS device
-- List the modules that are loaded by the app
-- Dump class names
-- Dump keychain items
-- Access to NSLog traces
+- 获取有关二进制文件的信息
+- 查看应用程序使用的文件夹和文件并下载
+- 检查Info.plist
+- 获取iOS设备上显示的应用程序屏幕的UI Dump
+- 列出应用程序加载的模块
+- 转储类名称
+- 转储钥匙串物品
+- 访问NSLog跟踪
 
 ##### Radare2
 
-[Radare2](https://github.com/radare/radare2 "Radare2") is a complete framework for reverse-engineering and analyzing binaries. The installation instructions can be found in the GitHub repository. To learn more on radare2 you may want to read the [official radare2 book](https://radare.gitbooks.io/radare2book/content/ "Radare2 book").
+[Radare2](https://github.com/radare/radare2 "Radare2") 是用于反向工程和分析二进制文件的完整框架。可以在GitHub存储库中找到安装说明。要了解有关radare2的更多信息，您可能需要阅读[官方radare2书](https://radare.gitbooks.io/radare2book/content/ "Radare2 book").
 
 ##### TablePlus
 
-[TablePlus](https://tableplus.io/ "TablePlus") is a tool for Windows and macOS to inspect database files, like Sqlite and others. This can be very useful during iOS engagements when dumping the database files from the iOS device and analyzing the content of them with a GUI tool.
+[TablePlus](https://tableplus.io/ "TablePlus") 是Windows和macOS检查Sqlite等数据库文件的工具。在从iOS设备转储数据库文件并使用GUI工具分析它们的内容时，这在iOS参与期间非常有用。
 
-### Basic Testing Operations
+### 基本测试操作
 
-#### Accessing the Device Shell
+#### 访问设备 Shell
 
-One of the most common things you do when testing an app is accessing the device shell. In this section we'll see how to access the iOS shell both remotely from your host computer with/without a USB cable and locally from the device itself.
+测试应用程序时，您要做的最常见的事情之一就是访问设备Shell。在本节中，我们将介绍如何通过USB电缆 或者（不带USB电缆）从主机远程访问iOS Shell，以及如何从设备本身本地访问iOS Shell。
 
-##### Remote Shell
+##### 远程 Shell
 
-In contrast to Android where you can easily access the device shell using the adb tool, on iOS you only have the option to access the remote shell via SSH. This also means that your iOS device must be jailbroken in order to connect to its shell from your host computer. For this section we assume that you've properly jailbroken your device and have either Cydia (see screenshot above) or Sileo installed as explained in "Getting Privileged Access". In the rest of the guide we will reference to Cydia, but the same packages should be available in Sileo.
+与Android相比，您可以使用adb工具轻松访问设备外壳，而在iOS上，您只能选择通过SSH访问远程外壳。这也意味着您的iOS设备必须越狱才能从主机连接到其外壳。对于本节，我们假设您已正确越狱了设备，并按照“获取特权访问”中的说明安装了Cydia（请参见上面的屏幕截图）或Sileo。在本指南的其余部分中，我们将引用Cydia，但Sileo中应提供相同的软件包。
 
 <img src="Images/Chapters/0x06b/cydia.png" alt="iOS App Folder Structure" width="250">
 
-In order to enable SSH access to your iOS device you can install the OpenSSH package. Once installed, be sure to connect both devices to the same Wi-Fi network and take a note of the device IP address, which you can find in the Settings -> Wi-Fi menu and tapping once on the info icon of the network you're connected to.
+为了启用SSH访问iOS设备，您可以安装OpenSSH软件包。 安装完成后，请确保将两个设备都连接到同一个Wi-Fi网络，并记下设备IP地址，您可以在“设置”->“ Wi-Fi”菜单中找到该IP地址，然后在您网络的信息图标上点击一次 连接到。
 
-You can now access the remote device's shell by running `ssh root@<device_ip_address>`, which will log you in as the root user:
+现在，您可以通过运行`ssh root @ <device_ip_address>`来访问远程设备的外壳，它将以root用户身份登录：
 
 ```shell
 $ ssh root@192.168.197.234
@@ -448,35 +450,35 @@ root@192.168.197.234's password:
 iPhone:~ root#
 ```
 
-Press Control + D or type `exit` to quit.
+按Control + D或键入`exit`退出。
 
-When accessing your iOS device via SSH consider the following:
+通过SSH访问iOS设备时，请注意以下事项：
 
-- The default users are `root` and `mobile`.
-- The default password for both is `alpine`.
+- 默认用户为 `root`和`mobile`。
+- 两者的默认密码均为`alpine`。
 
-> Remember to change the default password for both users `root` and `mobile` as anyone on the same network can find the IP address of your device and connect via the well-known default password, which will give them root access to your device.
+> 请记住，要同时更改root用户和mobile用户的默认密码，因为同一网络上的任何人都可以找到您设备的IP地址并通过众所周知的默认密码进行连接，这将使他们可以root用户访问您的设备 。
 
-If you forget your password and want to reset it to the default `alpine`:
+如果您忘记了密码并想将其重置为默认的`alpine`:
 
-1. Edit the file `/private/etc/master.password` on your jailbroken iOS device (using an on-device shell as shown below)
-2. Find the lines:
+1. 在越狱的iOS设备上编辑文件`/ private / etc / master.password`（使用设备上的外壳程序，如下所示）
+2. 找到以下行：
 
    ```shell
     root:xxxxxxxxx:0:0::0:0:System Administrator:/var/root:/bin/sh
     mobile:xxxxxxxxx:501:501::0:0:Mobile User:/var/mobile:/bin/sh
    ```
 
-3. Change `xxxxxxxxx` to `/smx7MYTQIi2M` (which is the hashed password `alpine`)
-4. Save and exit
+3. 将 `xxxxxxxxx` 更改为 `/smx7MYTQIi2M` (这是哈希密码 `alpine`)
+4. 保存并退出
 
-###### Connect to a Device via SSH over USB
+###### 通过SSH穿越USB连接到设备
 
-During a real black box test, a reliable Wi-Fi connection may not be available. In this situation, you can use [usbmuxd](https://github.com/libimobiledevice/usbmuxd "usbmuxd") to connect to your device's SSH server via USB.
+在真正的黑匣子测试期间，可能无法使用可靠的Wi-Fi连接。 在这种情况下，您可以使用[usbmuxd](https://github.com/libimobiledevice/usbmuxd "usbmuxd") 通过USB连接到设备的SSH服务器。
 
-Usbmuxd is a socket daemon that monitors USB iPhone connections. You can use it to map the mobile device's localhost listening sockets to TCP ports on your host machine. This allows you to conveniently SSH into your iOS device without setting up an actual network connection. When usbmuxd detects an iPhone running in normal mode, it connects to the phone and begins relaying requests that it receives via `/var/run/usbmuxd`.
+是一个套接字守护程序，用于监视USB iPhone连接。 您可以使用它将移动设备的localhost侦听套接字映射到主机上的TCP端口。 这使您可以方便地通过SSH进入您的iOS设备，而无需设置实际的网络连接。 当usbmuxd检测到以正常模式运行的iPhone时，它会连接到手机并开始中继通过 `/var/run/usbmuxd`接收到的请求。
 
-Connect macOS to an iOS device by installing and starting iproxy:
+通过安装和启动iproxy将macOS连接到iOS设备：
 
 ```shell
 $ brew install libimobiledevice
@@ -484,7 +486,7 @@ $ iproxy 2222 22
 waiting for connection
 ```
 
-The above command maps port `22` on the iOS device to port `2222` on localhost. With the following command in a new terminal window, you can connect to the device:
+上面的命令将iOS设备上的端口`22`映射到本地主机上的端口2222。 在新的终端窗口中使用以下命令，您可以连接到设备：
 
 ```shell
 $ ssh -p 2222 root@localhost
@@ -492,35 +494,35 @@ root@localhost's password:
 iPhone:~ root#
 ```
 
-You can also connect to your iPhone's USB via [Needle](https://labs.mwrinfosecurity.com/blog/needle-how-to/ "Needle").
+您还可以通过[Needle](https://labs.mwrinfosecurity.com/blog/needle-how-to/ "Needle")连接到iPhone的USB。
 
-##### On-device Shell App
+##### 设备上的 Shell 应用程序
 
-While usually using an on-device shell (terminal emulator) might be very tedious compared to a remote shell, it can prove handy for debugging in case of, for example, network issues or check some configuration. For example, you can install [NewTerm 2](https://repo.chariz.io/package/ws.hbang.newterm2/ "NewTerm 2") via Cydia for this purpose (it supports iOS 6.0 to 12.1.2 at the time of this writing).
+尽管与远程外壳程序相比，通常使用设备上外壳程序（终端仿真器）可能很繁琐，但在例如网络问题或检查某些配置的情况下，调试起来很方便。例如，您可以为此通过Cydia安装[NewTerm 2](https://repo.chariz.io/package/ws.hbang.newterm2/ "NewTerm 2") （它在以下位置支持iOS 6.0至12.1.2）：撰写本文时）
 
-In addition, there are a few jailbreaks that explicitly disable incoming SSH *for security reasons*. In those cases, it is very convenient to have an on-device shell app, which you can use to first SSH out of the device with a reverse shell, and then connect from your host computer to it.
+此外，*出于安全原因*，有一些越狱措施明确禁止传入的SSH。在这些情况下，拥有设备上的外壳应用程序非常方便，您可以使用该应用程序先使用反向外壳将SSH从设备中抽出，然后再从您的主机连接到它。
 
-Opening a reverse shell over SSH can be done by running the command `ssh -R <remote_port>:localhost:22 <username>@<host_computer_ip>`.
+通过运行命令`ssh -R <remote_port>：localhost：22 <username> @ <host_computer_ip>`，可以通过SSH打开反向Shell。
 
-On the on-device shell app run the following command and, when asked, enter the password of the `mstg` user of the host computer:
+在设备上的Shell应用程序上，运行以下命令，并在系统询问时输入主机的`mstg`用户的密码：
 
 ```shell
 ssh -R 2222:localhost:22 mstg@192.168.197.235
 ```
 
-On your host computer run the following command and, when asked, enter the password of the `root` user of the iOS device:
+在您的主机上运行以下命令，并在询问时输入iOS设备的 `root` 用户的密码：
 
 ```shell
 $ ssh -p 2222 root@localhost
 ```
 
-#### Host-Device Data Transfer
+#### 主机设备数据传输
 
-There might be various scenarios where you might need to transfer data from the iOS device or app data sandbox to your workstation or vice versa. The following section will show you different ways on how to achieve that.
+在各种情况下，您可能需要将数据从iOS设备或应用程序数据沙箱传输到工作站，反之亦然。下一节将向您展示如何实现这一目标的不同方法。
 
-##### Copying App Data Files via SSH and SCP
+##### 通过SSH和SCP复制应用程序数据文件
 
-As we know now, files from our app are stored in the Data directory. You can now simply archive the Data directory with `tar` and pull it from the device with `scp`:
+众所周知，应用程序中的文件存储在Data目录中。现在，您只需使用`tar`归档数据目录，然后使用`scp`将其从设备中拉出：
 
 ```shell
 iPhone:~ root# tar czvf /tmp/data.tgz /private/var/mobile/Containers/Data/Application/8C8E7EB0-BC9B-435B-8EF8-8F5560EB0693
@@ -530,37 +532,37 @@ $ scp -P 2222 root@localhost:/tmp/data.tgz .
 
 ##### Passionfruit
 
-After starting Passionfruit you can select the app that is in scope for testing. There are various functions available, of which one is called "Files". When selecting it, you will get a listing of the directories of the app sandbox.
+启动Passionfruit后，您可以选择要进行测试的应用程序。有多种功能可用，其中一种称为`文件`。选择它时，您将获得应用程序沙箱目录的列表。
 
 <img src="Images/Chapters/0x06b/passionfruit_data_dir.png" alt="Passiofruit Data directory">
 
-When navigating through the directories and selecting a file, a pop-up will show up and display the data either as hexadecimal or text. When closing this pop-up you have various options available for the file, including:
+在目录中导航并选择文件时，将显示一个弹出窗口，并以十六进制或文本形式显示数据。关闭此弹出窗口时，您可以使用该文件的各种选项，包括：
 
-- Text viewer
-- SQLite viewer
-- Image viewer
-- Plist viewer
-- Download
+- 文字检视器
+- SQLite查看器
+- 图像浏览器
+- Plist查看器
+- 下载
 
 <img src="Images/Chapters/0x06b/passionfruit_file_download.png" alt="Passiofruit File Options">
 
 ##### Objection
 
-When you are starting objection you will find the prompt within the Bundle directory.
+当您开始运行Objection时，您会在Bundle目录中找到提示。
 
 ```shell
 org.owasp.MSTG on (iPhone: 10.3.3) [usb] # pwd print
 Current directory: /var/containers/Bundle/Application/DABF849D-493E-464C-B66B-B8B6C53A4E76/org.owasp.MSTG.app
 ```
 
-Use the `env` command to get the directories of the app and navigate to the Documents directory.
+使用`env`命令来获取应用程序的目录并导航到Documents目录。
 
 ```shell
 org.owasp.MSTG on (iPhone: 10.3.3) [usb] # cd /var/mobile/Containers/Data/Application/72C7AAFB-1D75-4FBA-9D83-D8B4A2D44133/Documents
 /var/mobile/Containers/Data/Application/72C7AAFB-1D75-4FBA-9D83-D8B4A2D44133/Documents
 ```
 
-With the command `file download <filename>` you can download a file from the iOS device to your workstation and can analyze it afterwards.
+使用命令`文件下载<文件名>`，您可以将文件从iOS设备下载到工作站，然后可以对其进行分析。
 
 ```shell
 org.owasp.MSTG on (iPhone: 10.3.3) [usb] # file download .com.apple.mobile_container_manager.metadata.plist
@@ -570,41 +572,41 @@ Writing bytes to destination...
 Successfully downloaded /var/mobile/Containers/Data/Application/72C7AAFB-1D75-4FBA-9D83-D8B4A2D44133/.com.apple.mobile_container_manager.metadata.plist to .com.apple.mobile_container_manager.metadata.plist
 ```
 
-You can also upload files to the iOS device with `file upload <local_file_path>`.
+您也可以使用`file upload <local_file_path>`将文件上传到iOS设备
 
-#### Obtaining and Extracting Apps
+#### 获取和提取应用程序
 
-##### Getting the IPA File from an OTA Distribution Link
+##### 从OTA分发链接获取IPA文件
 
-During development, apps are sometimes provided to testers via over-the-air (OTA) distribution. In that situation, you'll receive an itms-services link, such as the following:
+在开发过程中，有时会通过无线（OTA）分发将应用程序提供给测试人员。在这种情况下，您将收到一个itms-services链接，例如：
 
 ```http
 itms-services://?action=download-manifest&url=https://s3-ap-southeast-1.amazonaws.com/test-uat/manifest.plist
 ```
 
-You can use the [ITMS services asset downloader](https://www.npmjs.com/package/itms-services "ITMS services asset downloader") tool to download the IPA from an OTA distribution URL. Install it via npm:
+您可以使用[ITMS服务资产下载器](https://www.npmjs.com/package/itms-services "ITMS services asset downloader") 工具从OTA分发URL下载IPA。 通过npm安装：
 
 ```shell
 $ npm install -g itms-services
 ```
 
-Save the IPA file locally with the following command:
+使用以下命令在本地保存IPA文件：
 
 ```shell
 # itms-services -u "itms-services://?action=download-manifest&url=https://s3-ap-southeast-1.amazonaws.com/test-uat/manifest.plist" -o - > out.ipa
 ```
 
-##### Acquiring the App Binary
+##### 获取应用程序二进制文件
 
-1. From an IPA:
+1. 从IPA:
 
-   If you have the IPA (probably including an already decrypted app binary), unzip it and you are ready to go. The app binary is located in the main bundle directory (.app), e.g. `Payload/Telegram X.app/Telegram X`. See the following subsection for details on the extraction of the property lists.
+   如果您拥有IPA（可能包括已解密的应用程序二进制文件），请将其解压缩，即可开始使用。应用程序二进制文件位于主捆绑目录（.app）中，例如有效负载/电报X.app/电报X。有关提取属性列表的详细信息，请参见以下小节。
 
-    > On macOS's Finder, .app directories are opened by right-clicking them and selecting "Show Package Content". On the terminal you can just `cd` into them.
+    > 在macOS的Finder上，通过右键单击.app目录并选择“显示软件包内容”来打开它们。在终端上，您可以将它们`cd`到其中。
 
-2. From a Jailbroken device:
+2. 从越狱设备中：
 
-    If you don't have the original IPA, then you need a jailbroken device where you will install the app (e.g. via App Store). Once installed, you need to extract the app binary from memory and rebuild the IPA file. Because of DRM, the file is encrypted when it is stored on the iOS device, so simply pulling the binary from the Bundle (either through SSH or Objection) will not be successful. The following shows the output of running class-dump on the Telegram app, which was directly pulled from the installation directory of the iPhone:
+    如果您没有原始IPA，则需要一个越狱设备（例如通过App Store安装该应用程序）。安装完成后，您需要从内存中提取应用程序二进制文件并重建IPA文件。由于DRM，文件存储在iOS设备上时会被加密，因此简单地从捆绑软件中提取二进制文件（通过SSH或Objection）将不会成功。下面显示了Telegram应用程序上正在运行的class-dump的输出，该输出直接从iPhone的安装目录中提取：
 
 ```shell
 $ class-dump Telegram
@@ -636,11 +638,11 @@ $ class-dump Telegram
 //
 ```
 
-In order to retrieve the unencrypted version, we can use tools such as [frida-ios-dump](https://github.com/AloneMonkey/frida-ios-dump "frida-ios-dump") or [Clutch](https://github.com/KJCracks/Clutch "Clutch"). Both will extract the unencrypted version from memory while the application is running on the device. The stability of both Clutch and Frida can vary depending on your iOS version and Jailbreak method, so it's useful to have multiple ways of extracting the binary. In general, all iOS versions lower than 12 should work with Clutch, while iOS 12+ should work with frida-ios-dump or a modified version of Clutch as discussed later.
+为了检索未加密的版本，我们可以使用[frida-ios-dump](https://github.com/AloneMonkey/frida-ios-dump "frida-ios-dump") 或 [Clutch](https://github.com/KJCracks/Clutch "Clutch"). 当应用程序在设备上运行时，两者都会从内存中提取未加密的版本。 根据您的iOS版本和越狱方法的不同，Clutch和Frida的稳定性可能会有所不同，因此有多种提取二进制文件的方法很有用。 通常，所有低于12的iOS版本均应与Clutch一起使用，而iOS 12+应与frida-ios-dump或Clutch的修改版一起使用，如稍后所述。
 
 ###### Using Clutch
 
-After building Clutch as explained on the Clutch GitHub page, push it to the iOS device through SCP. Run Clutch with the `-i` flag to list all installed applications:
+按照 Clutch GitHub页面上的说明构建Clutch之后，将其通过SCP推送到iOS设备。使用-i标志运行Clutch以列出所有已安装的应用程序：
 
 ```shell
 root# ./Clutch -i
@@ -651,7 +653,7 @@ Installed apps:
 ...
 ```
 
-Once you have the bundle identifier, you can use Clutch to create the IPA:
+获得捆绑包标识符后，可以使用Clutch创建IPA：
 
 ```shell
 root# ./Clutch -d ph.telegra.Telegraph
@@ -671,7 +673,7 @@ DONE: /private/var/mobile/Documents/Dumped/ph.telegra.Telegraph-iOS9.0-(Clutch-(
 Finished dumping ph.telegra.Telegraph in 20.5 seconds
 ```
 
-After copying the IPA file over to the host system and unzipping it, you can see that the Telegram application can now be parsed by class-dump, indicating that it is no longer encrypted:
+将IPA文件复制到主机系统并将其解压缩后，您可以看到现在可以通过class-dump解析Telegram应用程序，表明不再加密：
 
 ```shell
 
@@ -697,15 +699,15 @@ struct CGPoint {
 
 ```
 
-Note: when you use Clutch on iOS 12, please check [Clutch Github issue 228](https://github.com/KJCracks/Clutch/issues/228 "Getting Clutch to run on iOS 12")
+注意：在iOS 12上使用Clutch时，请检查[Clutch Github第228期](https://github.com/KJCracks/Clutch/issues/228 "Getting Clutch to run on iOS 12")
 
-###### Using Frida-ios-dump
+###### 使用 Frida-ios-dump
 
-[Frida-ios-dump](https://github.com/AloneMonkey/frida-ios-dump "Frida-ios-dump") is a Python script that helps you retrieve the decrypted version of an iOS app from an iOS device. It supports both Python 2 and Python 3 and requires Frida running on your iOS device (jailbroken or not). This tool uses Frida's [Memory API](https://www.frida.re/docs/javascript-api/#memory "Frida Memory API") to dump the memory of the running app and recreate an IPA file. Because the code is extracted from memory, it is automatically decrypted.
+[Frida-ios-dump](https://github.com/AloneMonkey/frida-ios-dump "Frida-ios-dump") 是一个Python脚本，可帮助您从iOS设备中检索iOS应用程序的解密版本 。 它同时支持Python 2和Python 3，并且要求Frida在iOS设备上运行（无论是否已破解）。 该工具使用Frida的 [Memory API](https://www.frida.re/docs/javascript-api/#memory "Frida Memory API") 转储正在运行的应用程序的内存并重新创建IPA文件。 由于代码是从内存中提取的，因此会自动解密。
 
-First, make sure that the configuration in `dump.py` is set to either localhost with port 2222 when using iProxy, or to the actual IP address and port of the device from which you want to dump the binary. Next, change the default username (`User = 'root'`) and password (`Password = 'alpine'`) in `dump.py` to the ones you use.
+首先，请确保在使用iProxy时，将`dump.py`中的配置设置为端口2222的localhost或要从中转储二进制文件的设备的实际IP地址和端口。 接下来，将`dump.py`中的默认用户名（`User ='root'`）和密码（`Password ='alpine`）更改为您使用的用户名。
 
-Now you can safely use the tool to enumerate the apps installed:
+现在，您可以安全地使用该工具来枚举已安装的应用程序：
 
 ```shell
 $ python dump.py -l
@@ -719,7 +721,7 @@ $ python dump.py -l
    ...
 ```
 
-and you can dump one of the listed binaries:
+您可以转储列出的二进制文件之一：
 
 ```shell
 $ python dump.py ph.telegra.Telegraph
@@ -738,31 +740,31 @@ libswiftCoreData.dylib.fid: 100%|██████████| 82.5k/82.5k [00
 0.00B [00:00, ?B/s]Generating "Telegram.ipa"
 ```
 
-After this, the `Telegram.ipa` file will be created in your current directory. You can validate the success of the dump by removing the app and reinstalling it (e.g. using `ios-deploy -b Telegram.ipa`). Note that this will only work on jailbroken devices, as otherwise the signature won't be valid.
+此后，将在当前目录中创建`Telegram.ipa`文件。 您可以通过删除应用并重新安装来验证转储是否成功（例如，使用`ios-deploy -b Telegram.ipa`）。 请注意，这仅适用于越狱设备，否则签名将无效。
 
-#### Installing Apps
+#### 安装应用程序
 
-When you install an application without using Apple's App Store, this is called sideloading. There are various ways of sideloading which are described below. On the iOS device, the actual installation process is then handled by the installd daemon, which will unpack and install the application. To integrate app services or be installed on an iOS device, all applications must be signed with a certificate issued by Apple. This means that the application can be installed only after successful code signature verification. On a jailbroken phone, however, you can circumvent this security feature with [AppSync](http://repo.hackyouriphone.org/appsyncunified "AppSync"), a package available in the Cydia store. It contains numerous useful applications that leverage jailbreak-provided root privileges to execute advanced functionality. AppSync is a tweak that patches installd, allowing the installation of fake-signed IPA packages.
+在不使用Apple的App Store的情况下安装应用程序时，这称为侧载。有多种侧面加载方式，如下所述。然后，在iOS设备上，实际的安装过程由installd守护进程处理，该守护进程将解压缩并安装该应用程序。要集成应用程序服务或将其安装在iOS设备上，必须使用Apple发行的证书对所有应用程序进行签名。这意味着仅在成功进行代码签名验证之后才能安装该应用程序。但是，在越狱的手机上，您可以使用Cydia商店中提供的软件包 [AppSync](http://repo.hackyouriphone.org/appsyncunified "AppSync"), 规避此安全功能。它包含许多有用的应用程序，这些应用程序利用越狱提供的root特权执行高级功能。 AppSync是一项已安装补丁的调整，允许安装假签名的IPA软件包。
 
-Different methods exist for installing an IPA package onto an iOS device, which are described in detail below.
+存在将IPA软件包安装到iOS设备上的不同方法，下面将详细介绍。
 
-> Please note that since iTunes 12.7 it is not longer possible to install apps using iTunes.
+> 请注意，自iTunes 12.7起，无法再使用iTunes安装应用程序。
 
 ##### Cydia Impactor
 
-One tool that is available for Windows, macOS and Linux is [Cydia Impactor](http://www.cydiaimpactor.com/ "Cydia Impactor"). This tool was originally created to jailbreak iPhones, but has been rewritten to sign and install IPA packages to iOS devices via sideloading. The tool can even be used to install APK files to Android devices. A [step by step guide and troubleshooting steps can be found here](https://yalujailbreak.net/how-to-use-cydia-impactor/ "How to use Cydia Impactor").
+可用于Windows，macOS和Linux的一种工具是 [Cydia Impactor](http://www.cydiaimpactor.com/ "Cydia Impactor"). 该工具最初是为越狱iPhone而创建的，但已被重写以通过侧面加载将IPA软件包签名并安装到iOS设备。该工具甚至可以用于将APK文件安装到Android设备。 [可在此处找到分步指南和故障排除步骤](https://yalujailbreak.net/how-to-use-cydia-impactor/ "How to use Cydia Impactor").
 
 ##### libimobiledevice
 
-On Linux and also macOS, you can alternatively use [libimobiledevice](https://www.libimobiledevice.org/ "libimobiledevice"), a cross-platform software protocol library and a set of tools for native communication with iOS devices. This allows you to install apps over a USB connection by executing ideviceinstaller. The connection is implemented with the USB multiplexing daemon [usbmuxd](https://www.theiphonewiki.com/wiki/Usbmux "Usbmux"), which provides a TCP tunnel over USB.
+在Linux以及macOS上，您也可以使用[libimobiledevice](https://www.libimobiledevice.org/ "libimobiledevice"), 跨平台软件协议库以及用于与iOS设备进行本机通信的一组工具。 这使您可以通过执行ideviceinstaller通过USB连接安装应用程序。 该连接是通过USB多路复用守护程序[usbmuxd](https://www.theiphonewiki.com/wiki/Usbmux "Usbmux"), 现的，该守护程序通过USB提供了TCP隧道。
 
-The package for libimobiledevice will be available in your Linux package manager. On macOS you can install libimobiledevice via brew:
+libimobiledevice的软件包将在您的Linux软件包管理器中提供。 在macOS上，您可以通过brew安装libimobiledevice：
 
 ```shell
 $ brew install libimobiledevice
 ```
 
-After the installation you have several new command line tools available, such as `ideviceinfo`, `ideviceinstaller` or `idevicedebug`.
+安装后，您会使用几个新的命令行工具，例如“ ideviceinfo”，“ ideviceinstaller”或“ idevicedebug”。
 
 ```shell
 # The following command will show detailed information about the iOS device connected via USB.
@@ -792,7 +794,7 @@ $ idevicedebug -d run OWASP.iGoat-Swift
 
 ##### ipainstaller
 
-The IPA can also be directly installed on the iOS device via the command line with [ipainstaller](https://github.com/autopear/ipainstaller "IPA Installer"). After copying the file over to the device, for example via scp, you can execute the ipainstaller with the IPA's filename:
+也可以通过命令行使用 [ipainstaller](https://github.com/autopear/ipainstaller "IPA Installer")将IPA直接安装在iOS设备上。 将文件复制到设备上（例如通过scp）后，可以使用IPA的文件名执行ipainstaller：
 
 ```shell
 $ ipainstaller App_name.ipa
@@ -800,20 +802,20 @@ $ ipainstaller App_name.ipa
 
 ##### ios-deploy
 
-On macOS one more tool can be used on the command line called [ios-deploy](https://github.com/ios-control/ios-deploy "ios-deploy"), to allow installation and debugging of iOS apps from the command line. It can be installed via brew:
+在macOS上，可以在命令行上使用一个名为 [ios-deploy](https://github.com/ios-control/ios-deploy "ios-deploy"), 的工具，以允许从以下位置安装和调试iOS应用 命令行。 可以通过brew安装：
 
 ```shell
 $ brew install ios-deploy
 ```
 
-After the installation, go into the directory of the IPA you want to install and unzip it as ios-deploy installs an app by using the bundle.
+安装后，进入要安装的IPA的目录并解压缩，因为ios-deploy使用捆绑包安装了应用程序。
 
 ```shell
 $ unzip Name.ipa
 $ ios-deploy --bundle 'Payload/Name.app' -W -d -v
 ```
 
-After the app is installed on the iOS device, you can simply start it by adding the `-m` flag which will directly start debugging without installing the application again.
+在将应用程序安装到iOS设备上之后，您只需添加-m标志即可直接启动它，而无需重新安装应用程序即可直接开始调试。
 
 ```shell
 $ ios-deploy --bundle 'Payload/Name.app' -W -d -v -m
@@ -821,11 +823,11 @@ $ ios-deploy --bundle 'Payload/Name.app' -W -d -v -m
 
 ##### Xcode
 
-It is also possible to use the Xcode IDE to install iOS apps by doing the following steps:
+通过执行以下步骤，也可以使用Xcode IDE安装iOS应用程序：
 
-1. Start Xcode
-2. Select **Window/Devices and Simulators**
-3. Select the connected iOS device and click on the **+** sign in **Installed Apps**.
+1. 启动Xcode
+2. 选择**窗口/设备和模拟器**
+3. 选择已连接的iOS设备，然后单击**已安装的应用程序** 中的 **+** 标志。
 
 ##### Allow Application Installation on a Non-iPad Device
 
@@ -846,26 +848,26 @@ Sometimes an application can require to be used on an iPad device. If you only h
 </plist>  
 ```
 
-It is important to note that changing this value will break the original signature of the IPA file so you need to re-sign the IPA, after the update, in order to install it on a device on which the signature validation has not been disabled.
+重要的是要注意，更改此值将破坏IPA文件的原始签名，因此在更新之后，您需要重新签名IPA，以便将其安装在尚未禁用签名验证的设备上。
 
-This bypass might not work if the application requires capabilities that are specific to modern iPads while your iPhone or iPod is a bit older.
+如果您的iPhone或iPod较旧，而该应用程序需要特定于现代iPad的功能，则此绕过可能不起作用。
 
-Possible values for the property [UIDeviceFamily](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/iPhoneOSKeys.html#//apple_ref/doc/uid/TP40009252-SW11 "UIDeviceFamily property") can be found in the Apple Developer documentation.
+属性 [UIDeviceFamily](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/iPhoneOSKeys.html#//apple_ref/doc/uid/TP40009252-SW11 "UIDeviceFamily property") 可以在Apple Developer文档中找到。
 
-#### Information Gathering
+#### 信息收集
 
-One fundamental step when analyzing apps is information gathering. This can be done by inspecting the app package on your workstation or remotely by accessing the app data on the device. You'll find more advance techniques in the subsequent chapters but, for now, we will focus on the basics: getting a list of all installed apps, exploring the app package and accessing the app data directories on the device itself. This should give you a bit of context about what the app is all about without even having to reverse engineer it or perform more advanced analysis. We will be answering questions such as:
+分析应用程序时的基本步骤之一是信息收集。这可以通过检查工作站上的应用程序包来完成，也可以通过访问设备上的应用程序数据来远程完成。在随后的章节中，您会发现更多高级技术，但现在，我们将重点介绍以下基础知识：获取所有已安装应用程序的列表，浏览应用程序包以及访问设备本身上的应用程序数据目录。这应该为您提供有关应用程序的全部内容的上下文，而无需进行反向工程或执行更高级的分析。我们将回答以下问题：
 
-- Which files are included in the package?
-- Which Frameworks does the app use?
-- Which capabilities does the app require?
-- Which permissions does the app request to the user and for what reason?
-- Does the app allow any unsecured connections?
-- Does the app create any new files when being installed?
+- 包中包含哪些文件？
+- 该应用程序使用哪些框架？
+- 该应用程序需要哪些功能？
+- 该应用向用户请求哪些权限？出于什么原因？
+- 该应用程序允许任何不安全的连接吗？
+- 该应用在安装时会创建任何新文件吗？
 
-##### Listing Installed Apps
+##### 列出已安装的应用程序
 
-When targeting apps that are installed on the device, you'll first have to figure out the correct bundle identifier of the application you want to analyze. You can use `frida-ps -Uai` to get all apps (`-a`) currently installed (`-i`) on the connected USB device (`-U`):
+定位到设备上安装的应用程序时，首先必须找出要分析的应用程序的正确捆绑标识符。您可以使用`frida-ps -Uai`来获取已连接的USB设备（`-U`）当前安装的所有应用程序（`-i`）：
 
 ```bash
 $ frida-ps -Uai
@@ -880,17 +882,17 @@ $ frida-ps -Uai
    -  iGoat-Swift          OWASP.iGoat-Swift
 ```
 
-It also shows which of them are currently running. Take a note of the "Identifier" (bundle identifier) and the PID if any as you'll need them afterwards.
+它还显示了其中哪些正在运行。 记下`Identifier`(捆绑标识符) 和PID（如果有），因为以后需要它们。
 
-You can also directly open passionfruit and after selecting your iOS device you'll get the list of installed apps.
+您还可以直接打开 passionfruit，选择iOS设备后，您将获得已安装应用程序的列表。
 
 <img src="Images/Chapters/0x06b/passionfruit_installed_apps.png" alt="Passionfruit Installed Apps" width="400">
 
-##### Exploring the App Package
+##### 探索应用程序包
 
-Once you have collected the package name of the application you want to target, you'll want to start gathering information about it. First, retrieve the IPA as explained in "Basic Testing Operations - Obtaining and Extracting Apps".
+收集了要定位的应用程序的程序包名称后，就需要开始收集有关它的信息。 首先，按照“基本测试操作-获取和提取应用程序”中的说明检索IPA。
 
-You can unzip the IPA using the standard `unzip` or any other ZIP utility. Inside you'll find a `Payload` folder contaning the so-called Application Bundle (.app). The following is an example in the following output, note that it was truncated for better readability and overview:
+您可以使用标准的`unzip`或任何其他ZIP实用程序将IPA解压缩。 在内部，您会找到一个`Payload`文件夹，其中包含所谓的应用程序捆绑包（.app）。 以下是以下输出中的示例，请注意，为了更好的可读性和概述性，将其截断了：
 
 ```shell
 $ ls -1 Payload/iGoat-Swift.app
@@ -928,62 +930,62 @@ Info.plist
 iGoat-Swift
 ```
 
-The most relevant items are:
+最相关的项目是：
 
-- `Info.plist` contains configuration information for the application, such as its bundle ID, version number, and display name.
-- `_CodeSignature/` contains a plist file with a signature over all files in the bundle.
-- `Frameworks/` contains the app native libraries as .dylib or .framework files.
-- `PlugIns/` may contain app extensions as .appex files (not present in the example).
-- `iGoat-Swift` is the app binary containing the app’s code. Its name is the same as the bundle's name minus the .app extension.
-- Various resources such as images/icons, `*.nib` files (storing the user interfaces of iOS app), localized content (`<language>.lproj`), text files, audio files, etc.
+- `Info.plist`包含应用程序的配置信息，例如其捆绑软件ID，版本号和显示名称。
+- `_CodeSignature /`包含一个plist文件，该文件具有对捆绑软件中所有文件的签名。
+- `Frameworks /`包含应用程序本机库，如.dylib或.framework文件。
+- `PlugIns /`可能包含作为.appex文件的应用程序扩展名（示例中不存在）。
+- `iGoat-Swift`是包含应用程序代码的应用程序二进制文件。 其名称与捆绑包的名称减去.app扩展名相同。
+- 各种资源，例如图像/图标，`*。nib文件`（存储iOS应用程序的用户界面），本地化内容（<language> .lproj），文本文件，音频文件等。
 
-###### The Info.plist File
+###### Info.plist文件
 
-The information property list or `Info.plist` (named by convention) is the main source of information for an iOS app. It consists of a structured file containing key-value pairs describing essential configuration information about the app. Actually, all bundled executables (app extensions, frameworks and apps) are expected to have an `Info.plist` file. You can find all possible keys in the [Apple Developer Documentation](https://developer.apple.com/documentation/bundleresources/information_property_list?language=objc "Information Property List").
+信息属性列表或“ Info.plist”（按惯例命名）是iOS应用程序的主要信息来源。 它由一个结构化文件组成，该文件包含键值对，这些键值对描述了有关应用程序的基本配置信息。 实际上，所有捆绑的可执行文件（应用程序扩展，框架和应用程序）都应具有“ Info.plist”文件。 您可以在[Apple Developer文档](https://developer.apple.com/documentation/bundleresources/information_property_list?language=objc "Information Property List")中找到所有可能的键。
 
-The file might be formatted in XML or binary (bplist). You can convert it to XML format with one simple command:
+该文件可能采用XML或二进制（bplist）格式。 您可以使用一个简单的命令将其转换为XML格式：
 
-- On macOS with `plutil`, which is a tool that comes natively with macOS 10.2 and above versions (no official online documentation is currently available):
+- 在具有`plutil`的macOS上，这是macOS 10.2及更高版本的本地提供的工具（当前尚无官方在线文档）：
 
   ```bash
   $ plutil -convert xml1 Info.plist
   ```
 
-- On Linux:
+- 在 Linux:
 
   ```bash
   $ apt install libplist-utils
   $ plistutil -i Info.plist -o Info_xml.plist
   ```
 
-Here's a non-exhaustive list of some info and the corresponding keywords that you can easily search for in the `Info.plist` file by just inspecting the file or by using `grep -i <keyword> Info.plist`:
+这是一些信息和相应关键字的非详尽列表，您可以通过仅检查文件或使用`grep -i <keyword> Info.plist`轻松在“ Info.plist”文件中进行搜索：
 
-- App permissions Purpose Strings: `UsageDescription` (see "iOS Platform APIs")
-- Custom URL schemes: `CFBundleURLTypes` (see "iOS Platform APIs")
-- Exported/imported *custom document types*: `UTExportedTypeDeclarations`/`UTImportedTypeDeclarations` (see "iOS Platform APIs")
-- App Transport Security (ATS) configuration: `NSAppTransportSecurity` (see "iOS Network APIs")
+- 应用权限用途字符串：`UsageDescription`（请参阅“ iOS平台API”）
+- 自定义URL方案：CFBundleURLTypes（请参阅“ iOS平台API”）
+- 导出/导入的*自定义文档类型*：`UTExportedTypeDeclarations` /`UTImportedTypeDeclarations`（请参阅“ iOS平台API”）
+- 应用传输安全性（ATS）配置：`NSAppTransportSecurity`（请参阅“ iOS网络API”）
 
-Please refer to the mentioned chapters to learn more about how to test each of these points.
+请参考上述章节，以了解有关如何测试这些要点的更多信息。
 
 ###### App Binary
 
-iOS app binaries are fat binaries (they can be deployed on all devices 32- and 64-bit). In contrast to Android, where you can actually decompile the app binary to Java code, the iOS app binaries can only be disassembled.
+iOS应用二进制文件是胖二进制文件（它们可以部署在所有32位和64位设备上）。 与Android（实际上可以将应用程序二进制文件反编译为Java代码）相比，iOS应用程序二进制文件只能反汇编。
 
-Refer to the chapter "Reverse Engineering and Tampering on iOS" for more details.
+有关更多详细信息，请参阅“在iOS上进行逆向工程和篡改”一章。
 
-###### Native Libraries
+###### 原生库
 
-iOS native libraries are known as Frameworks.
+iOS原生库称为框架。
 
-You can easily visualize them from Passionfruit by clicking on "Modules":
+您可以通过单击“模块”轻松地从Passionfruit中可视化它们：
 
 <img src="Images/Chapters/0x06b/passionfruit_modules.png" alt="Passionfruit Modules">
 
-And get a more detailed view including their imports/exports:
+并获得更详细的视图，包括它们的导入/导出
 
 <img src="Images/Chapters/0x06b/passionfruit_modules_detail.png" alt="Passionfruit Modules Detail">
 
-They are available in the `Frameworks` folder in the IPA, you can also inspect them from the terminal:
+它们位于IPA的`Frameworks`文件夹中，您也可以从终端检查它们：
 
 ```shell
 $ ls -1 Frameworks/
@@ -993,7 +995,7 @@ libswiftCoreData.dylib
 libswiftCoreFoundation.dylib
 ```
 
-or from the device with objection (as well as per SSH of course):
+或有objection 的设备（当然还有SSH）：
 
 ```shell
 OWASP.iGoat-Swift on (iPhone: 11.1.2) [usb] # ls
@@ -1006,27 +1008,27 @@ Regular           420  None                ...  libswiftCoreFoundation.dylib
 ...
 ```
 
-Please note that this might not be the complete list of native code elements being used by the app as some can be part of the source code, meaning that they'll be compiled in the app binary and therefore cannot be found as standalone libraries or Frameworks in the `Frameworks` folder.
+请注意，这可能不是应用程序正在使用的本机代码元素的完整列表，因为其中一些可能是源代码的一部分，这意味着它们将在应用程序二进制文件中进行编译，因此无法作为独立的库或框架找到 在`框架`文件夹中。
 
-For now this is all information you can get about the Frameworks unless you start reverse engineering them. Refer to the chapter "Tampering and Reverse Engineering on iOS" for more information about how to reverse engineer Frameworks.
+目前，除非您开始对它们进行反向工程，否则您将获得有关框架的所有信息。 请参阅“ iOS上的篡改和反向工程”一章，以获取有关如何反向工程框架的更多信息。
 
-###### Other App Resources
+###### 其他应用程序资源
 
-It is normally worth taking a look at the rest of the resources and files that you may find in the Application Bundle (.app) inside the IPA as some times they contain additional goodies like encrypted databases, certificates, etc.
+通常值得一看的是，您可能会在IPA内的应用程序捆绑包（.app）中找到其余资源和文件，因为有时它们包含加密数据库，证书等其他信息。
 
 <img src="Images/Chapters/0x06b/passionfruit_db_view.png" alt="Passionfruit Database View">
 
-##### Accessing App Data Directories
+##### 访问应用程序数据目录
 
-Once you have installed the app, there is further information to explore. Let's go through a short overview of the app folder structure on iOS apps to understand which data is stored where. The following illustration represents the application folder structure:
+安装该应用程序后，将有更多信息可供探索。让我们简要介绍一下iOS应用程序上的应用程序文件夹结构，以了解哪些数据存储在何处。下图显示了应用程序文件夹的结构：
 
 <img src="Images/Chapters/0x06a/iOS_Folder_Structure.png" alt="iOS App Folder Structure" width="350">
 
-On iOS, system applications can be found in the `/Applications` directory while user-installed apps are available under `/private/var/containers/`. However, finding the right folder just by navigating the file system is not a trivial task as every app gets a random 128-bit UUID (Universal Unique Identifier) assigned for its directory names.
+在iOS上，系统应用程序位于/应用程序目录中，而用户安装的应用程序位于/ private / var / containers /下。但是，仅通过导航文件系统来找到正确的文件夹并不是一件容易的事，因为每个应用程序都会为其目录名称分配一个随机的128位UUID（通用唯一标识符）。
 
-In order to easily obtain the installation directory information for user-installed apps you can follow the following methods:
+为了轻松获取用户安装的应用程序的安装目录信息，您可以按照以下方法进行操作：
 
-Connect to the terminal on the device and run the command `ipainstaller` ([IPA Installer Console](https://cydia.saurik.com/package/com.autopear.installipa "IPA Installer Console")) as follows:
+连接到设备上的终端并运行命令 `ipainstaller` ([IPA Installer Console](https://cydia.saurik.com/package/com.autopear.installipa "IPA Installer Console")) 如下所示：
 
 ```shell
 iPhone:~ root# ipainstaller -l
@@ -1040,7 +1042,7 @@ Application: /private/var/containers/Bundle/Application/3ADAF47D-A734-49FA-B274-
 Data: /private/var/mobile/Containers/Data/Application/8C8E7EB0-BC9B-435B-8EF8-8F5560EB0693
 ```
 
-Using objection's command `env` will also show you all the directory information of the app. Connecting to the application with objection is described in the section "[Recommended Tools - Objection](#using-objection "Recommended Tools - Objection")".
+使用objection的命令 `env` 还将向您显示该应用程序的所有目录信息。 通过Objection连接到应用程序的描述 "[推荐工具 - Objection](#using-objection "Recommended Tools - Objection")".
 
 ```shell
 OWASP.iGoat-Swift on (iPhone: 11.1.2) [usb] # env
@@ -1053,53 +1055,53 @@ DocumentDirectory  /var/mobile/Containers/Data/Application/8C8E7EB0-BC9B-435B-8E
 LibraryDirectory   /var/mobile/Containers/Data/Application/8C8E7EB0-BC9B-435B-8EF8-8F5560EB0693/Library
 ```
 
-As you can see, apps have two main locations:
+如您所见，应用程序有两个主要位置：
 
 - The Bundle directory (`/var/containers/Bundle/Application/3ADAF47D-A734-49FA-B274-FBCA66589E67/`).
 - The Data directory (`/var/mobile/Containers/Data/Application/8C8E7EB0-BC9B-435B-8EF8-8F5560EB0693/`).
 
-These folders contain information that must be examined closely during application security assessments (for example when analyzing the stored data for sensitive data).
+这些文件夹包含必须在应用程序安全评估期间（例如，在分析存储的数据中查找敏感数据时）仔细检查的信息。
 
-Bundle directory:
+捆绑目录：
 
 - **AppName.app**
-  - This is the Application Bundle as seen before in the IPA, it contains essential application data, static content as well as the application's compiled binary.
-  - This directory is visible to users, but users can't write to it.
-  - Content in this directory is not backed up.
-  - The contents of this folder are used to validate the code signature.
+  - 这是之前在IPA中看到的Application Bundle，它包含必要的应用程序数据，静态内容以及应用程序的已编译二进制文件。
+   - 该目录对用户可见，但用户无法对其进行写入。
+   - 此目录中的内容未备份。
+   - 此文件夹的内容用于验证代码签名。
 
-Data directory:
+数据目录：
 
 - **Documents/**
-  - Contains all the user-generated data. The application end user initiates the creation of this data.
-  - Visible to users and users can write to it.
-  - Content in this directory is backed up.
-  - The app can disable paths by setting `NSURLIsExcludedFromBackupKey`.
+   - 包含所有用户生成的数据。 应用程序最终用户启动此数据的创建。
+   - 对用户可见，用户可以对其进行写入。
+   - 此目录中的内容已备份。
+   - 该应用可以通过设置 `NSURLIsExcludedFromBackupKey`禁用路径。
 - **Library/**
-  - Contains all files that aren't user-specific, such as caches, preferences, cookies, and property list (plist) configuration files.
-  - iOS apps usually use the `Application Support` and `Caches` subdirectories, but the app can create custom subdirectories.
+   - 包含非特定于用户的所有文件，例如缓存，首选项，cookie和属性列表（plist）配置文件。
+   - iOS应用程序通常使用“应用程序支持”和“缓存”子目录，但该应用程序可以创建自定义子目录。
 - **Library/Caches/**
-  - Contains semi-persistent cached files.
-  - Invisible to users and users can't write to it.
-  - Content in this directory is not backed up.
-  - The OS may delete this directory's files automatically when the app is not running and storage space is running low.
+   - 包含半永久性缓存文件。
+   - 对用户不可见，用户无法写入。
+   - 此目录中的内容未备份。
+   - 当应用未运行且存储空间不足时，操作系统可能会自动删除此目录的文件。
 - **Library/Application Support/**
-  - Contains persistent files necessary for running the app.
-  - Invisible to users and users can't write to it.
-  - Content in this directory is backed up.
-  - The app can disable paths by setting `NSURLIsExcludedFromBackupKey`.
+   - 包含运行该应用程序所需的永久文件。
+   - 对用户不可见，用户无法写入。
+   - 此目录中的内容已备份。
+   - 该应用可以通过设置`NSURLIsExcludedFromBackupKey`禁用路径。
 - **Library/Preferences/**
-  - Used for storing properties that can persist even after an application is restarted.
-  - Information is saved, unencrypted, inside the application sandbox in a plist file called [BUNDLE_ID].plist.
-  - All the key/value pairs stored using `NSUserDefaults` can be found in this file.
+   - 用于存储即使在重新启动应用程序后仍然可以保留的属性。
+   - 信息以未加密的形式保存在应用程序沙箱中的plist文件中，该文件名为[BUNDLE_ID] .plist。
+   - 使用“ NSUserDefaults”存储的所有键/值对都可以在此文件中找到。
 - **tmp/**
-  - Use this directory to write temporary files that do not need to persist between app launches.
-  - Contains non-persistent cached files.
-  - Invisible to users.
-  - Content in this directory is not backed up.
-  - The OS may delete this directory's files automatically when the app is not running and storage space is running low.
+   - 使用此目录写入在应用程序启动之间不需要保留的临时文件。
+   - 包含非永久性缓存的文件。
+   - 对用户不可见。
+   - 此目录中的内容未备份。
+   - 当应用未运行且存储空间不足时，操作系统可能会自动删除此目录的文件。
 
-Let's take a closer look at iGoat-Swift's Application Bundle (.app) directory inside the Bundle directory (`/var/containers/Bundle/Application/3ADAF47D-A734-49FA-B274-FBCA66589E67/iGoat-Swift.app`):
+让我们仔细看一下Bundle目录中的iGoat-Swift的Application Bundle（.app）目录 (`/var/containers/Bundle/Application/3ADAF47D-A734-49FA-B274-FBCA66589E67/iGoat-Swift.app`):
 
 ```shell
 OWASP.iGoat-Swift on (iPhone: 11.1.2) [usb] # ls
@@ -1139,38 +1141,38 @@ Regular           420  None                ...  Info.plist
 Regular           493  None                ...  iGoat-Swift
 ```
 
-You can also visualize the Bundle directory from Passionfruit by clicking on **Files** -> **App Bundle**:
+您还可以通过单击**Files** -> **App Bundle**来可视化Passionfruit的Bundle目录：
 
 <img src="Images/Chapters/0x06b/passionfruit_bundle_dir.png" alt="Passionfruit Bundle Directory View">
 
-Including the `Info.plist` file:
+包含`Info.plist`文件：
 
 <img src="Images/Chapters/0x06b/passionfruit_plist_view.png" alt="Passionfruit Plist View">
 
-As well as the Data directory in **Files** -> **Data**:
+以及 **Files** -> **Data** 中的Data目录：
 
 <img src="Images/Chapters/0x06b/passionfruit_data_dir.png" alt="Passionfruit Data Directory View">
 
-Refer to the "Testing Data Storage" chapter for more information and best practices on securely storing sensitive data.
+有关安全存储敏感数据的更多信息和最佳做法，请参阅“测试数据存储”一章。
 
-##### Monitoring System Logs
+##### 监视系统日志
 
-Many apps log informative (and potentially sensitive) messages to the console log. The log also contains crash reports and other useful information. You can collect console logs through the Xcode **Devices** window as follows:
+许多应用程序在控制台日志中记录信息丰富（且可能敏感）的消息。 该日志还包含崩溃报告和其他有用信息。 您可以通过Xcode“设备”窗口收集控制台日志，如下所示：
 
-1. Launch Xcode.
-2. Connect your device to your host computer.
-3. Choose **Window** -> **Devices and Simulators**.
-4. Click on your connected iOS device in the left section of the Devices window.
-5. Reproduce the problem.
-6. Click on the **Open Console** button located in the upper right-hand area of the Devices window to view the console logs on a separate window.
+1. 启动Xcode。
+2. 将设备连接到主机。
+3. 选择**窗口** -> **设备和模拟器**。
+4. 单击“设备”窗口左侧的已连接iOS设备。
+5. 重现问题。
+6. 单击“设备”窗口右上方区域中的“打开控制台”按钮，以在单独的窗口中查看控制台日志。
 
 ![Opening the Device Console in Xcode](Images/Chapters/0x06b/open_device_console.png)
 
-To save the console output to a text file, go to the top right side of the Console window and click on the **Save** button.
+要将控制台输出保存到文本文件，请转到“控制台”窗口的右上角，然后单击 **保存** 按钮。
 
 ![Monitoring console logs through Xcode](Images/Chapters/0x06b/device_console.png)
 
-You can also connect to the device shell as explained in "Accessing the Device Shell", install socat via apt-get and run the following command:
+您还可以按照“访问设备外壳”中的说明连接到设备外壳，通过apt-get安装socat并运行以下命令：
 
 ```shell
 iPhone:~ root# socat - UNIX-CONNECT:/var/run/lockdown/syslog.sock
@@ -1187,24 +1189,24 @@ Jun  7 13:42:14 iPhone touch[9708] <Notice>: MS:Notice: Injecting: (null) [touch
 ...
 ```
 
-Additionally, Passionfruit offers a view of all the NSLog-based application logs. Simply click on the **Console** -> **Output** tab:
+此外，Passionfruit还提供了所有基于NSLog的应用程序日志的视图。 只需单击 **控制台** -> **输出**标签：
 
 <img src="Images/Chapters/0x06b/passionfruit_console_logs.png" alt="Passionfruit Console Logs View">
 
-Needle also has an option to capture the logs of an iOS application, you can start the monitoring by opening Needle and running the following commands:
+Needle还具有捕获iOS应用程序日志的选项，您可以通过打开Needle并运行以下命令来启动监视：
 
 ```shell
 [needle] > use dynamic/monitor/syslog
 [needle][syslog] > run
 ```
 
-##### Dumping KeyChain Data
+##### 导出 KeyChain 数据
 
-Dumping the KeyChain data can be done with multiple tools, but not all of them will work on any iOS version. As is more often the case, try the different tools or look up their documentation for information on the latest supported versions.
+可以使用多种工具来完成KeyChain数据的转储，但并不是所有工具都可以在任何iOS版本上使用。 通常，尝试使用不同的工具或查找其文档以获取有关最新支持版本的信息。
 
-###### Objection (Jailbroken / non-Jailbroken)
+###### Objection（越狱/未越狱）
 
-The KeyChain data can easily be viewed using Objection. First, connect objection to the app as described in "Recommended Tools - Objection". Then, use the `ios keychain dump` command to get an overview of the keychain:
+可以使用Objection轻松查看KeyChain数据。 首先，按照“推荐工具-异议”中所述将异议连接到应用程序。 然后，使用`ios keychain dump`命令来获得钥匙串的概述：
 
 ```shell
 $ objection --gadget="iGoat-Swift" explore
@@ -1223,17 +1225,17 @@ Created                    Accessible                      ACL    Type      Acco
 OWASP.iGoat-Swift on (iPhone: 12.0) [usb] # quit  
 ```
 
-Note that currently, the latest versions of frida-server and objection do not correctly decode all keychain data. Different combinations can be tried to increase compatibility. For example, the previous printout was created with `frida-tools==1.3.0`, `frida==12.4.8` and `objection==1.5.0`.
+请注意，当前，最新版本的frida-server和objection无法正确解码所有钥匙串数据。 可以尝试使用不同的组合来增加兼容性。 例如，使用“ frida-tools == 1.3.0”，“ frida == 12.4.8”和“ objection == 1.5.0”创建了先前的打印输出。
 
-Finally, since the keychain dumper is executed from within the application context, it will only print out keychain items that can be accessed by the application and **not** the entire keychain of the iOS device.
+最后，由于钥匙串转储程序是从应用程序上下文中执行的，因此它只会打印出应用程序可以访问的钥匙串项目，而不会打印出iOS设备的整个钥匙串。
 
 ###### Needle (Jailbroken)
 
-Needle can list the content of the keychain through the `storage/data/keychain_dump_frida` module. However, getting Needle up and running can be difficult. First, make sure that `open`, and the `darwin cc tools` are installed. The installation procedure for these tools is described in "Recommended Tools - iOS Device".
+Needle可以通过`storage / data / keychain_dump_frida`模块列出钥匙串的内容。 但是，启动和运行Needle可能很困难。 首先，请确保已安装“ open”和“ darwin cc tools”。 在“推荐工具-iOS设备”中介绍了这些工具的安装过程。
 
-Before dumping the keychain, open Needle and use the `device/dependency_installer` plugin to install any other missing dependencies. This module should return without any errors. If an error did pop up, be sure to fix this error before continuing.
+在转储钥匙串之前，请打开Needle并使用`device / dependency_installer`插件来安装所有其他缺少的依赖项。 该模块应该返回而没有任何错误。 如果确实弹出错误，请确保在继续操作之前解决此错误。
 
-Finally, select the `storage/data/keychain_dump_frida` module and run it:
+最后，选择`storage / data / keychain_dump_frida`模块并运行它：
 
 ```shell
 [needle][keychain_dump_frida] > use storage/data/keychain_dump_frida
@@ -1274,17 +1276,17 @@ Finally, select the `storage/data/keychain_dump_frida` module and run it:
 [*] Saving output to file: /Users/razr/.needle/output/frida_script_dump_keychain.txt
 ```
 
-Note that currently only the `keychain_dump_frida` module works on iOS 12, but not the `keychain_dump` module.
+请注意，目前只有`keychain_dump_frida`模块可以在iOS 12上使用，而不能使用`keychain_dump`模块。
 
-###### Passionfruit (Jailbroken / non-Jailbroken)
+###### Passionfruit（越狱/非越狱）
 
-With Passionfruit it's possible to access the keychain data of the app you have selected. Click on **Storage** -> **Keychain** and you can see a listing of the stored Keychain information.
+使用Passionfruit，可以访问您选择的应用程序的钥匙串数据。 单击**存储**-> **钥匙串**，您可以看到存储的钥匙串信息的列表。
 
 <img src="Images/Chapters/0x06b/Passionfruit_Keychain.png" alt="Passionfruit Keychain" width="250">
 
 ###### Keychain-dumper (Jailbroken)
 
-[Keychain-dumper](https://github.com/ptoomey3/Keychain-Dumper/ "Keychain-dumper") lets you dump a jailbroken device's KeyChain contents. The easiest way to get the tool is to download the binary from its GitHub repo:
+[Keychain-dumper](https://github.com/ptoomey3/Keychain-Dumper/ "Keychain-dumper") 可让您转储越狱设备的KeyChain内容。 获取该工具的最简单方法是从其GitHub存储库下载二进制文件：
 
 ```shell
 $ git clone https://github.com/ptoomey3/Keychain-Dumper
@@ -1314,25 +1316,25 @@ Generic Field: (null)
 Keychain Data: WOg1DfuH
 ```
 
-In newer versions of iOS (iOS 11 and up), additional steps are necessary. See the README.md for more details.
-Note that this binary is signed with a self-signed certificate that has a "wildcard" entitlement. The entitlement grants access to *all* items in the Keychain. If you are paranoid or have very sensitive private data on your test device, you may want to build the tool from source and manually sign the appropriate entitlements into your build; instructions for doing this are available in the GitHub repository.
+在较新版本的iOS（iOS 11及更高版本）中，需要执行其他步骤。 有关更多详细信息，请参见README.md。
+请注意，此二进制文件使用具有“通配符”权利的自签名证书进行了签名。 该权利授予对钥匙串中*所有*项目的访问权限。 如果您偏执狂或在测试设备上拥有非常敏感的私人数据，则可能要从源代码构建工具并手动将适当的权利签名到构建中； GitHub存储库中提供了执行此操作的说明。
 
-### Setting Up a Network Testing Environment
+### 设置网络测试环境
 
-#### Basic Network Monitoring/Sniffing
+#### 基本网络 监视/嗅探
 
-You can remotely sniff all traffic in real-time on iOS by [creating a Remote Virtual Interface](https://stackoverflow.com/questions/9555403/capturing-mobile-phone-traffic-on-wireshark/33175819#33175819 "Wireshark + OSX + iOS") for your iOS device. First make sure you have Wireshark installed on your macOS machine.
+您可以远程嗅探iOS所有实时流量，通过[创建远程虚拟接口](https://stackoverflow.com/questions/9555403/capturing-mobile-phone-traffic-on-wireshark/33175819#33175819 "Wireshark + OSX + iOS") 首先，请确保您在macOS机器上安装了Wireshark。
 
-1. Connect your iOS device to your macOS machine via USB.
-2. You would need to know the UDID of your iOS device, before you can start sniffing. Check the section "Getting the UDID of an iOS device" on how to retrieve it. Open the Terminal on macOS and enter the following command, filling in the UDID of your iOS device.
+1. 通过USB将iOS设备连接到macOS计算机。
+2. 在开始嗅探之前，您需要知道iOS设备的UDID。 请参阅“获取iOS设备的UDID”部分，以了解如何获取它。 在macOS上打开终端，然后输入以下命令，并填写iOS设备的UDID。
 
 ```shell
 $ rvictl -s <UDID>
 Starting device <UDID> [SUCCEEDED] with interface rvi0
 ```
 
-1. Launch Wireshark and select "rvi0" as the capture interface.
-1. Filter the traffic with Capture Filters in Wireshark to display what you want to monitor (for example, all HTTP traffic sent/received via the IP address 192.168.1.1).
+1. 启动Wireshark并选择“ rvi0”作为捕获接口。
+1. 使用Wireshark中的“捕获过滤器”过滤流量，以显示要监视的内容（例如，通过IP地址192.168.1.1发送/接收的所有HTTP流量）。
 
 ```text
 ip.addr == 192.168.1.1 && http
@@ -1340,53 +1342,53 @@ ip.addr == 192.168.1.1 && http
 
 ![Capture Filters in Wireshark](Images/Chapters/0x06b/wireshark_filters.png)
 
-The documentation of Wireshark offers many examples for [Capture Filters](https://wiki.wireshark.org/CaptureFilters "Capture Filters") that should help you to filter the traffic to get the information you want.
+Wireshark的文档提供了许多相关的例子 [Capture Filters](https://wiki.wireshark.org/CaptureFilters "Capture Filters") 这些示例应有助于您过滤流量以获取所需的信息。
 
-#### Setting up an Interception Proxy
+#### 设置拦截代理
 
-Burp Suite is an integrated platform for security testing mobile and web applications. Its tools work together seamlessly to support the entire testing process, from initial mapping and analysis of attack surfaces to finding and exploiting security vulnerabilities. Burp Proxy operates as a web proxy server for Burp Suite, which is positioned as a man-in-the-middle between the browser and web server(s). Burp Suite allows you to intercept, inspect, and modify incoming and outgoing raw HTTP traffic.
+是用于安全测试移动和Web应用程序的集成平台。它的工具无缝协作以支持整个测试过程，从最初的攻击面映射和分析到发现和利用安全漏洞。 Burp Proxy充当Burp Suite的Web代理服务器，该服务器位于浏览器和Web服务器之间的中间人位置。 Burp Suite允许您拦截，检查和修改传入和传出的原始HTTP通信。
 
-Setting up Burp to proxy your traffic is pretty straightforward. We assume that you have an iOS device and workstation connected to a Wi-Fi network that permits client-to-client traffic. If client-to-client traffic is not permitted, you can use usbmuxd to connect to Burp via USB.
+设置Burp代理您的流量非常简单。我们假设您有一个连接到Wi-Fi网络且允许客户端到客户端流量的iOS设备和工作站。如果不允许客户端到客户端通信，则可以使用usbmuxd通过USB连接到Burp。
 
-PortSwigger provides a good [tutorial on setting up an iOS device to work with Burp](https://support.portswigger.net/customer/portal/articles/1841108-configuring-an-ios-device-to-work-with-burp "Configuring an iOS Device to Work With Burp") and a [tutorial on installing Burp's CA certificate to an iOS device](https://support.portswigger.net/customer/portal/articles/1841109-installing-burp-s-ca-certificate-in-an-ios-device "Installing Burp's CA Certificate in an iOS Device").
+PortSwigger提供了很好的[设置iOS设备以与Burp配合使用的教程](https://support.portswigger.net/customer/portal/articles/1841108-configuring-an-ios-device-to-work-with-burp "Configuring an iOS Device to Work With Burp") 和[将Burp的CA证书安装到iOS设备的教程](https://support.portswigger.net/customer/portal/articles/1841109-installing-burp-s-ca-certificate-in-an-ios-device "Installing Burp's CA Certificate in an iOS Device").
 
-##### Using Burp via USB on a Jailbroken Device
+##### 在越狱设备上通过USB使用Burp
 
-In the section "Accessing the Device Shell" we've already learned how we can use iproxy to use SSH via USB. When doing dynamic analysis, it's interesting to use the SSH connection to route our traffic to Burp that is running on our computer. Let's get started:
+在“访问设备外壳”部分中，我们已经学习了如何使用iproxy通过USB使用SSH。在进行动态分析时，使用SSH连接将我们的流量路由到计算机上运行的Burp很有意思。让我们开始吧：
 
-First we need to use iproxy to make SSH from iOS available on localhost.
+首先，我们需要使用iproxy使iOS上的SSH在localhost上可用。
 
 ```shell
 $ iproxy 2222 22
 waiting for connection
 ```
 
-The next step is to make a remote port forwarding of port 8080 on the iOS device to the localhost interface on our computer to port 8080.
+下一步是将iOS设备上的端口8080远程转发到计算机上的localhost接口到端口8080。
 
 ```shell
 ssh -R 8080:localhost:8080 root@localhost -p 2222
 ```
 
-You should now be able to reach Burp on your iOS device. Open Safari on iOS and go to 127.0.0.1:8080 and you should see the Burp Suite Page. This would also be a good time to [install the CA certificate](https://support.portswigger.net/customer/portal/articles/1841109-installing-burp-s-ca-certificate-in-an-ios-device "Installing Burp's CA Certificate in an iOS Device") of Burp on your iOS device.
+您现在应该可以在iOS设备上访问Burp。在iOS上打开Safari并转到127.0.0.1:8080，您应该会看到Burp Suite页面。这也是的好时机[安装CA证书](https://support.portswigger.net/customer/portal/articles/1841109-installing-burp-s-ca-certificate-in-an-ios-device "Installing Burp's CA Certificate in an iOS Device") 在iOS设备上安装Burp的CA证书”。
 
-The last step would be to set the proxy globally on your iOS device:
+最后一步是在iOS设备上全局设置代理：
 
-1. Go to **Settings** -> **Wi-Fi**
-2. Connect to *any* Wi-Fi (you can literally connect to any Wi-Fi as the traffic for port 80 and 443 will be routed through USB, as we are just using the Proxy Setting for the Wi-Fi so we can set a global Proxy)
-3. Once connected click on the small blue icon on the right side of the connect Wi-Fi
-4. Configure your Proxy by selecting **Manual**
-5. Type in 127.0.0.1 as **Server**
-6. Type in 8080 as **Port**
+1. 转到 **设置** -> **Wi-Fi**
+2. 连接到 *any* Wi-Fi（您可以直接连接到任何Wi-Fi，因为端口80和443的流量将通过USB路由，因为我们仅使用Wi-Fi的代理设置，因此我们可以设置全局代理）
+3. 连接后，单击连接Wi-Fi右侧的蓝色小图标。
+4. 通过选择**手动**配置您的代理
+5. 输入127.0.0.1作为 **服务器**
+6. 输入8080作为 **端口**
 
-Open Safari and go to any webpage, you should see now the traffic in Burp. Thanks @hweisheimer for the [initial idea](https://twitter.com/hweisheimer/status/1095383526885724161 "Port Forwarding via USB on iOS")!
+打开Safari并转到任何网页，您现在应该看到Burp的访问量。感谢@hweisheimer提出的[初步构想](https://twitter.com/hweisheimer/status/1095383526885724161 "Port Forwarding via USB on iOS")!
 
-#### Certificate Pinning
+#### 证书固定
 
-Some applications will implement SSL Pinning, which prevents the application from accepting your intercepting certificate as a valid certificate. This means that you will not be able to monitor the traffic between the application and the server.
+某些应用程序将实现SSL固定，这将阻止应用程序将您的拦截证书作为有效证书接受。 这意味着您将无法监视应用程序和服务器之间的流量。
 
-For information on disabling SSL Pinning both statically and dynamically, refer to "Bypassing SSL Pinning" in the "Testing Network Communication" chapter.
+有关静态和动态禁用SSL固定的信息，请参阅“测试网络通信”一章中的“绕过SSL固定”。
 
-### References
+### 参考文献
 
 - Jailbreak Exploits - <https://www.theiphonewiki.com/wiki/Jailbreak_Exploits>
 - limera1n exploit - <https://www.theiphonewiki.com/wiki/Limera1n>
@@ -1398,7 +1400,7 @@ For information on disabling SSL Pinning both statically and dynamically, refer 
 - Information Property List - <https://developer.apple.com/documentation/bundleresources/information_property_list?language=objc>
 - UIDeviceFamily - <https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/iPhoneOSKeys.html#//apple_ref/doc/uid/TP40009252-SW11>
 
-#### Tools
+#### 工具列表
 
 - Apple iOS SDK - <https://developer.apple.com/download/more/>
 - AppSync - <http://repo.hackyouriphone.org/appsyncunified>
