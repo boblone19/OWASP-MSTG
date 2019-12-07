@@ -1,14 +1,14 @@
-## iOS 防御反逆向
+## iOS 反逆向防御
 
 ### 越狱检测 (MSTG-RESILIENCE-1)
 
-#### Overview
+#### 概述
 
-Jailbreak detection mechanisms are added to reverse engineering defense to make running the app on a jailbroken device more difficult. This blocks some of the tools and techniques reverse engineers like to use. Like most other types of defense, jailbreak detection is not very effective by itself, but scattering checks throughout the app's source code can improve the effectiveness of the overall anti-tampering scheme. A [list of typical jailbreak detection techniques for iOS was published by Trustwave](https://www.trustwave.com/Resources/SpiderLabs-Blog/Jailbreak-Detection-Methods/ "Jailbreak Detection Methods on the Trustware Spiderlabs Blog").
+添加了越狱检测机制增加了逆向工程防御，从而使在越狱设备上运行应用程序更加困难。 这阻碍了逆向工程师喜欢使用的一些工具和技术。 与大多数其他类型的防御一样，越狱检测本身并不是很有效，但是在应用程序的源代码中分散检查，可以提高整体防篡改方案的有效性。 [Trustwave发布了适用于iOS的典型越狱检测技术列表](https://www.trustwave.com/Resources/SpiderLabs-Blog/Jailbreak-Detection-Methods/ "Jailbreak Detection Methods on the Trustware Spiderlabs Blog").
 
-##### File-based Checks
+##### 基于文件为基础的检查
 
-Check for files and directories typically associated with jailbreaks, such as:
+检查通常与越狱相关的`文件`和`目录`，例如：
 
 ```text
 /Applications/Cydia.app
