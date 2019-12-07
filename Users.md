@@ -51,4 +51,4 @@
 
 ## 征集用户
 
-您是否正在积极使用MASVS或MSTG并希望在此处列出？提交[github上的问题](https://github.com/OWASP/owasp-mstg/issues/new“新问题”)，请与Sven Schleier(Slack：* Sven *)，Jeroen Willemsen(Slack：* jeroenwillemsen *)联系)或Carlos Holguera(松弛：* Carlos *)，或发送电子邮件至[Sven](mailto：sven.schleier@owasp.org)，[Jeroen](mailto：jeroen.willemsen@owasp.org)或[Carlos](mailto：carlos.holguera@owasp.org)。
+您是否正在积极使用MASVS或MSTG并希望在此处列出？提交[github上的问题](https://github.com/OWASP/owasp-mstg/issues/new“issue”)，请与Sven Schleier(Slack：* Sven *)，Jeroen Willemsen(Slack：* jeroenwillemsen *)联系)或Carlos Holguera(松弛：* Carlos *)，或发送电子邮件至[Sven](mailto：sven.schleier@owasp.org)，[Jeroen](mailto：jeroen.willemsen@owasp.org)或[Carlos](mailto：carlos.holguera@owasp.org)。
