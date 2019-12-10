@@ -1,73 +1,74 @@
-## Data Storage on iOS
+## iOS上的数据存储
 
-The protection of sensitive data, such as authentication tokens and private information, is key for mobile security. In this chapter, you'll learn about the iOS APIs for local data storage, and best practices for using them.
+保护敏感数据（例如身份验证令牌和私人信息）是移动安全的关键。 在本章中，您将学习用于本地数据存储的iOS API，以及使用它们的最佳实践。
 
-### Testing Local Data Storage (MSTG-STORAGE-1 and MSTG-STORAGE-2)
+### 测试本地数据存储 (MSTG-STORAGE-1 and MSTG-STORAGE-2)
 
-As little sensitive data as possible should be saved in permanent local storage. However, in most practical scenarios, at least some user data must be stored. Fortunately, iOS offers secure storage APIs, which allow developers to use the cryptographic hardware available on every iOS device. If these APIs are used correctly, sensitive data and files can be secured via hardware-backed 256-bit AES encryption.
+应将尽可能少的敏感数据保存在永久本地存储中。但是，在大多数实际情况下，必须至少存储一些用户数据。幸运的是，iOS提供了安全的存储API，使开发人员可以使用每个iOS设备上可用的加密硬件。如果正确使用这些API，则可以通过硬件支持的256位AES加密来保护敏感数据和文件。
 
-#### Data Protection API
 
-App developers can leverage the iOS *Data Protection* APIs to implement fine-grained access control for user data stored in flash memory. The APIs are built on top of the Secure Enclave Processor (SEP), which was introduced with the iPhone 5S. The SEP is a coprocessor that provides cryptographic operations for data protection and key management. A device-specific hardware key-the device UID (Unique ID)-is embedded in the secure enclave, ensuring the integrity of data protection even when the operating system kernel is compromised.
+#### 数据保护 API
 
-The data protection architecture is based on a hierarchy of keys. The UID and the user passcode key (which is derived from the user's passphrase via the PBKDF2 algorithm) sit at the top of this hierarchy. Together, they can be used to "unlock" so-called class keys, which are associated with different device states (e.g., device locked/unlocked).
+应用开发人员可以利用iOS *Data Protection* API对存储在闪存中的用户数据实施细粒度的访问控制。这些API建立在iPhone 5S随附的安全飞地处理器（SEP）之上。 SEP是协处理器，可提供用于数据保护和密钥管理的加密操作。设备专用的硬件密钥-设备UID（唯一ID）-嵌入在安全区域中，即使在操作系统内核受到威胁时，也可以确保数据保护的完整性。
 
-Every file stored on the iOS file system is encrypted with its own per-file key, which is contained in the file metadata. The metadata is encrypted with the file system key and wrapped with the class key corresponding to the protection class the app selected when creating the file.
+数据保护体系结构基于密钥的层次结构。 UID和用户密码密钥（通过PBKDF2算法从用户密码短语派生）位于此层次结构的顶部。它们可以一起用于“解锁”与不同设备状态（例如，设备锁定/解锁）关联的所谓的类密钥。
 
-The following illustration shows the [iOS Data Protection Key Hierarchy](https://www.apple.com/business/docs/iOS_Security_Guide.pdf "iOS Security Guide").
+iOS文件系统上存储的每个文件都使用其自己的按文件密钥加密，该密钥包含在文件元数据中。使用文件系统密钥对元数据进行加密，并使用与创建文件时选择的应用程序的保护类别相对应的类别密钥进行包装。
+
+下图显示了[iOS数据保护密钥层次结构](https://www.apple.com/business/docs/iOS_Security_Guide.pdf "iOS Security Guide").
 
 <img src="Images/Chapters/0x06d/key_hierarchy_apple.jpg" alt="Key Hierarchy iOS" width="550">
 
-Files can be assigned to one of four different protection classes, which are explained in more detail in the [iOS Security Guide](https://www.apple.com/business/docs/iOS_Security_Guide.pdf "iOS Security Guide"):
+可以将文件分配给四种不同的保护类别之一，[iOS安全指南](https://www.apple.com/business/docs/iOS_Security_Guide.pdf "iOS Security Guide"):
 
-- **Complete Protection (NSFileProtectionComplete)**: A key derived from the user passcode and the device UID protects this class key. The derived key is wiped from memory shortly after the device is locked, making the data inaccessible until the user unlocks the device.
+-**完全保护（NSFileProtectionComplete）**：从用户密码和设备UID派生的密钥可保护该类密钥。锁定设备后不久，就会从内存中擦除派生密钥，从而使数据不可访问，直到用户解锁设备为止。
 
-- **Protected Unless Open (NSFileProtectionCompleteUnlessOpen)**: This protection class is similar to Complete Protection, but, if the file is opened when unlocked, the app can continue to access the file even if the user locks the device. This protection class is used when, for example, a mail attachment is downloading in the background.
+-**除非打开，否则受保护（NSFileProtectionCompleteUnlessOpen）**：此保护类类似于“完全保护”，但是，如果在解锁时打开文件，则即使用户锁定了设备，应用程序也可以继续访问该文件。例如，在后台下载邮件附件时，将使用此保护类。
 
-- **Protected Until First User Authentication (NSFileProtectionCompleteUntilFirstUserAuthentication)**: The file can be accessed as soon as the user unlocks the device for the first time after booting. It can be accessed even if the user subsequently locks the device and the class key is not removed from memory.
+-**受保护，直到首次用户身份验证（NSFileProtectionCompleteUntilFirstUserAuthentication）**：启动后，用户首次解锁设备后，便可以访问该文件。即使用户随后锁定了该设备并且未从内存中删除类密钥，也可以对其进行访问。
 
-- **No Protection (NSFileProtectionNone)**: The key for this protection class is protected with the UID only. The class key is stored in "Effaceable Storage", which is a region of flash memory on the iOS device that allows the storage of small amounts of data. This protection class exists for fast remote wiping (immediate deletion of the class key, which makes the data inaccessible).
+-**无保护（NSFileProtectionNone）**：此保护类的密钥仅受UID保护。类密钥存储在“ Effaceable Storage”中，这是iOS设备上的闪存区域，允许存储少量数据。该保护类用于快速远程擦除（立即删除类密钥，这使得数据不可访问）。
 
-All class keys except `NSFileProtectionNone` are encrypted with a key derived from the device UID and the user's passcode. As a result, decryption can happen only on the device itself and requires the correct passcode.
+除“ NSFileProtectionNone”之外的所有类密钥均使用从设备UID和用户密码派生的密钥进行加密。结果，解密只能在设备本身上发生，并且需要正确的密码。
 
-Since iOS 7, the default data protection class is "Protected Until First User Authentication".
+从iOS 7开始，默认的数据保护类为“直到首次用户身份验证之前都受保护”。
 
 ##### The Keychain
 
-The iOS Keychain can be used to securely store short, sensitive bits of data, such as encryption keys and session tokens. It is implemented as an SQLite database that can be accessed through the Keychain APIs only.
+iOS钥匙串可用于安全地存储短而敏感的数据位，例如加密密钥和会话令牌。它被实现为SQLite数据库，只能通过钥匙串API进行访问。
 
-On macOS, every user application can create as many Keychains as desired, and every login account has its own Keychain. The [structure of the Keychain on iOS](https://developer.apple.com/library/content/documentation/Security/Conceptual/keychainServConcepts/02concepts/concepts.html "https://developer.apple.com/library/content/documentation/Security/Conceptual/keychainServConcepts/02concepts/concepts.html") is different: only one Keychain is available to all apps. Access to the items can be shared between apps signed by the same developer via the [access groups feature](https://developer.apple.com/library/content/documentation/IDEs/Conceptual/AppDistributionGuide/AddingCapabilities/AddingCapabilities.html "Adding capabilities") of the attribute [`kSecAttrAccessGroup`](https://developer.apple.com/documentation/security/ksecattraccessgroup "Attribute kSecAttrAccessGroup"). Access to the Keychain is managed by the `securityd` daemon, which grants access according to the app's `Keychain-access-groups`, `application-identifier`, and `application-group` entitlements.
+在macOS上，每个用户应用程序都可以创建所需数量的钥匙串，并且每个登录帐户都有自己的钥匙串。 [iOS上的钥匙串结构](https://developer.apple.com/library/content/documentation/Security/Conceptual/keychainServConcepts/02concepts/concepts.html "https://developer.apple.com/library/content/documentation/Security/Conceptual/keychainServConcepts/02concepts/concepts.html") 不同：只有一个Keychain可供所有应用程序使用。可以通过[访问组功能](https://developer.apple.com/library/content/documentation/IDEs/Conceptual/AppDistributionGuide/AddingCapabilities/AddingCapabilities.html "Adding capabilities") 属性 [`kSecAttrAccessGroup`](https://developer.apple.com/documentation/security/ksecattraccessgroup "Attribute kSecAttrAccessGroup"). 对“钥匙串”的访问由`securityd`守护程序管理，该守护程序根据应用程序的`钥匙串访问组`，`应用程序标识符`和`应用程序组`权利来授予访问权限。
 
-The [Keychain API](https://developer.apple.com/library/content/documentation/Security/Conceptual/keychainServConcepts/02concepts/concepts.html "Keychain concepts") includes the following main operations:
+[Keychain API](https://developer.apple.com/library/content/documentation/Security/Conceptual/keychainServConcepts/02concepts/concepts.html "Keychain concepts") 包括以下主要操作:
 
 - `SecItemAdd`
 - `SecItemUpdate`
 - `SecItemCopyMatching`
 - `SecItemDelete`
 
-Data stored in the Keychain is protected via a class structure that is similar to the class structure used for file encryption. Items added to the Keychain are encoded as a binary plist and encrypted with a 128-bit AES per-item key in Galois/Counter Mode (GCM). Note that larger blobs of data aren't meant to be saved directly in the Keychain-that's what the Data Protection API is for. You can configure data protection for Keychain items by setting the `kSecAttrAccessible` key in the call to `SecItemAdd` or `SecItemUpdate`. The following configurable [accessibility values for kSecAttrAccessible](https://developer.apple.com/documentation/security/keychain_services/keychain_items/item_attribute_keys_and_values#1679100 "Accessibility Values for kSecAttrAccessible") are the Keychain Data Protection classes:
+钥匙串中存储的数据通过类似于用于文件加密的类结构的类结构进行保护。添加到钥匙串中的项目被编码为二进制plist，并在Galois / Counter模式（GCM）中使用128位AES每项密钥进行加密。请注意，较大的数据块并不意味着直接保存在钥匙串中，这就是Data Protection API的目的。您可以通过将调用中的“ kSecAttrAccessible”键设置为“ SecItemAdd”或“ SecItemUpdate”来为钥匙串项目配置数据保护。以下是可配置的[kSecAttrAccessible的可访问性值](https://developer.apple.com/documentation/security/keychain_services/keychain_items/item_attribute_keys_and_values#1679100 "Accessibility Values for kSecAttrAccessible") 是钥匙串数据保护类：
 
-- `kSecAttrAccessibleAlways`: The data in the Keychain item can always be accessed, regardless of whether the device is locked.
-- `kSecAttrAccessibleAlwaysThisDeviceOnly`: The data in the Keychain item can always be accessed, regardless of whether the device is locked. The data won't be included in an iCloud or iTunes backup.
-- `kSecAttrAccessibleAfterFirstUnlock`: The data in the Keychain item can't be accessed after a restart until the device has been unlocked once by the user.
-- `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`: The data in the Keychain item can't be accessed after a restart until the device has been unlocked once by the user. Items with this attribute do not migrate to a new device. Thus, after restoring from a backup of a different device, these items will not be present.
-- `kSecAttrAccessibleWhenUnlocked`: The data in the Keychain item can be accessed only while the device is unlocked by the user.
-- `kSecAttrAccessibleWhenUnlockedThisDeviceOnly`: The data in the Keychain item can be accessed only while the device is unlocked by the user. The data won't be included in an iCloud or iTunes backup.
-- `kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly`: The data in the Keychain can be accessed only when the device is unlocked. This protection class is only available if a passcode is set on the device. The data won't be included in an iCloud or iTunes backup.
+- `kSecAttrAccessibleAlways`：“钥匙串”项中的数据始终可以访问，无论设备是否被锁定。
+- `kSecAttrAccessibleAlwaysThisDeviceOnly`：钥匙链项中的数据始终可以访问，无论设备是否被锁定。数据不会包含在iCloud或iTunes备份中。
+- `kSecAttrAccessibleAfterFirstUnlock`：重启后，直到用户将设备解锁一次，才能访问“钥匙串”项中的数据。
+- `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`：重启后，直到用户将设备解锁一次，才能访问“钥匙串”项中的数据。具有此属性的项目不会迁移到新设备。因此，从其他设备的备份还原后，这些项目将不存在。
+- `kSecAttrAccessibleWhenUnlocked`：钥匙串项中的数据只能在用户将设备解锁后才能访问。
+- `kSecAttrAccessibleWhenUnlockedThisDeviceOnly`：钥匙串项中的数据只能在用户将设备解锁后才能访问。数据不会包含在iCloud或iTunes备份中。
+- `kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly`：仅当设备解锁时才能访问钥匙串中的数据。仅当在设备上设置了密码时，此保护级别才可用。数据不会包含在iCloud或iTunes备份中。
 
-`AccessControlFlags` define the mechanisms with which users can authenticate the key (`SecAccessControlCreateFlags`):
+`AccessControlFlags`定义了用户用来认证密钥的机制（SecAccessControlCreateFlags）：
 
-- `kSecAccessControlDevicePasscode`: Access the item via a passcode.
-- `kSecAccessControlBiometryAny`: Access the item via one of the fingerprints registered to Touch ID. Adding or removing a fingerprint won't invalidate the item.
-- `kSecAccessControlBiometryCurrentSet`: Access the item via one of the fingerprints registered to Touch ID. Adding or removing a fingerprint _will_ invalidate the item.
-- `kSecAccessControlUserPresence`: Access the item via either one of the registered fingerprints (using Touch ID) or default to the passcode.
+- `kSecAccessControlDevicePasscode`：通过密码访问项目。
+- `kSecAccessControlBiometryAny`：通过注册到Touch ID的指纹之一访问该项目。 添加或删除指纹不会使该项目无效。
+- `kSecAccessControlBiometryCurrentSet`：通过注册到Touch ID的指纹之一访问该项目。 添加或删除指纹将使该项目无效。
+- `kSecAccessControlUserPresence`：通过注册的指纹之一（使用Touch ID）或默认密码来访问项目。
 
-Please note that keys secured by Touch ID (via `kSecAccessControlBiometryAny` or `kSecAccessControlBiometryCurrentSet`) are protected by the Secure Enclave: The Keychain holds a token only, not the actual key. The key resides in the Secure Enclave.
+请注意，通过Touch ID（通过`kSecAccessControlBiometryAny`或` kSecAccessControlBiometryCurrentSet`保护）的密钥受安全区域保护：密钥链仅持有令牌，而不是实际密钥。密钥位于安全区域中。
 
-Starting with iOS 9, you can do ECC-based signing operations in the Secure Enclave. In that scenario, the private key and the cryptographic operations reside within the Secure Enclave. See the static analysis section for more info on creating the ECC keys.
-iOS 9 supports only 256-bit ECC. Furthermore, you need to store the public key in the Keychain because it can't be stored in the Secure Enclave. After the key is created, you can use the `kSecAttrKeyType` to indicate the type of algorithm you want to use the key with.
+从iOS 9开始，您可以在Secure Enclave中执行基于ECC的签名操作。在这种情况下，私钥和加密操作位于Secure Enclave中。有关创建ECC密钥的更多信息，请参见静态分析部分。
+iOS 9仅支持256位ECC。此外，您需要将公钥存储在钥匙串中，因为它不能存储在Secure Enclave中。创建密钥后，您可以使用`kSecAttrKeyType`来指示您要使用密钥的算法类型。
 
-In case you want to use these mechanisms, it is recommended to test whether the passcode has been set. In iOS 8, you will need to check whether you can read/write from an item in the Keychain protected by the `kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly` attribute. From iOS 9 onward you can check whether a lock screen is set, using `LAContext`:
+如果要使用这些机制，建议测试是否已设置密码。在iOS 8中，您需要检查是否可以从受`kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly`属性保护的钥匙串中的项目进行读取/写入。从iOS 9开始，您可以使用`LAContext`检查是否设置了锁定屏幕：
 
 Swift:
 
@@ -89,11 +90,11 @@ Objective-C:
 }
 ```
 
-###### Keychain Data Persistence
+###### Keychain 数据持久性
 
-On iOS, when an application is uninstalled, the Keychain data used by the application is retained by the device, unlike the data stored by the application sandbox which is wiped. In the event that a user sells their device without performing a factory reset, the buyer of the device may be able to gain access to the previous user's application accounts and data by reinstalling the same applications used by the previous user. This would require no technical ability to perform.
+在iOS上，当卸载应用程序时，设备保留应用程序使用的钥匙串数据，这与擦除的应用程序沙箱存储的数据不同。 如果用户在不执行出厂重置的情况下出售其设备，则设备的购买者可以通过重新安装先前用户使用的相同应用程序来访问先前用户的应用程序帐户和数据。 这将不需要技术能力来执行。
 
-When assessing an iOS application, you should look for Keychain data persistence. This is normally done by using the application to generate sample data that may be stored in the Keychain, uninstalling the application, then reinstalling the application to see whether the data was retained between application installations. You can also verify persistence by using the iOS security assessment framework Needle to read the Keychain. The following Needle commands demonstrate this procedure:
+在评估iOS应用程序时，您应该寻找钥匙串数据持久性。 通常，通过使用应用程序生成可能存储在钥匙串中的示例数据，卸载应用程序，然后重新安装应用程序以查看在两次应用程序安装之间是否保留了数据，来完成此操作。 您还可以使用iOS安全评估框架Needle来读取钥匙串，以验证持久性。 以下Needle命令演示了此过程：
 
 ```shell
 $ python needle.py
@@ -121,9 +122,9 @@ $ python needle.py
  }
 ```
 
-There's no iOS API that developers can use to force wipe data when an application is uninstalled. Instead, developers should take the following steps to prevent Keychain data from persisting between application installations:
+卸载应用程序后，开发人员无法使用iOS API强制擦除数据。 相反，开发人员应采取以下步骤来防止钥匙串数据在应用程序安装之间持久存在：
 
-- When an application is first launched after installation, wipe all Keychain data associated with the application. This will prevent a device's second user from accidentally gaining access to the previous user's accounts. The following Swift example is a basic demonstration of this wiping procedure:
+- 安装后首次启动应用程序时，请擦除与该应用程序关联的所有钥匙串数据。 这将防止设备的第二个用户意外访问前一个用户的帐户。 以下Swift示例是此擦除过程的基本演示：
 
 ```swift
 let userDefaults = UserDefaults.standard
@@ -137,17 +138,17 @@ if userDefaults.bool(forKey: "hasRunBefore") == false {
 }
 ```
 
-- When developing logout functionality for an iOS application, make sure that the Keychain data is wiped as part of account logout. This will allow users to clear their accounts before uninstalling an application.
+- 开发iOS应用程序的注销功能时，请确保在注销帐户时擦除了钥匙串数据。 这将允许用户在卸载应用程序之前清除其帐户。
 
-#### Static Analysis
+#### 静态分析
 
-When you have access to the source code of an iOS app, try to spot sensitive data that's saved and processed throughout the app. This includes passwords, secret keys, and personally identifiable information (PII), but it may as well include other data identified as sensitive by industry regulations, laws, and company policies. Look for this data being saved via any of the local storage APIs listed below. Make sure that sensitive data is never stored without appropriate protection. For example, authentication tokens should not be saved in `NSUserDefaults` without additional encryption.
+当您有权访问iOS应用程序的源代码时，请尝试找出在整个应用程序中保存和处理的敏感数据。这包括密码，秘密密钥和个人身份信息（PII），但也可能包括由行业法规，法律和公司政策确定为敏感的其他数据。查找是否通过下面列出的任何本地存储API保存了此数据。确保没有适当的保护就永远不会存储敏感数据。例如，如果没有其他加密，则不应将身份验证令牌保存在“ NSUserDefaults”中。
 
-The encryption must be implemented so that the secret key is stored in the Keychain with secure settings, ideally `kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly`. This ensures the usage of hardware-backed storage mechanisms. Make sure that the `AccessControlFlags` are set according to the security policy of the keys in the KeyChain.
+必须实施加密，以便秘密密钥以安全设置（理想情况下为`kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly`）存储在钥匙串中。这样可以确保使用硬件支持的存储机制。确保根据KeyChain中密钥的安全策略设置了“ AccessControlFlags”。
 
-[Generic examples of using the KeyChain](https://developer.apple.com/library/content/samplecode/GenericKeychain/Introduction/Intro.html#//apple_ref/doc/uid/DTS40007797-Intro-DontLinkElementID_2 "GenericKeyChain") to store, update, and delete data can be found in the official Apple documentation. The official Apple documentation also includes an example of using [Touch ID and passcode protected keys](https://developer.apple.com/documentation/localauthentication/accessing_keychain_items_with_face_id_or_touch_id "Accessing Keychain Items with Face ID or Touch ID").
+[使用KeyChain的通用示例](https://developer.apple.com/library/content/samplecode/GenericKeychain/Introduction/Intro.html#//apple_ref/doc/uid/DTS40007797-Intro-DontLinkElementID_2 "GenericKeyChain") Apple的官方文档中提供了用于存储，更新和删除数据的信息。 Apple的官方文档还包括使用[Touch ID和受密码保护的键]的示例(https://developer.apple.com/documentation/localauthentication/accessing_keychain_items_with_face_id_or_touch_id "访问带有Face ID或Touch ID的钥匙串项目”）。
 
-Here is sample Swift code you can use to create keys (Notice the `kSecAttrTokenID as String: kSecAttrTokenIDSecureEnclave`: this indicates that we want to use the Secure Enclave directly.):
+这是可以用来创建密钥的示例Swift代码（请注意`kSecAttrTokenID`为字符串：`kSecAttrTokenIDSecureEnclave`：这表明我们要直接使用安全区域）：
 
 ```swift
 // private key parameters
@@ -181,25 +182,25 @@ if status != errSecSuccess {
 }
 ```
 
-When checking an iOS app for insecure data storage, consider the following ways to store data because none of them encrypt data by default:
+检查iOS应用程序的数据存储不安全时，请考虑以下存储数据的方法，因为默认情况下，它们都不对数据进行加密：
 
 ##### `NSUserDefaults`
 
-The [`NSUserDefaults`](https://developer.apple.com/documentation/foundation/nsuserdefaults "NSUserDefaults Class") class provides a programmatic interface for interacting with the default system. The default system allows an application to customize its behavior according to user preferences. Data saved by `NSUserDefaults` can be viewed in the application bundle. This class stores data in a plist file, but it's meant to be used with small amounts of data.
+[`NSUserDefaults`](https://developer.apple.com/documentation/foundation/nsuserdefaults "NSUserDefaults Class") 类提供了用于与默认系统进行交互的编程接口。 默认系统允许应用程序根据用户首选项自定义其行为。 由NSUserDefaults保存的数据可以在应用程序捆绑中查看。 此类将数据存储在plist文件中，但它应与少量数据一起使用。
 
-##### File system
+##### 文件系统
 
-- `NSData`: creates static data objects, while `NSMutableData` creates dynamic data objects. `NSData` and `NSMutableData` are typically used for data storage, but they are also useful for distributed objects applications, in which data contained in data objects can be copied or moved between applications. The following are methods used to write `NSData` objects:
+- `NSData`: 创建静态数据对象，而`NSMutableData`创建动态数据对象。 NSData和NSMutableData通常用于数据存储，但对于分布式对象应用程序也很有用，在分布式对象应用程序中，数据对象中包含的数据可以在应用程序之间复制或移动。 以下是用于写入NSData对象的方法：
   - `NSDataWritingWithoutOverwriting`
   - `NSDataWritingFileProtectionNone`
   - `NSDataWritingFileProtectionComplete`
   - `NSDataWritingFileProtectionCompleteUnlessOpen`
   - `NSDataWritingFileProtectionCompleteUntilFirstUserAuthentication`
-- `writeToFile`: stores data as part of the `NSData` class
-- `NSSearchPathForDirectoriesInDomains, NSTemporaryDirectory`: used to manage file paths
-- `NSFileManager`: lets you examine and change the contents of the file system. You can use `createFileAtPath` to create a file and write to it.
+- `writeToFile`: 将数据存储为 `NSData` 类的一部分
+- `NSSearchPathForDirectoriesInDomains, NSTemporaryDirectory`: 用于管理文件路径
+- `NSFileManager`: 可让您检查和更改文件系统的内容。 您可以使用 `createFileAtPath` 创建文件并写入文件.
 
-The following example shows how to create a securely encrypted file using the `createFileAtPath` method:
+以下示例说明如何使用 `createFileAtPath` 方法创建安全加密的文件:
 
 ```objc
 [[NSFileManager defaultManager] createFileAtPath:[self filePath]
@@ -210,39 +211,39 @@ The following example shows how to create a securely encrypted file using the `c
 
 ##### CoreData
 
-[`Core Data`](https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/CoreData/nsfetchedresultscontroller.html#//apple_ref/doc/uid/TP40001075-CH8-SW1 "Core Data iOS") is a framework for managing the model layer of objects in your application. It provides general and automated solutions to common tasks associated with object life cycles and object graph management, including persistence. [Core Data can use SQLite as its persistent store](https://cocoacasts.com/what-is-the-difference-between-core-data-and-sqlite/ "What Is the Difference Between Core Data and SQLite"), but the framework itself is not a database.
+[`Core Data`](https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/CoreData/nsfetchedresultscontroller.html#//apple_ref/doc/uid/TP40001075-CH8-SW1 "Core Data iOS") 是用于管理应用程序中对象模型层的框架。 它为与对象生命周期和对象图管理（包括持久性）相关的常见任务提供了通用的自动化解决方案。 [核心数据可以使用SQLite作为其持久性存储](https://cocoacasts.com/what-is-the-difference-between-core-data-and-sqlite/ "What Is the Difference Between Core Data and SQLite"), 但是框架本身不是数据库。
 
-CoreData does not encrypt it's data by default. As part of a research project (iMAS) from the MITRE Corporation, that was focused on open source iOS security controls, an additional encryption layer can be added to CoreData. See the [GitHub Repo](https://github.com/project-imas/encrypted-core-data "Encrypted Core Data SQLite Store") for more details.
+默认情况下，CoreData不会加密其数据。 作为MITER Corporation的研究项目（iMAS）的一部分，该项目专注于开源iOS安全控件，可以向CoreData添加一个附加的加密层。 有关更多详细信息，请参见[GitHub Repo](https://github.com/project-imas/encrypted-core-data "Encrypted Core Data SQLite Store").
 
-##### SQLite Databases
+##### SQLite 数据库
 
-The SQLite 3 library must be added to an app if the app is to use SQLite. This library is a C++ wrapper that provides an API for the SQLite commands.
+如果应用程序要使用SQLite，则必须将SQLite 3库添加到该应用程序。 该库是一个C ++包装器，为SQLite命令提供了API。
 
-##### Firebase Real-time Databases
+##### Firebase 实时数据库
 
-Firebase is a development platform with more than 15 products, and one of them is Firebase Real-time Database. It can be leveraged by application developers to store and sync data with a NoSQL cloud-hosted database. The data is stored as JSON and is synchronized in real-time to every connected client and also remains available even when the application goes offline.
+Firebase是具有15多种产品的开发平台，其中之一是Firebase实时数据库。 应用程序开发人员可以利用它来存储数据并与NoSQL云托管数据库同步。 数据存储为JSON，并实时同步到每个连接的客户端，即使应用程序脱机也保持可用。
 
-###### Identifying Misconfigured Firebase Instance
+###### 识别配置错误的 Firebase实例
 
-In Jan 2018, [Appthority Mobile Threat Team (MTT)](https://cdn2.hubspot.net/hubfs/436053/Appthority%20Q2-2018%20MTR%20Unsecured%20Firebase%20Databases.pdf "Unsecured Firebase Databases: Exposing Sensitive Data via Thousands of Mobile Apps") performed security research on insecure backend services connecting to mobile applications. They discovered a misconfiguration in Firebase, which is one of the top 10 most popular data stores which could allow attackers to retrieve all the unprotected data hosted on the cloud server. The team performed the research on 2 Million+ mobile applications and found that the around 9% of Android applications and almost half (47%) of iOS apps that connect to a Firebase database were vulnerable.
+在2018年1月 [Appthority Mobile Threat Team (MTT)](https://cdn2.hubspot.net/hubfs/436053/Appthority%20Q2-2018%20MTR%20Unsecured%20Firebase%20Databases.pdf "Unsecured Firebase Databases: Exposing Sensitive Data via Thousands of Mobile Apps") 不安全的Firebase数据库：公开敏感信息 通过数以千计的移动应用程序进行的数据”）对连接到移动应用程序的不安全后端服务进行了安全性研究。 他们发现Firebase中的配置错误，这是最受欢迎的十大数据存储之一，攻击者可以利用它来检索云服务器上托管的所有不受保护的数据。 该团队对200万多个移动应用程序进行了研究，发现连接到Firebase数据库的大约9％的Android应用程序和近一半（47％）的iOS应用程序容易受到攻击。
 
-The misconfigured Firebase instance can be identified by making the following network call:
+可以通过以下网络调用来识别配置错误的Firebase实例：
 
 `https://\<firebaseProjectName\>.firebaseio.com/.json`
 
-The _firebaseProjectName_ can be retrieved from the property list(.plist) file. For example, _PROJECT_ID_ key stores the corresponding Firebase project name in _GoogleService-Info.plist_ file.
+此 _firebaseProjectName_ 可以从属性list(.plist) file 获取. 例如, _PROJECT_ID_ 密钥相应的Firebase项目名称存储在 _GoogleService-Info.plist_ file.
 
-Alternatively, the analysts can use [Firebase Scanner](https://github.com/shivsahni/FireBaseScanner "Firebase Scanner"), a python script that automates the task above as shown below:
+或者，分析人员可以使用 [Firebase Scanner](https://github.com/shivsahni/FireBaseScanner "Firebase Scanner"), 这是一个Python脚本，可自动执行上述任务，如下所示：
 
 ```shell
 python FirebaseScanner.py -f <commaSeperatedFirebaseProjectNames>
 ```
 
-##### Realm databases
+##### 领域数据库(Realm databases)
 
-[Realm Objective-C](https://realm.io/docs/objc/latest/ "Realm Objective-C") and [Realm Swift](https://realm.io/docs/swift/latest/ "Realm Swift") aren't supplied by Apple, but they are still worth noting. They store everything unencrypted, unless the configuration has encryption enabled.
+[Realm Objective-C](https://realm.io/docs/objc/latest/ "Realm Objective-C") 和 [Realm Swift](https://realm.io/docs/swift/latest/ "Realm Swift") 但仍然值得注意。 它们存储所有未加密的内容，除非配置启用了加密。
 
-The following example demonstrates how to use encryption with a Realm database:
+以下示例演示了如何对Realm数据库使用加密：
 
 ```swift
 // Open the encrypted Realm file where getKey() is a method to obtain a key from the Keychain or a server
@@ -256,54 +257,54 @@ do {
 }
 ```
 
-##### Couchbase Lite Databases
+##### Couchbase Lite 数据库
 
-[Couchbase Lite](https://github.com/couchbase/couchbase-lite-ios "Couchbase Lite") is a lightweight, embedded, document-oriented (NoSQL) database engine that can be synced. It compiles natively for iOS and macOS.
+[Couchbase Lite](https://github.com/couchbase/couchbase-lite-ios "Couchbase Lite") 是一个轻量级，嵌入式，面向文档（NoSQL）的数据库引擎，可以同步。 它针对iOS和macOS进行本地编译。
 
 ##### YapDatabase
 
-[YapDatabase](https://github.com/yapstudios/YapDatabase "YapDatabase") is a key/value store built on top of SQLite.
+[YapDatabase](https://github.com/yapstudios/YapDatabase "YapDatabase") 是建立在SQLite之上的键/值存储。
 
-#### Dynamic Analysis
+#### 动态分析
 
-One way to determine whether sensitive information (like credentials and keys) is stored insecurely without leveraging native iOS functions is to analyze the app's data directory. Triggering all app functionality before the data is analyzed is important because the app may store sensitive data only after specific functionality has been triggered. You can then perform static analysis for the data dump according to generic keywords and app-specific data.
+在不利用本机iOS功能的情况下确定敏感信息（如凭据和密钥）是否被不安全存储的一种方法是分析应用程序的数据目录。在分析数据之前触发所有应用程序功能非常重要，因为只有在触发特定功能后，应用程序才能存储敏感数据。然后，您可以根据通用关键字和特定于应用程序的数据对数据转储执行静态分析。
 
-The following steps can be used to determine how the application stores data locally on a jailbroken iOS device:
+以下步骤可用于确定应用程序如何在越狱的iOS设备上本地存储数据：
 
-1. Trigger the functionality that stores potentially sensitive data.
-2. Connect to the iOS device and navigate to its Bundle directory (this applies to iOS versions 8.0 and above): `/var/mobile/Containers/Data/Application/$APP_ID/`
-3. Execute grep with the data that you've stored, for example: `grep -iRn "USERID"`.
-4. If the sensitive data is stored in plaintext, the app fails this test.
+1. 触发存储潜在敏感数据的功能。
+2. 连接到iOS设备并导航到其Bundle目录（适用于8.0和更高版本的iOS版本）: `/var/mobile/Containers/Data/Application/$APP_ID/`
+3. 使用您存储的数据执行grep，例如: `grep -iRn "USERID"`.
+4. 如果敏感数据以明文形式存储，则该应用无法通过此测试.
 
-You can analyze the app's data directory on a non-jailbroken iOS device by using third-party applications, such as [iMazing](https://imazing.com "iMazing").
+您可以使用其他，等第三方应用程序在未越狱的iOS设备上分析该应用程序的数据目录。比如[iMazing](https://imazing.com "iMazing").
 
-1. Trigger the functionality that stores potentially sensitive data.
-2. Connect the iOS device to your workstation and launch iMazing.
-3. Select "Apps", right-click the desired iOS application, and select "Extract App".
-4. Navigate to the output directory and locate $APP_NAME.imazing. Rename it `$APP_NAME.zip`.
-5. Unpack the ZIP file. You can then analyze the application data.
+1. 触发存储潜在敏感数据的功能。
+2. 将iOS设备连接到您的工作站，然后启动iMazing。
+3. 选择“应用程序”，右键单击所需的iOS应用程序，然后选择“提取应用程序”。
+4. 导航到输出目录，然后找到 $APP_NAME.imazing。将其重命名为 $APP_NAME.zip。
+5. 解压缩ZIP文件。然后，您可以分析应用程序数据。
 
-> Note that tools like iMazing don't copy data directly from the device. They try to extract data from the backups they create. Therefore, getting all the app data that's stored on the iOS device is impossible: not all folders are included in backups. Use a jailbroken device or repackage the app with Frida and use a tool like objection to access all the data and files.
+> 请注意，iMazing之类的工具不会直接从设备复制数据。 他们尝试从创建的备份中提取数据。 因此，不可能获取存储在iOS设备上的所有应用程序数据：并非所有文件夹都包含在备份中。 使用越狱设备或将应用程序与Frida重新打包，然后使用异议之类的工具访问所有数据和文件。
 
-If you added the Frida library to the app and repackaged it as described in "Dynamic Analysis on Non-Jailbroken Devices" (from the "Tampering and Reverse Engineering on iOS" chapter), you can use [objection](https://github.com/sensepost/objection "objection") to transfer files directly from the app's data directory or [read files in objection](https://github.com/sensepost/objection/wiki/Using-objection#getting-started-ios-edition "Getting started iOS edition") as explained in the chapter "Basic Security Testing on iOS", section "[Host-Device Data Transfer](0x06b-Basic-Security-Testing.md#host-device-data-transfer "Host-Device Data Transfer")".
+如果您将Frida库添加到应用中，并按照“非越狱设备上的动态分析”（来自“ iOS上的篡改和反向工程”一章）中的说明进行了重新打包，则可以使用[objection](https://github.com/sensepost/objection "objection") 以直接从应用程序的数据目录传输文件或[读取objection文件](https://github.com/sensepost/objection/wiki/Using-objection#getting-started-ios-edition "Getting started iOS edition") 如“ iOS上的基本安全性测试”一章中的“ [主机设备数据传输](0x06b-Basic-Security-Testing.md#host-device-data-transfer "Host-Device Data Transfer")".
 
-The Keychain contents can be dumped during dynamic analysis. On a jailbroken device, you can use [Keychain dumper](https://github.com/ptoomey3/Keychain-Dumper/ "Keychain Dumper") as described in the chapter "Basic Security Testing on iOS".
+可以在动态分析期间转储钥匙串内容。 在越狱的设备上，可以按照“ iOS的基本安全性测试”一章中的说明使用[Keychain dumper](https://github.com/ptoomey3/Keychain-Dumper/ "Keychain Dumper").
 
-The path to the Keychain file is
+钥匙串文件的路径是
 
 ```shell
 /private/var/Keychains/keychain-2.db
 ```
 
-On a non-jailbroken device, you can use objection to [dump the Keychain items](https://github.com/sensepost/objection/wiki/Notes-About-The-Keychain-Dumper "Notes About The Keychain Dumper") created and stored by the app.
+在非越狱设备上，您可以使用objection来 [转储钥匙串物品](https://github.com/sensepost/objection/wiki/Notes-About-The-Keychain-Dumper "Notes About The Keychain Dumper") 由应用创建和存储。
 
-##### Dynamic Analysis with Xcode and iOS simulator
+##### 使用Xcode和iOS模拟器进行动态分析
 
-> This test is only available on macOS, as Xcode and the iOS simulator is needed.
+> 此测试仅在macOS上可用，因为需要Xcode和iOS模拟器。
 
-For testing the local storage and verifying what data is stored within it, it's not mandatory to have an iOS device. With access to the source code and Xcode the app can be build and deployed in the iOS simulator. The file system of the current device of the iOS simulator is available in `~/Library/Developer/CoreSimulator/Devices`.
+为了测试本地存储并验证其中存储了哪些数据，并不一定要拥有iOS设备。 通过访问源代码和Xcode，可以在iOS模拟器中构建和部署该应用程序。 iOS模拟器当前设备的文件系统位于`~/Library/Developer/CoreSimulator/Devices`中。
 
-Once the app is running in the iOS simulator, you can navigate to the directory of the latest simulator started with the following command:
+一旦应用程序在iOS模拟器中运行，您就可以导航到以下命令开头的最新模拟器的目录：
 
 ```shell
 $ cd ~/Library/Developer/CoreSimulator/Devices/$(
@@ -311,87 +312,87 @@ ls -alht ~/Library/Developer/CoreSimulator/Devices | head -n 2 |
 awk '{print $9}' | sed -n '1!p')/data/Containers/Data/Application
 ```
 
-The command above will automatically find the UUID of the latest simulator started. Now you still need to grep for your app name or a keyword in your app. This will show you the UUID of the app.
+上面的命令将自动查找启动的最新模拟器的UUID。 现在，您仍然需要grep输入应用名称或应用中的关键字。 这将向您显示该应用程序的UUID。
 
 ```shell
 $ grep -iRn keyword .
 ```
 
-Then you can monitor and verify the changes in the filesystem of the app and investigate if any sensitive information is stored within the files while using the app.
+然后，您可以监视和验证应用程序文件系统中的更改，并在使用应用程序时调查文件中是否存储了任何敏感信息。
 
-##### Dynamic Analysis with Needle
+##### 动态分析：通过 Needle
 
-On a jailbroken device, you can use the iOS security assessment framework Needle to find vulnerabilities caused by the application's data storage mechanism.
+在越狱设备上，您可以使用iOS安全评估框架Needle来查找由应用程序的数据存储机制引起的漏洞
 
-###### Reading the Keychain
+###### 阅读钥匙串(Keychain)
 
-To use Needle to read the Keychain, execute the following command:
+要使用Needle读取钥匙串，请执行以下命令：
 
 ```shell
 [needle] > use storage/data/keychain_dump
 [needle][keychain_dump] > run
 ```  
 
-###### Searching for Binary Cookies
+###### 搜索 二进制Cookie
 
-iOS applications often store binary cookie files in the application sandbox. Cookies are binary files containing cookie data for application WebViews. You can use Needle to convert these files to a readable format and inspect the data. Use the following Needle module, which searches for binary cookie files stored in the application container, lists their data protection values, and gives the user the options to inspect or download the file:
+iOS应用程序通常将二进制Cookie文件存储在应用程序沙箱中。 Cookie是包含应用程序WebView的Cookie数据的二进制文件。 您可以使用Needle将这些文件转换为可读格式并检查数据。 使用以下Needle模块，该模块搜索存储在应用程序容器中的二进制cookie文件，列出其数据保护值，并为用户提供检查或下载文件的选项：
 
 ```shell
 [needle] > use storage/data/files_binarycookies
 [needle][files_binarycookies] > run
 ```
 
-###### Searching for Property List Files
+###### 搜索属性列表文件
 
-iOS applications often store data in property list (plist) files that are stored in both the application sandbox and the IPA package. Sometimes these files contain sensitive information, such as usernames and passwords; therefore, the contents of these files should be inspected during iOS assessments. Use the following Needle module, which searches for plist files stored in the application container, lists their data protection values, and gives the user the options to inspect or download the file:
+OS应用程序通常将数据存储在存储在应用程序沙箱和IPA包中的属性列表（plist）文件中。有时，这些文件包含敏感信息，例如用户名和密码。因此，应在iOS评估期间检查这些文件的内容。使用以下Needle模块，该模块搜索存储在应用程序容器中的plist文件，列出其数据保护值，并为用户提供检查或下载文件的选项：
 
 ```shell
 [needle] > use storage/data/files_plist
 [needle][files_plist] > run
 ```
 
-###### Searching for Cache Databases
+###### 搜索缓存数据库
 
-iOS applications can store data in cache databases. These databases contain data such as web requests and responses. Sometimes the data is sensitive. Use the following Needle module, which searches for cache files stored in the application container, lists their data protection values, and gives the user the options to inspect or download the file:
+iOS应用程序可以将数据存储在缓存数据库中。这些数据库包含Web请求和响应之类的数据。有时数据是敏感的。使用以下Needle模块，该模块搜索存储在应用程序容器中的缓存文件，列出其数据保护值，并为用户提供检查或下载文件的选项：
 
 ```shell
 [needle] > use storage/data/files_cachedb
 [needle][files_cachedb] > run
 ```
 
-###### Searching for SQLite Databases
+###### 搜索SQLite数据库
 
-iOS applications typically use SQLite databases to store data required by the application. Testers should check the data protection values of these files and their contents for sensitive data. Use the following Needle module, which searches for SQLite databases stored in the application container, lists their data protection values, and gives the user the options to inspect or download the file:
+iOS应用程序通常使用SQLite数据库来存储应用程序所需的数据。测试人员应检查这些文件的数据保护值及其内容是否包含敏感数据。使用以下Needle模块，该模块搜索存储在应用程序容器中的SQLite数据库，列出其数据保护值，并为用户提供检查或下载文件的选项：
 
 ```shell
 [needle] > use storage/data/files_sql
 [needle][files_sql] >
 ```
 
-### Checking Logs for Sensitive Data (MSTG-STORAGE-3)
+### 检查日志中的敏感数据 (MSTG-STORAGE-3)
 
-There are many legitimate reasons for creating log files on a mobile device, including keeping track of crashes or errors that are stored locally while the device is offline (so that they can be sent to the app's developer once online), and storing usage statistics. However, logging sensitive data, such as credit card numbers and session information, may expose the data to attackers or malicious applications.
-Log files can be created in several ways. The following list shows the methods available on iOS:
+在移动设备上创建日志文件有很多合理的原因，包括跟踪当设备离线时存储在本地的崩溃或错误（以便可以将它们联机后发送给应用程序的开发人员），以及存储使用情况统计信息。但是，记录敏感数据（例如信用卡号和会话信息）可能会将数据暴露给攻击者或恶意应用程序。
+日志文件可以通过多种方式创建。以下列表显示了iOS上可用的方法：
 
-- NSLog Method
-- printf-like function
-- NSAssert-like function
-- Macro
+- NSLog方法
+- 类似printf的功能
+- 类似于NSAssert的功能
+- 宏
 
-#### Static Analysis
+#### 静态分析
 
-Use the following keywords to check the app's source code for predefined and custom logging statements:
+使用以下关键字检查应用程序的源代码中是否存在预定义和自定义的日志记录语句：
 
-- For predefined and built-in functions:
-  - NSLog
-  - NSAssert
-  - NSCAssert
-  - fprintf
-- For custom functions:
-  - Logging
-  - Logfile
+- 对于预定义和内置功能：
+  - NSLog
+  - NSAssert
+  - NSCAssert
+  - fprintf
+- 对于自定义功能：
+  - 记录
+  - 日志文件
 
-A generalized approach to this issue is to use a define to enable `NSLog` statements for development and debugging, then disable them before shipping the software. You can do this by adding the following code to the appropriate PREFIX_HEADER (\*.pch) file:
+解决此问题的通用方法是使用定义来启用NSLog语句进行开发和调试，然后在发布软件之前禁用它们。您可以通过将以下代码添加到适当的PREFIX_HEADER（\*.pch）文件中来做到这一点：
 
 ```C#
 #ifdef DEBUG
@@ -401,46 +402,46 @@ A generalized approach to this issue is to use a define to enable `NSLog` statem
 #endif
 ```
 
-#### Dynamic Analysis
+#### 动态分析
 
-In the section "Monitoring System Logs" of the chapter "iOS Basic Security Testing" various methods for checking the device logs are explained. Navigate to a screen that displays input fields that take sensitive user information.
+在“ iOS基本安全性测试”一章的“监视系统日志”部分中，介绍了用于检查设备日志的各种方法。导航到一个显示包含敏感用户信息的输入字段的屏幕。
 
-After starting one of the methods, fill in the input fields. If sensitive data is displayed in the output, the app fails this test.
+启动其中一种方法后，填写输入字段。如果输出中显示敏感数据，则该应用程序未通过此测试。
 
-### Determining Whether Sensitive Data Is Sent to Third Parties (MSTG-STORAGE-4)
+### 确定是否将敏感数据发送给第三方 (MSTG-STORAGE-4)
 
-Various third-party services can be embedded in the app. The features these services provide can involve tracking services to monitor the user's behavior while using the app, selling banner advertisements, or improving the user experience.
-The downside to third-party services is that developers don't know the details of the code executed via third-party libraries. Consequently, no more information than is necessary should be sent to a service, and no sensitive information should be disclosed.
+各种第三方服务可以嵌入到应用程序中。这些服务提供的功能可能涉及跟踪服务，以在使用应用程序，出售横幅广告或改善用户体验时监视用户的行为。
+第三方服务的缺点是开发人员不知道通过第三方库执行的代码的详细信息。因此，不应将不必要的信息发送给服务，并且不应公开任何敏感信息。
 
-The downside is that a developer doesn’t know in detail what code is executed via 3rd party libraries and therefore giving up visibility. Consequently it should be ensured that not more than the information needed is sent to the service and that no sensitive information is disclosed.
+不利之处在于，开发人员无法详细了解通过第三方库执行的代码，因此无法获得可视性。因此，应确保向服务发送的信息不超过所需的信息，并且不会泄露敏感信息。
 
-Most third-party services are implemented in two ways:
+大多数第三方服务以两种方式实现：
 
-- with a standalone library
-- with a full SDK
+- 具有独立库
+- 使用完整的SDK
 
-#### Static Analysis
+#### 静态分析
 
-To determine whether API calls and functions provided by the third-party library are used according to best practices, review their source code.
+要确定是否根据最佳实践使用了第三方库提供的API调用和功能，请查看其源代码。
 
-All data that's sent to third-party services should be anonymized to prevent exposure of PII (Personal Identifiable Information) that would allow the third party to identify the user account. No other data (such as IDs that can be mapped to a user account or session) should be sent to a third party.
+发送给第三方服务的所有数据都应匿名，以防止暴露PII（个人身份信息），该信息将使第三方能够识别用户帐户。不应将其他数据（例如可以映射到用户帐户或会话的ID）发送给第三方。
 
-#### Dynamic Analysis
+#### 动态分析
 
-All requests made to external services should be analyzed for embedded sensitive information. By using an interception proxy, you can investigate the traffic between the app and the third party's endpoints. When the app is in use, all requests that don't go directly to the server that hosts the main function should be checked for sensitive information that's sent to a third party. This information could be PII in a request to a tracking or ad service.
+应该分析对外部服务的所有请求以获取嵌入的敏感信息。通过使用拦截代理，您可以调查应用程序与第三方端点之间的流量。使用该应用程序时，应检查所有未直接发送到承载主要功能的服务器的请求，以查找发送给第三方的敏感信息。该信息可以是对跟踪或广告服务的请求中的PII。
 
-### Finding Sensitive Data in the Keyboard Cache (MSTG-STORAGE-5)
+### 在键盘缓存中查找敏感数据 (MSTG-STORAGE-5)
 
-Several options for simplifying keyboard input are available to users. These options include autocorrection and spell checking. Most keyboard input is cached by default, in `/private/var/mobile/Library/Keyboard/dynamic-text.dat`.
+用户可以使用几种简化键盘输入的选项。这些选项包括自动更正和拼写检查。默认情况下，大多数键盘输入都会缓存在 `/private/var/mobile/Library/Keyboard/dynamic-text.dat`.
 
-The [UITextInputTraits protocol](https://developer.apple.com/reference/uikit/uitextinputtraits "UITextInputTraits protocol") is used for keyboard caching. The UITextField, UITextView, and UISearchBar classes automatically support this protocol and it offers the following properties:
+[UITextInputTraits protocol](https://developer.apple.com/reference/uikit/uitextinputtraits "UITextInputTraits protocol") 用于键盘缓存。 UITextField，UITextView和UISearchBar类自动支持此协议，并且提供以下属性：
 
-- `var autocorrectionType: UITextAutocorrectionType` determines whether autocorrection is enabled during typing. When autocorrection is enabled, the text object tracks unknown words and suggests suitable replacements, replacing the typed text automatically unless the user overrides the replacement. The default value of this property is `UITextAutocorrectionTypeDefault`, which for most input methods enables autocorrection.
-- `var secureTextEntry: BOOL` determines whether text copying and text caching are disabled and hides the text being entered for `UITextField`. The default value of this property is `NO`.
+- `var autocorrectionType: UITextAutocorrectionType` 确定在键入过程中是否启用了自动校正。启用自动更正后，文本对象将跟踪未知单词并建议合适的替换，除非用户覆盖替换，否则自动替换键入的文本。此属性的默认值为`UITextAutocorrectionTypeDefault`, 对于大多数输入法而言，它启用自动更正。
+- `var secureTextEntry: BOOL` 确定是否禁用了文本复制和文本缓存，并隐藏了为`UITextField`输入的文本。该属性的默认值为 `NO`.
 
-#### Static Analysis
+#### 静态分析
 
-- Search through the source code for similar implementations, such as
+- 在源代码中搜索类似的实现，例如
 
 ```objc
   textObject.autocorrectionType = UITextAutocorrectionTypeNo;
@@ -449,22 +450,22 @@ The [UITextInputTraits protocol](https://developer.apple.com/reference/uikit/uit
 
 - Open xib and storyboard files in the `Interface Builder` of Xcode and verify the states of `Secure Text Entry` and `Correction` in the `Attributes Inspector` for the appropriate object.
 
-The application must prevent the caching of sensitive information entered into text fields. You can prevent caching by disabling it programmatically, using the `textObject.autocorrectionType = UITextAutocorrectionTypeNo` directive in the desired UITextFields, UITextViews, and UISearchBars. For data that should be masked, such as PINs and passwords, set `textObject.secureTextEntry` to `YES`.
+应用程序必须防止缓存输入到文本字段中的敏感信息. 应用程序必须防止缓存输入到文本字段中的敏感信息。 您可以通过在所需的`UITextFields`，`UITextViews`和`UISearchBars`中使用`textObject.autocorrectionType = UITextAutocorrectionTypeNo`指令以编程方式将其禁用来防止缓存. 对于应屏蔽的数据, 例如PIN和密码, 请将 `textObject.secureTextEntry` 设置为 `YES`.
 
 ```objc
 UITextField *textField = [ [ UITextField alloc ] initWithFrame: frame ];
 textField.autocorrectionType = UITextAutocorrectionTypeNo;
 ```
 
-#### Dynamic Analysis
+#### 动态分析
 
-If a jailbroken iPhone is available, execute the following steps:
+如果可以使用越狱的iPhone，请执行以下步骤：
 
-1. Reset your iOS device keyboard cache by navigating to Settings > General > Reset > Reset Keyboard Dictionary.
-2. Use the application and identify the functionalities that allow users to enter sensitive data.
-3. Dump the keyboard cache file `dynamic-text.dat` into the following directory (which might be different for iOS versions before 8.0):
+1. 通过导航至 `设置`>`常规`>`重置`>`重置键盘字典` 重置iOS设备键盘缓存。
+2. 使用该应用程序并确定允许用户输入敏感数据的功能。
+3. 将键盘缓存文件`dynamic-text.dat`转储到以下目录（对于8.0之前的iOS版本可能有所不同）：
 `/private/var/mobile/Library/Keyboard/`
-4. Look for sensitive data, such as username, passwords, email addresses, and credit card numbers. If the sensitive data can be obtained via the keyboard cache file, the app fails this test.
+4. 查找敏感数据，例如用户名，密码，电子邮件地址和信用卡号。 如果可以通过键盘缓存文件获取敏感数据，则该应用无法通过此测试。
 
 With Needle:
 
@@ -503,15 +504,15 @@ UITextField *textField = [ [ UITextField alloc ] initWithFrame: frame ];
 textField.autocorrectionType = UITextAutocorrectionTypeNo;
 ```
 
-If you must use a non-jailbroken iPhone:
+如果必须使用未越狱的iPhone：
 
-1. Reset the keyboard cache.
-2. Key in all sensitive data.
-3. Use the app again and determine whether autocorrect suggests previously entered sensitive information.
+1. 重置键盘缓存。
+2. 键入所有敏感数据。
+3. 再次使用该应用程序，并确定自动更正是否建议以前输入的敏感信息。
 
-### Determining Whether Sensitive Data Is Exposed via IPC Mechanisms (MSTG-STORAGE-6)
+### 确定是否通过 IPC机制 公开敏感数据 (MSTG-STORAGE-6)
 
-#### Overview
+#### 概述
 
 [Inter Process Communication (IPC)](https://nshipster.com/inter-process-communication/ "IPC on iOS") allows processes to send each other messages and data. For processes that need to communicate with each other, there are different ways to implement IPC on iOS:
 
