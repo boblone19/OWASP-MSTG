@@ -8,41 +8,45 @@
 
 #### 主机设备
 
-尽管您可以使用Linux或Windows机器进行测试，但是您会发现在这些平台上很多任务是困难的或不可能的。 此外，Xcode开发环境和iOS SDK仅适用于macOS。 这意味着您肯定要在macOS上进行源代码分析和调试（这也使黑盒测试更加容易）。
+尽管您可以使用`Linux`或`Windows`机器进行测试，但是您会发现在这些平台上实现很多任务是困难的或不可能的。 此外，Xcode开发环境和iOS SDK仅适用于`macOS`。 这意味着您肯定要在macOS上进行源代码分析和调试（这也使黑盒测试更加容易）。
 
-以下是最基本的iOS应用测试设置：
+以下是最基础的 iOS应用 测试设置：
 
-- 理想情况下，具有管理员权限的macOS计算机。
+- 具有管理员权限的 macOS计算机是理想的测试环境。
 - 允许客户端到客户端流量的Wi-Fi网络。
 - 至少一台越狱的iOS设备（所需的iOS版本）。
-- Burp Suite或其他拦截代理工具。
+- Burp Suite 或其他拦截代理工具。
 
 ##### 设置Xcode和命令行工具
 
-Xcode是用于macOS的集成开发环境（IDE），其中包含用于开发用于macOS，iOS，watchOS和tvOS的软件的一组工具。您可以[从Apple官方网站免费下载Xcode](https://developer.apple.com/xcode/ide/ "Apple Xcode IDE"). Xcode将为您提供与iOS设备进行交互的不同工具和功能，这在渗透测试（例如分析日志或应用的侧载）期间可能会有所帮助。
+Xcode是用于macOS的集成开发环境（IDE），其中包含用于开发用于macOS，iOS，watchOS和tvOS的软件的一组工具。您可以[从Apple官方网站免费下载Xcode](https://developer.apple.com/xcode/ide/ "Apple Xcode IDE"). Xcode将为您提供与iOS设备进行交互的不同工具和功能，这在渗透测试（例如分析日志或应用的加载）期间可能会有所帮助。
 
-所有开发工具已经包含在Xcode中，但是您的终端中不可用。为了使它们在系统范围内可用，建议安装命令行工具包。在测试iOS应用程序时，这将非常方便，因为您稍后将使用的某些工具（例如，异议）也依赖于此软件包的可用性。您可以[从Apple官方网站下载](https://developer.apple.com/download/more/ "Apple iOS SDK") 或直接从终端安装它：
+所有开发工具已经包含在Xcode中，但是默认在您的终端中窗口中是不可用。为了使它们在系统范围内可用，建议安装命令行工具包。在测试iOS应用程序时，这将非常方便，因为您稍后将使用的某些工具（例如，Objection）也依赖于此软件包的可用性。您可以[从Apple官方网站下载](https://developer.apple.com/download/more/ "Apple iOS SDK") 或直接从终端安装它：
 
 ```shell
 $ xcode-select --install
 ```
 
-#### 测试装置
+对于命令行xcode工具，可以下载`Command Line Tools for Xcode <U VERSION>`
+
+#### 测试设备
 
 ##### 获取iOS设备的UDID
 
-The UDID is a 40-digit unique sequence of letters and numbers to identify an iOS device. You can find the [UDID of your iOS device via iTunes](http://www.iclarified.com/52179/how-to-find-your-iphones-udid "How to Find Your iPhone's UDID"), by selecting your device and clicking on "Serial Number" in the summary tab. When clicking on this you will iterate through different meta-data of the iOS device including its UDID.
+UDID是一个由字母和数字组成的40位唯一序列，用来识别iOS设备。你可以在Finder app中找到macOS Catalina上你的iOS设备的UDID，因为iTunes在Catalina已经不可用了。只需在Finder中选择已连接的iOS设备，点击iOS设备名称下的信息进行迭代即可。除了UDID，你可以找到序列号，IMEI和其他有用的信息。
 
-It is also possible to get the UDID via various command line tools while the device is attached via USB:
+如果你在Catalina之前使用macOS版本，你可以[通过iTunes找到你的iOS设备的UDID](http://www.iclarified.com/52179/how-to-find-your-iphones-udid "How to Find Your iPhone's UDID")方法，选择你的设备并点击`摘要`选项卡中的“序列号”。当点击这个时，你会查看到iOS设备的不同数据源，包括它的UDID。
 
-- By using the [I/O Registry Explorer](https://developer.apple.com/library/archive/documentation/DeviceDrivers/Conceptual/IOKitFundamentals/TheRegistry/TheRegistry.html "I/O Registry Explorer") tool `ioreg` (macOS only):
+当设备通过USB连接时，也可以通过macOS上的各种命令行工具获得UDID:
+
+- 通过使用[I/O注册表资源管理器](https://developer.apple.com/library/archive/documentation/DeviceDrivers/Conceptual/IOKitFundamentals/TheRegistry/TheRegistry.html "I/O Registry Explorer") 工具 `ioreg` (macOS only):
 
     ```sh
     $ ioreg -p IOUSB -l | grep "USB Serial"
     |         "USB Serial Number" = "9e8ada44246cee813e2f8c1407520bf2f84849ec"
     ```
 
-- By using [ideviceinstaller](https://github.com/libimobiledevice/ideviceinstaller) (macOS / Linux):
+- 通过使用 [ideviceinstaller](https://github.com/libimobiledevice/ideviceinstaller) (macOS / Linux):
 
     ```sh
     $ brew install ideviceinstaller
@@ -50,7 +54,7 @@ It is also possible to get the UDID via various command line tools while the dev
     316f01bd160932d2bf2f95f1f142bc29b1c62dbc
     ```
 
-- By using the system_profiler (macOS only):
+- 通过使用 system_profiler (macOS only):
 
     ```sh
     $ system_profiler SPUSBDataType | sed -n -e '/iPad/,/Serial/p;/iPhone/,/Serial/p;/iPod/,/Serial/p' | grep "Serial Number:"
@@ -58,7 +62,7 @@ It is also possible to get the UDID via various command line tools while the dev
                 Serial Number: 64655621de6ef5e56a874d63f1e1bdd14f7103b1
     ```
 
-- By using instruments (macOS only):
+- 通过使用 instruments (macOS only):
 
     ```sh
     $ instruments -s devices
@@ -66,17 +70,17 @@ It is also possible to get the UDID via various command line tools while the dev
 
 ##### 在真实设备上测试（越狱）
 
-您应该拥有一部越狱的 iPhone 或 iPad 才能运行测试。 这些设备允许root访问和工具安装，从而使安全测试过程更加简单。 如果您无权使用越狱设备，则可以应用本章后面介绍的解决方法，但要准备好接受更艰难的体验。
+您应该拥有一部越狱的 iPhone 或 iPad 才能运行测试。 这些设备允许root访问和工具安装，从而使安全测试过程更加简单。 如果您无权使用越狱设备，则可以应用本章后面介绍的解决方法，但要准备好接受更艰难的挑战。
 
 ##### 在 iOS 模拟器上测试
 
-与完全模拟实际Android设备的硬件的Android仿真器不同，iOS SDK仿真器提供了iOS设备的更高级别的 *仿真*。 最重要的是，仿真器二进制文件被编译为x86代码而不是ARM代码。 为真实设备编译的应用程序无法运行，从而使模拟器无法用于黑匣子分析和逆向工程。
+与完全模拟实际Android设备的硬件的Android仿真器不同，iOS SDK仿真器提供了iOS设备的更高级别的 *仿真*。 最重要的是，仿真器二进制文件被编译为x86代码而不是ARM代码。 使真实设备编译的应用程序无法运行，从而使模拟器无法用于黑匣子分析和逆向工程。
 
 ##### 获取特权访问
 
-通常将iOS越狱与Android扎根相比，但过程实际上是完全不同的。 为了解释差异，我们将首先回顾Android上“roting”和“flashing”的概念。
+iOS越狱经常与Android Root相比，但过程实际上是完全不同的。 为了解释差异，我们将首先回顾Android上“rooting”和“flashing”的概念。
 
-- **Rooting**: 这通常涉及在系统上安装`su`二进制文件，或用有根的自定义ROM替换整个系统。只要引导加载程序是可访问的，就不需要利用漏洞来获得root访问权限。
+- **Rooting**: 这通常涉及在系统上安装 `su` 二进制文件，或用有根的自定义ROM替换整个系统。这种不需要利用漏洞来获得root访问权限的方法是建立在引导加载程序可访问的情况下。
 - **Flashing custom ROMs**: 解锁引导加载程序后，这可让您替换设备上正在运行的操作系统。引导加载程序可能需要利用漏洞才能解锁。
 
 在iOS设备上，无法刷新自定义ROM，因为iOS引导加载程序仅允许引导和刷新Apple签名的图像。这就是为什么即使未通过Apple签署也无法安装正式的iOS映像的原因，并且这使得iOS降级仅在以前的iOS版本仍被签署的情况下才可能进行。
@@ -91,20 +95,20 @@ Cydia是由Jay Freeman（又名“ saurik”）为越狱设备开发的替代应
 
 某些应用尝试检测运行它们的iOS设备是否已越狱。这是因为越狱会停用某些iOS的默认安全机制。但是，有几种方法可以解决这些检测问题，我们将在 “iOS上的逆向工程和篡改” 和 “在iOS上测试反反向防御” 一章中介绍它们。
 
-###### 越狱的好处
+###### 越狱的优势
 
 最终用户经常越狱设备以调整iOS系统的外观，添加新功能以及从非官方应用程序商店安装第三方应用程序。但是，对于安全测试人员来说，越狱iOS设备会带来更多好处。它们包括但不限于以下内容：
 
-- 根访问文件系统。
+- 最高权限访问文件系统。
 - 可以执行未经Apple签名的应用程序（包括许多安全工具）。
 - 无限制的调试和动态分析。
 - 访问运行时 Objective-C 或 Swift。
 
 ###### 越狱类型
 
-有 *系留*，*半系留*，*半系留* 和 *未系留*越狱。
+有 *tethered*，*半 tethered*，*半 untethered* 和 *untethered* 越狱。
 
-- 捆绑越狱不会在重新启动后持续存在，因此要重新应用越狱，需要在每次重新启动期间将设备连接（捆绑）到计算机上。如果未连接计算机，则设备可能根本不会重启。
+- tethered 越狱不会在重新启动后持续存在，因此要重新应用越狱，需要在每次重新启动期间将设备连接（捆绑）到计算机上。如果未连接计算机，则设备可能根本不会重启。
 
 - 除非重新启动期间将设备连接到计算机，否则无法重新应用半栓式越狱。该设备还可以自行启动进入非越狱模式。
 
