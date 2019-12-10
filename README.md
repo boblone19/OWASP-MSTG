@@ -1,81 +1,81 @@
 <a href="https://leanpub.com/mobile-security-testing-guide"><img width=180px align="right" style="float: right;" src="Document/Images/mstg-cover-release-small.jpg"></a>
 
-# OWASP 移动安全测试指南 [![Twitter Follow](https://img.shields.io/twitter/follow/OWASP_MSTG.svg?style=social&label=Follow)](https://twitter.com/OWASP_MSTG)
+# OWASP Mobile Security Testing Guide [![Twitter Follow](https://img.shields.io/twitter/follow/OWASP_MSTG.svg?style=social&label=Follow)](https://twitter.com/OWASP_MSTG)
 
 [![Creative Commons License](https://licensebuttons.net/l/by-sa/4.0/88x31.png)](https://creativecommons.org/licenses/by-sa/4.0/ "CC BY-SA 4.0")
 
 [![OWASP Flagship](https://img.shields.io/badge/owasp-flagship%20project-48A646.svg)](https://www.owasp.org/index.php/Category:OWASP_Project#tab=Project_Inventory)
 [![Build Status](https://travis-ci.com/OWASP/owasp-mstg.svg?branch=master)](https://travis-ci.com/OWASP/owasp-mstg)
 
-这是 OWASP 移动安全测试指南 （MSTG） 的官方 GitHub 存储库。MSTG 是移动应用安全测试和逆向工程的综合手册。它描述了验证 [OWASP 移动应用程序验证标准 （MASVS）中列出的控制的技术流程](https://github.com/OWASP/owasp-masvs "MASVS").
-您还可以阅读 MSTG [Gitbook](https://mobile-security.gitbook.io/mobile-security-testing-guide/ "MSTG @ Gitbook") 或下载它作为 [e-book](https://leanpub.com/mobile-security-testing-guide-preview "MSTG as an e-book").
+This is the official GitHub Repository of the OWASP Mobile Security Testing Guide (MSTG). The MSTG is a comprehensive manual for mobile app security testing and reverse engineering. It describes technical processes for verifying the controls listed in the [OWASP Mobile Application Verification Standard (MASVS)](https://github.com/OWASP/owasp-masvs "MASVS").
+You can also read the MSTG on [Gitbook](https://mobile-security.gitbook.io/mobile-security-testing-guide/ "MSTG @ Gitbook") or download it as an [e-book](https://leanpub.com/mobile-security-testing-guide-preview "MSTG as an e-book").
 
-MSTG 和 MASVS 正被许多公司、标准和各种组织采用。想了解更多信息？查看我们的 [用户文档，列出一些采用者](Users.md).
+The MSTG and the MASVS are being adopted by many companies, standards, and various organizations. Want to find out more? Check our [users document listing some of the adopters](Users.md).
 
-## 目录
+## Table-of-Contents
 
-### 介绍
+### Introduction
 
-- [页眉](Document-cn/0x00-Header.md)
-- [前言](Document-cn/Foreword.md)
-- [正面](Document-cn/0x02-Frontispiece.md)
-- [移动安全测试指南简介](Document-cn/0x03-Overview.md)
-- [移动应用分类](Document-cn/0x04a-Mobile-App-Taxonomy.md)
-- [移动应用安全测试](Document-cn/0x04b-Mobile-App-Security-Testing.md)
+- [Header](Document/0x00-Header.md)
+- [Foreword](Document/Foreword.md)
+- [Frontispiece](Document/0x02-Frontispiece.md)
+- [Introduction to the Mobile Security Testing Guide](Document/0x03-Overview.md)
+- [Mobile App Taxonomy](Document/0x04a-Mobile-App-Taxonomy.md)
+- [Mobile App Security Testing](Document/0x04b-Mobile-App-Security-Testing.md)
 
-### 一般测试指南
+### General Testing Guide
 
-- [移动应用身份验证体系结构](Document-cn/0x04e-Testing-Authentication-and-Session-Management.md)
-- [测试网络通信](Document-cn/0x04f-Testing-Network-Communication.md)
-- [移动应用中的加密](Document-cn/0x04g-Testing-Cryptography.md)
-- [测试代码质量](Document-cn/0x04h-Testing-Code-Quality.md)
-- [篡改和逆向工程](Document-cn/0x04c-Tampering-and-Reverse-Engineering.md)
-- [测试用户教育](Document-cn/0x04i-Testing-user-interaction.md)
+- [Mobile App Authentication Architectures](Document/0x04e-Testing-Authentication-and-Session-Management.md)
+- [Testing Network Communication](Document/0x04f-Testing-Network-Communication.md)
+- [Cryptography in Mobile Apps](Document/0x04g-Testing-Cryptography.md)
+- [Testing Code Quality](Document/0x04h-Testing-Code-Quality.md)
+- [Tampering and Reverse Engineering](Document/0x04c-Tampering-and-Reverse-Engineering.md)
+- [Testing User Education](Document/0x04i-Testing-user-interaction.md)
 
-### Android 测试指南
+### Android Testing Guide
 
-- [平台概述](Document-cn/0x05a-Platform-Overview.md)
-- [Android 基本安全测试](Document-cn/0x05b-Basic-Security_Testing.md)
-- [Android 上的数据存储](Document-cn/0x05d-Testing-Data-Storage.md)
-- [Android 加密 API](Document-cn/0x05e-Testing-Cryptography.md)
-- [Android 上的本地身份验证](Document-cn/0x05f-Testing-Local-Authentication.md)
-- [Android 网络 APIs](Document-cn/0x05g-Testing-Network-Communication.md)
-- [Android 平台 APIs](Document-cn/0x05h-Testing-Platform-Interaction.md)
-- [Android 代码质量和构建设置](Document-cn/0x05i-Testing-Code-Quality-and-Build-Settings.md)
-- [Android 上的篡改和反向工程](Document-cn/0x05c-Reverse-Engineering-and-Tampering.md)
-- [Android 防逆转防御](Document-cn/0x05j-Testing-Resiliency-Against-Reverse-Engineering.md)
+- [Platform Overview](Document/0x05a-Platform-Overview.md)
+- [Android Basic Security Testing](Document/0x05b-Basic-Security_Testing.md)
+- [Data Storage on Android](Document/0x05d-Testing-Data-Storage.md)
+- [Android Cryptographic APIs](Document/0x05e-Testing-Cryptography.md)
+- [Local Authentication on Android](Document/0x05f-Testing-Local-Authentication.md)
+- [Android Network APIs](Document/0x05g-Testing-Network-Communication.md)
+- [Android Platform APIs](Document/0x05h-Testing-Platform-Interaction.md)
+- [Code Quality and Build Settings for Android Apps](Document/0x05i-Testing-Code-Quality-and-Build-Settings.md)
+- [Tampering and Reverse Engineering on Android](Document/0x05c-Reverse-Engineering-and-Tampering.md)
+- [Android Anti-Reversing Defenses](Document/0x05j-Testing-Resiliency-Against-Reverse-Engineering.md)
 
-### iOS 测试指南
+### iOS Testing Guide
 
-- [平台概述](Document-cn/0x06a-Platform-Overview.md)
-- [iOS 基本安全测试](Document-cn/0x06b-Basic-Security-Testing.md)
-- [iOS 上的数据存储](Document-cn/0x06d-Testing-Data-Storage.md)
-- [iOS 加密 API](Document-cn/0x06e-Testing-Cryptography.md)
-- [iOS 上的本地身份验证](Document-cn/0x06f-Testing-Local-Authentication.md)
-- [iOS 网络 APIs](Document-cn/0x06g-Testing-Network-Communication.md)
-- [iOS 平台 APIs](Document-cn/0x06h-Testing-Platform-Interaction.md)
-- [iOS 代码质量和构建设置](Document-cn/0x06i-Testing-Code-Quality-and-Build-Settings.md)
-- [iOS 上的篡改和反向工程](Document-cn/0x06c-Reverse-Engineering-and-Tampering.md)
-- [iOS 防逆防御](Document-cn/0x06j-Testing-Resiliency-Against-Reverse-Engineering.md)
+- [Platform Overview](Document/0x06a-Platform-Overview.md)
+- [iOS Basic Security Testing](Document/0x06b-Basic-Security-Testing.md)
+- [Data Storage on iOS](Document/0x06d-Testing-Data-Storage.md)
+- [iOS Cryptographic APIs](Document/0x06e-Testing-Cryptography.md)
+- [Local Authentication on iOS](Document/0x06f-Testing-Local-Authentication.md)
+- [iOS Network APIs](Document/0x06g-Testing-Network-Communication.md)
+- [iOS Platform APIs](Document/0x06h-Testing-Platform-Interaction.md)
+- [Code Quality and Build Settings for iOS Apps](Document/0x06i-Testing-Code-Quality-and-Build-Settings.md)
+- [Tampering and Reverse Engineering on iOS](Document/0x06c-Reverse-Engineering-and-Tampering.md)
+- [iOS Anti-Reversing Defenses](Document/0x06j-Testing-Resiliency-Against-Reverse-Engineering.md)
 
-### 附录
+### Appendix
 
-- [测试工具](Document-cn/0x08-Testing-Tools.md)
-- [建议阅读](Document-cn/0x09-Suggested-Reading.md)
+- [Testing Tools](Document/0x08-Testing-Tools.md)
+- [Suggested Reading](Document/0x09-Suggested-Reading.md)
 
-## 阅读移动安全测试指南
+## Reading the Mobile Security Testing Guide
 
-MSTG 的 1.0 版本于 2018 年 6 月发布。您可以获取多种格式的中间版本。
+The release 1.0 of the MSTG was published in June 2018. You can get intermediate builds in multiple formats.
 
-1. 阅读 [Gitbook](https://mobile-security.gitbook.io/mobile-security-testing-guide/ "Gitbook"). 本书会自动与主回购同步。
+1. Read it on [Gitbook](https://mobile-security.gitbook.io/mobile-security-testing-guide/ "Gitbook"). The book is automatically synchronized with the main repo.
 
-2. 检查 [版本](https://github.com/OWASP/owasp-mstg/releases "Our releases"). 在这里，您可以找到 PDF、包含源的存档以及任何给定标记版本的 DocX 文档。请注意，文档是按标记自动生成的。
+2. Check the [releases](https://github.com/OWASP/owasp-mstg/releases "Our releases"). Here you can find a PDF, an archive containing the sources and a DocX document for any given tagged version. Please note that the documents are generated automatically per tag.
 
-3. 将书籍作为印刷版本。这本书的硬拷贝可以通过[lulu.com]订购。(http://www.lulu.com/shop/sven-schleier-and-jeroen-willemsen-and-bernhard-m%C3%BCller/owasp-mobile-security-testing-guide/paperback/product-24091501.html "MSTG 在 Lulu.com"). 这本书的这个版本并不完全符合书籍印刷标准，但我们正在改进每个版本。如果您发现任何问题或错误，即使是小问题或错误，请提出 [问题](https://github.com/OWASP/owasp-mstg/issues "我们的问题部分")，所以我们可以在下一个版本中修复它。.
+3. Get the book as printed version. A hardcopy of the book can be ordered via [lulu.com](http://www.lulu.com/shop/sven-schleier-and-jeroen-willemsen-and-bernhard-m%C3%BCller/owasp-mobile-security-testing-guide/paperback/product-24091501.html "MSTG on Lulu.com"). This version of the book is not completely aligned with book printing standards, but we are improving each version. If you recognize any issues or mistakes, even small ones, please raise an [issue](https://github.com/OWASP/owasp-mstg/issues "our issues section") so we can fix it in the next version.
 
-4. 获取 [电子书](https://leanpub.com/mobile-security-testing-guide-preview "MSTG as an e-book"). 这本书是免费的，但如果你想支持我们的项目，你可以选择以你选择的价格购买它。通过销售电子书筹集的所有资金将直接纳入项目预算，并将用于资助未来发行的制作。
+4. Get the [e-book](https://leanpub.com/mobile-security-testing-guide-preview "MSTG as an e-book"). The book is available for free, but you can choose to purchase it at a price of your choosing if you wish to support our project. All funds raised through sales of the e-book go directly into the project budget and will be used to fund production of future releases.
 
-5. 克隆存储库并运行 [文档生成器](https://github.com/OWASP/owasp-mstg/blob/master/Tools/generate_document.sh "The document generator") (需要 [pandoc](http://pandoc.org "Pandoc")). 这将在"生成"子目录中生成 docx 和 HTML 文件。
+5. Clone the repository and run the [document generator](https://github.com/OWASP/owasp-mstg/blob/master/Tools/generate_document.sh "The document generator") (requires [pandoc](http://pandoc.org "Pandoc")). This produces docx and HTML files in the "Generated" subdirectory.
 
     ```shell
     $ git clone https://github.com/OWASP/owasp-mstg/
@@ -83,7 +83,7 @@ MSTG 的 1.0 版本于 2018 年 6 月发布。您可以获取多种格式的中�
     $ ./generate_document.sh
     ```
 
-6. 克隆存储库并运行 [gitbook 生成器](https://github.com/OWASP/owasp-mstg/blob/master/Tools/gitbookepubandpdf.sh "Gitbook based"). 这将在"生成"子目录中生成 PDF、Epub 和 Mobi 文件。
+6. Clone the repository and run the [gitbook generator](https://github.com/OWASP/owasp-mstg/blob/master/Tools/gitbookepubandpdf.sh "Gitbook based"). This produces PDF, Epub and Mobi files in the "Generated" subdirectory.
 
     ```shell
     $ git clone https://github.com/OWASP/owasp-mstg/
@@ -91,43 +91,43 @@ MSTG 的 1.0 版本于 2018 年 6 月发布。您可以获取多种格式的中�
     $ ./gitbookandpdf.sh
     ```
 
-您还可以使用 [文档索引](https://rawgit.com/OWASP/owasp-mstg/master/Generated/OWASP-MSTG-Table-of-Contents.html "TOC") 以导航 MSTG 的主分支。
+You can also use the [document index](https://rawgit.com/OWASP/owasp-mstg/master/Generated/OWASP-MSTG-Table-of-Contents.html "TOC") to navigate the master branch of the MSTG.
 
-## 贡献、功能请求和反馈
+## Contributions, feature requests and feedback
 
-**我们正在寻找更多的作者，评论者和编辑。** 入门的最佳方式是浏览 [现有内容](https://mobile-security.gitbook.io/mobile-security-testing-guide/ "existing content"). 此外，请检查 [问题](https://github.com/OWASP/owasp-mstg/issues "our issues section") 和 [项目页面](https://github.com/OWASP/owasp-mstg/projects/2 "The MSTG Project") 用于打开的任务的列表。
+**We are searching for additional authors, reviewers and editors.** The best way to get started is to browse the [existing content](https://mobile-security.gitbook.io/mobile-security-testing-guide/ "existing content"). Also, check the [issues](https://github.com/OWASP/owasp-mstg/issues "our issues section") and the [project page](https://github.com/OWASP/owasp-mstg/projects/2 "The MSTG Project") for a list of open tasks.
 
-将"我们"线路放在 [Slack通道](https://app.slack.com/client/T04T40NHX/C1M6ZVC6S "Come to our Slack!") 在你开始研究一个主题之前。这有助于我们跟踪每个人正在做什么，并防止冲突。您可以在此处创建 Slack 帐户：
+Drop a us line on the [Slack channel](https://app.slack.com/client/T04T40NHX/C1M6ZVC6S "Come to our Slack!") before you start working on a topic. This helps us to keep track of what everyone is doing and prevent conflicts. You can create a Slack account here:
 
 [https://owasp.slack.com/](https://join.slack.com/t/owasp/shared_invite/enQtNjExMTc3MTg0MzU4LWQ2Nzg3NGJiZGQ2MjRmNzkzN2Q4YzU1MWYyZTdjYjA2ZTA5M2RkNzE2ZjdkNzI5ZThhOWY5MjljYWZmYmY4ZjM)
 
-在您开始供款之前，请查看我们的 [贡献指南](https://github.com/OWASP/owasp-mstg/blob/master/CONTRIBUTING.md "Contribution Guide") 应该让你开始。
+Before you start contributing, please check our [contribution guide](https://github.com/OWASP/owasp-mstg/blob/master/CONTRIBUTING.md "Contribution Guide") which should get you started.
 
-请注意，MSTG 主要关注本机应用程序。这些是使用 Java 或 Kotlin 构建的应用程序，使用 Android 的 Android SDK 构建，或使用适用于 iOS 的 Apple SDK 使用 Swift 或 Objective-C 构建。原生脚本/反应原生/Xamarin/Cordova/...应用不在 MSTG 的重点范围内。但是，一些键控件（如固定）已经针对其中一些平台进行了解释。
-如果您正在寻找有关此字段的更多安全建议，请查看基于合规性清单 1.1.2 的正在进行的 Google 工作表：
+Please note that the MSTG focuses primarely on the native apps. These are apps built with Java or Kotlin using the Android SDK for Android or built with Swift or Objective-C using the Apple SDKs for iOS. Nativescript/React-native/Xamarin/Cordova/... apps are not within the focus of the MSTG. However, some key-controls, such as pinning, have been explained already for some of these platforms.
+If you are looking for more security recommendations on this field, take a look the work-in-progress Google sheets based on the compliancy checklist 1.1.2:
 
-- [Flutter 合规性检查表 (WIP)](https://drive.google.com/open?id=1wHK3VI1cU1xmYrCu9yb5OHKUEeLIPSkC "Flutter Compliancy Checklist");
-- [React-Native 合规性检查表 (WIP)](https://drive.google.com/open?id=1P5FZ_Bup5eSPOmkePZA8cIpKGOKvngkN "React-Native Compliancy Checklist").
-- [Xamarin 合规性检查表 (WIP)](https://drive.google.com/open?id=1UL1yLRREJwXfe0HlrcX-IuvPYQM7lTtG "Xamarin Compliancy Checklist").
+- [Flutter Compliancy Checklist (WIP)](https://drive.google.com/open?id=1wHK3VI1cU1xmYrCu9yb5OHKUEeLIPSkC "Flutter Compliancy Checklist");
+- [React-Native Compliancy Checklist (WIP)](https://drive.google.com/open?id=1P5FZ_Bup5eSPOmkePZA8cIpKGOKvngkN "React-Native Compliancy Checklist").
+- [Xamarin Compliancy Checklist (WIP)](https://drive.google.com/open?id=1UL1yLRREJwXfe0HlrcX-IuvPYQM7lTtG "Xamarin Compliancy Checklist").
 
-如果指南中确实要查看某些内容，或者您想要建议改进，请创建一个问题 [问题](https://github.com/OWASP/owasp-mstg/issues "Issue") 或呼叫我们 [Slack](https://app.slack.com/client/T04T40NHX/C1M6ZVC6S "Come to our Slack!").
-如果问题被接受，我们将将其安排到我们的[里程碑](https://github.com/OWASP/owasp-mstg/milestones "Milestones").
+If there's something you really want to see in the guide, or you want to suggest an improvement, create an issue [issue](https://github.com/OWASP/owasp-mstg/issues "Issue") or ping us on [Slack](https://app.slack.com/client/T04T40NHX/C1M6ZVC6S "Come to our Slack!").
+If the issue is accepted, we will schedule it into one of our [milestones](https://github.com/OWASP/owasp-mstg/milestones "Milestones").
 
-## 创作贡献
+## Authoring Credit
 
-参与者将根据其 GitHub 记录的贡献添加到确认表中。名称列表按添加的行数排序。作者的分类如下：
+Contributors are added to the acknowledgements table based on their contributions logged by GitHub. The list of names is sorted by the number of lines added. Authors are categorized as follows:
 
-- 项目负责人/作者：不断管理指南的开发，撰写大量新内容。如果过去发生过任何违反《行为准则》的行为，则无法实现项目领导。
-- 共同作者：持续提供高质量的内容，[至少记录2，000个新增内容](https://github.com/OWASP/owasp-mstg/graphs/contributors "Co-author").
-- 最佳贡献者：持续贡献优质内容，[至少记录 500 个新增内容](https://github.com/OWASP/owasp-mstg/graphs/contributors "Top Contributor").
-- 贡献者：任何形式的贡献，[至少记录50个新增量](https://github.com/OWASP/owasp-mstg/graphs/contributors "Contributor").
-- 迷你贡献者：所有低于50个的新增内容，例如，提交一个单词或句子。
-- 审阅者：尚未提交自己的拉取请求，但以其他方式创建问题或提供有用反馈的人。
+- Project Leader / Author: Manage development of the guide continuously and write a large amount of new content. Project Leadership cannot be achieved if any violations of the Code of Conduct occurred in the past.
+- Co-Author: Consistently contribute quality content, [at least 2,000 additions logged](https://github.com/OWASP/owasp-mstg/graphs/contributors "Co-author").
+- Top Contributor: Consistently contribute quality content, [at least 500 additions logged](https://github.com/OWASP/owasp-mstg/graphs/contributors "Top Contributor").
+- Contributor: Any form of contribution, [at least 50 additions logged](https://github.com/OWASP/owasp-mstg/graphs/contributors "Contributor").
+- Mini-contributor: Everything below 50 additions, e.g. committing a single word or sentence.
+- Reviewer: People that haven't submitted their own pull requests, but have created issues or given useful feedback in other ways.
 
-如果您在表或错误的列中缺少，请 ping 我们或创建拉取请求（请注意，我们经常更新表，但不是实时更新）。
+Please ping us or create a pull request if you are missing from the table or in the wrong column (note that we update the table frequently, but not in realtime).
 
-如果您愿意编写大部分指南，并帮助持续推动项目向前发展，您可以以作者身份加入。请注意，您将在几个月内投入大量时间。请联系斯文·施莱尔（斯莱克：[斯文]）、耶罗恩·威廉森（斯莱克：[耶罗恩·威廉森]）或卡洛斯·霍尔格拉（斯莱克：[卡洛斯]）了解更多信息。
+If you are willing to write a large portion of the guide and help consistently drive the project forward, you can join as an author. Be aware that you'll be expected to invest lots of time over several months. Contact Sven Schleier (Slack: *Sven*), Jeroen Willemsen (Slack: *jeroenwillemsen*) or Carlos Holguera (Slack: *Carlos*) for more information.
 
 ## Crackmes
 
-在"Crackmes"文件夹中，您可以找到一组要破解的移动应用程序。你能找到秘密吗？有关详细信息：请查看 [README.md](https://github.com/OWASP/owasp-mstg/blob/master/Crackmes/README.md "Crackmes readme") at the [Crackmes folder](https://github.com/OWASP/owasp-mstg/blob/master/Crackmes "Crackmes folder").
+In the Crackmes folder, you can find a set of mobile apps to hack. Are you able to find the secrets? For more details: check the [README.md](https://github.com/OWASP/owasp-mstg/blob/master/Crackmes/README.md "Crackmes readme") at the [Crackmes folder](https://github.com/OWASP/owasp-mstg/blob/master/Crackmes "Crackmes folder").
