@@ -4,7 +4,7 @@ iOS是为苹果移动设备（包括iPhone，iPad和iPod Touch）提供动力的
 
 1. iOS安全架构
 2. iOS应用程序结构
-3.进程间通信（IPC）
+3. 进程间通信（IPC）
 4. iOS应用程序发布
 5. iOS应用程序攻击面
 
