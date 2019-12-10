@@ -106,7 +106,7 @@ Cydia是由Jay Freeman（又名“ saurik”）为越狱设备开发的替代应
 
 ###### 越狱类型
 
-有 *tethered*，*半 tethered*，*半 untethered* 和 *untethered* 越狱。
+有 *全栓式越狱*，*半栓式越狱*，*半捆绑式越狱* 和 *不受限制* 越狱。
 
 - tethered 越狱不会在重新启动后持续存在，因此要重新应用越狱，需要在每次重新启动期间将设备连接（捆绑）到计算机上。如果未连接计算机，则设备可能根本不会重启。
 
@@ -116,7 +116,7 @@ Cydia是由Jay Freeman（又名“ saurik”）为越狱设备开发的替代应
 
 - 不受限制的越狱是最终用户的最普遍选择，因为仅需应用一次，此后设备将被永久越狱。
 
-###### 注意事项 和 注意事项
+###### 注意事宜 和 注意事项
 
 越狱越狱的iOS设备变得越来越复杂，因为Apple不断强化系统并修补已利用的漏洞。越狱已成为一个非常时间敏感的过程，因为苹果公司在发布修复程序后相对较快地停止对这些易受攻击的版本进行签名（除非越狱得益于基于硬件的漏洞，例如[limera1n漏洞利用](https://www.theiphonewiki.com/wiki/Limera1n "limera1n exploit") 的BootROM。这意味着一旦Apple停止对固件进行签名，便无法降级到特定的iOS版本。
 
@@ -139,9 +139,11 @@ iOS越狱场景发展如此之快，以至于很难提供最新的说明。但�
 
 > 请注意，您对设备进行的任何修改均需自担风险。通常情况下，越狱是安全的，但事情可能会出错，并且最终可能会使设备变砖。除您以外的任何一方均不承担任何责任。
 
+---
+
 #### 推荐工具 - iOS设备
 
-可以使用Cydia安装越狱设备上的许多工具，该设备是iOS设备的非官方AppStore，可让您管理存储库。在Cydia中，您应该通过导航到 **Sources** -> **Edit**，然后单击左上方的 **Add**，添加（如果默认情况下尚未完成）以下存储库：
+许多工具可以使用Cydia安装在越狱设备上，该设备是iOS设备的非官方AppStore，可让您管理存储库。在Cydia中，您应该通过导航到 **Sources** -> **Edit**，然后单击左上方的 **Add**，添加（如果默认情况下尚未完成）以下存储库：
 
 - <http://apt.thebigboss.org/repofiles/cydia/>: 最受欢迎的存储库之一是BigBoss，其中包含各种软件包，例如BigBoss推荐工具软件包。
 - <http://repo.hackyouriphone.org>: 添加HackYouriPhone存储库以获取AppSync包。
@@ -153,9 +155,7 @@ iOS越狱场景发展如此之快，以至于很难提供最新的说明。但�
 
 > 如果您使用的是Sileo App Store，请记住，Seoo兼容层在Cydia和Sileo之间共享您的源，但是，Cydia无法删除在Sileo中添加的源，并且[Sileo无法删除在Sileo中添加的源。 Cydia](https://www.idownloadblog.com/2019/01/11/install-sileo-package-manager-on-unc0ver-jailbreak/ "You can now install the Sileo package manager on the unc0ver jailbreak"). 当您尝试删除来源时，请记住这一点。
 
-After adding all the suggested repositories above you can install the following useful packages from Cydia to get started:
-
-在添加完上面所有建议的存储库后，您可以从Cydia安装以下有用的软件包以开始使用：
+在添加了以上所有建议的存储库后，您可以从Cydia安装以下有用的软件包开始:
 
 - adv-cmds：高级命令行，其中包括诸如finger，fingerd，last，lsvfs，md和ps之类的工具。
 - AppList：允许开发人员查询已安装应用程序的列表，并基于该列表提供首选项窗格。
@@ -187,9 +187,11 @@ $ apt-get update
 $ apt-get install adv-cmds
 ```
 
-##### iDevice USB上的小提示
+##### 在iOS设备上使用USB的小提示
 
-在iOS设备上，处于锁定状态1小时后，您无法再进行数据连接，除非由于iOS 11.4.1引入的USB受限模式而再次将其解锁
+在iOS设备上，您无法再进行数据连接，当锁定状态1小时后被激活，除非你再次解锁你的移动设备，这种技术是基于iOS 11.4.1 开始引入。
+
+---
 
 #### 推荐工具 - 主机
 
