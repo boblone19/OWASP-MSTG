@@ -1,28 +1,28 @@
-## iOS平台概述
+## iOS 平台概述
 
-iOS是为苹果移动设备（包括iPhone，iPad和iPod Touch）提供动力的移动操作系统。这也是Apple tvOS的基础，后者继承了iOS的许多功能。本节从架构角度介绍iOS平台。讨论了以下五个关键领域：
+iOS 是为苹果移动设备（包括iPhone，iPad和iPod Touch）启动的移动操作系统。这也是Apple tvOS的基础，后者继承了iOS的许多功能。本节从架构角度介绍iOS平台。讨论了以下五个关键领域：
 
-1. iOS安全架构
-2. iOS应用程序结构
+1. iOS 安全架构
+2. iOS 应用程序结构
 3. 进程间通信（IPC）
-4. iOS应用程序发布
-5. iOS应用程序攻击面
+4. iOS 应用程序发布
+5. iOS 应用程序攻击面
 
-与Apple桌面操作系统macOS（以前称为OS X）类似，iOS基于Darwin，Darwin是Apple开发的开源Unix操作系统。 Darwin的内核是XNU（“ X不是Unix”），它是混合了Mach和FreeBSD内核组件的混合内核。
+与Apple桌面操作系统macOS（以前称为OS X）类似，iOS基于Darwin，Darwin是Apple开发的开源Unix操作系统。 Darwin的内核是XNU（“X不是Unix”），它是混合了Mach和FreeBSD内核组件的混合内核。
 
 但是，iOS应用程序在比桌面应用程序更严格的环境中运行。 iOS应用在文件系统级别彼此隔离，并且在系统API访问方面受到很大限制。
 
-为了保护用户免受恶意应用程序的侵害，Apple限制并控制了对允许在iOS设备上运行的应用程序的访问。苹果的App Store是唯一的官方应用程序分发平台。那里的开发人员可以提供他们的应用程序，而消费者可以购买，下载和安装应用程序。这种发布方式不同于Android，后者支持多个应用商店和侧载（无需使用官方App Store即可在iOS设备上安装应用）。在iOS中，侧载通常是指通过USB安装应用程序的方法，尽管在[Apple Developer Enterprise Program](https://developer.apple.com/programs/enterprise/ "Apple Developer Enterprise Program").
+为了保护用户免受恶意应用程序的侵害，Apple限制并控制了对允许在iOS设备上运行的应用程序的访问。苹果的App Store是唯一的官方应用程序分发平台。那里的开发人员可以提供他们的应用程序，而消费者可以购买，下载和安装应用程序。这种发布方式不同于Android，后者支持多个应用商店和侧载（无需使用官方App Store即可在iOS设备上安装应用）。在iOS中，侧载通常是指通过USB安装应用程序的方法，尽管在[Apple 开发者企业计划](https://developer.apple.com/programs/enterprise/ "Apple Developer Enterprise Program").
 
-过去，只有通过越狱或复杂的解决方法才能进行旁加载。使用iOS 9或更高版本，可以 [sideload via Xcode](https://www.igeeksblog.com/how-to-sideload-apps-on-iphone-ipad-in-ios-10/ "How to Sideload Apps on iPhone and iPad Running iOS 10 using Xcode 8").
+过去，只有通过越狱或复杂的解决方法才能进加载。使用iOS 9或更高版本，可以[通过 Xcode 加载](https://www.igeeksblog.com/how-to-sideload-apps-on-iphone-ipad-in-ios-10/ "How to Sideload Apps on iPhone and iPad Running iOS 10 using Xcode 8").
 
-iOS应用程序通过Apple的iOS沙箱（历史上称为Seatbelt）彼此隔离，这是一种强制访问控制（MAC）机制，用于描述应用程序可以访问和不能访问的资源。与Android广泛的Binder IPC设施相比，iOS提供的IPC（进程间通信）选项很少，从而最大程度地减少了潜在的攻击面。
+iOS 应用程序通过Apple的iOS沙箱（历史上称为Seatbelt）彼此隔离，这是一种强制访问控制（MAC）机制，用于描述应用程序可以访问和不能访问的资源。与Android广泛的Binder IPC设施相比，iOS提供的IPC（进程间通信）选项很少，从而最大程度地减少了潜在的攻击面。
 
-统一的硬件和紧密的硬件/软件集成创建了另一个安全优势。每个iOS设备都提供安全功能，例如安全启动，硬件支持的钥匙串和文件系统加密（在iOS中称为数据保护）。通常，iOS更新通常会迅速推广到很大一部分用户，从而减少了支持不受保护的旧iOS版本的需求。
+统一的硬件和紧密的硬件或者软件集成，创建了另一个安全优势。每个iOS设备都提供安全功能，例如安全启动，硬件支持的钥匙串和文件系统加密（在iOS中称为数据保护）。通常，iOS更新通常会迅速推广到很大一部分用户，从而减少了支持不受保护的旧iOS版本的需求。
 
-尽管iOS具有众多优势，但iOS应用开发人员仍然需要担心安全性。数据保护，钥匙串，Touch ID / Face ID身份验证以及网络安全性仍然为错误留有很大余地。在以下各章中，我们将介绍iOS安全体系结构，说明基本的安全测试方法，并提供反向工程方法。
+尽管iOS具有众多优势，但iOS应用开发人员仍然需要担心安全性。数据保护，钥匙串，Touch ID/Face ID身份验证以及网络安全性仍然为错误留有很大余地。在以下各章中，我们将介绍iOS安全体系结构，说明基本的安全测试方法，并提供反向工程方法。
 
-### iOS安全架构
+### iOS 安全架构
 
 Apple在iOS安全指南中正式记录的[iOS安全体系结构](https://www.apple.com/business/docs/iOS_Security_Guide.pdf "Apple iOS Security Guide"),包含六个核心功能。 Apple针对每个主要的iOS版本更新了此安全指南：
 
