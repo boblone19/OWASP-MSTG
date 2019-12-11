@@ -27,8 +27,6 @@ Xcode是用于macOS的集成开发环境（IDE），其中包含用于开发用�
 $ xcode-select --install
 ```
 
-对于命令行xcode工具，可以下载`Command Line Tools for Xcode <U VERSION>`
-
 #### 测试设备
 
 ##### 获取iOS设备的UDID
@@ -233,7 +231,7 @@ $ frida-trace -U YourApp -m "*[NSURL* *HTTP*]"
 
 [IDB](https://www.idbtool.com "IDBTool") 是一个开源工具，可简化iOS应用安全评估和研究的一些常见任务。文档中提供了[IDB的安装说明](https://www.idbtool.com/installation/ "IDB Installation").
 
-单击IDB中的 **连接到USB / SSH设备**按钮，然后在启动IDB的终端中键入SSH密码。现在，您可以单击**选择应用程序...**，选择要分析的应用程序并获取该应用程序的初始元信息。现在，您可以进行二进制分析，查看本地存储并调查IPC。
+单击IDB中的 **连接到USB/SSH设备**按钮，然后在启动IDB的终端中键入SSH密码。现在，您可以单击**选择应用程序...**，选择要分析的应用程序并获取该应用程序的初始元信息。现在，您可以进行二进制分析，查看本地存储并调查IPC。
 
 请记住，选择应用程序后，IDB可能会不稳定并崩溃。
 
@@ -306,7 +304,7 @@ MobSF启动并运行后，可以通过导航到<http://127.0.0.1:8000>在浏览�
 
 ##### Needle
 
-[Needle](https://github.com/mwrlabs/needle "Needle") 是一个多合一的iOS安全评估框架，您可以将其作为iOS的“ Metasploit”进行比较。 Github Wiki中的[安装指南](https://github.com/mwrlabs/needle/wiki/Installation-Guide "Needle Installation Guide") 包含有关如何准备Kali Linux或macOS以及如何进行安装的所有信息以及在您的iOS设备上安装Needle Agent。
+[Needle](https://github.com/mwrlabs/needle "Needle") 是一个多合一的iOS安全评估框架，您可以将其作为iOS的"Metasploit"相媲美。 Github Wiki中的[安装指南](https://github.com/mwrlabs/needle/wiki/Installation-Guide "Needle Installation Guide") 包含有关如何准备 Kali Linux 或 macOS，以及如何进行安装的所有信息以及在您的iOS设备上安装Needle Agent。
 
 还请确保您从Coolstar存储库安装了Darwin CC Tools，以使Needle在iOS 12上运行。
 
