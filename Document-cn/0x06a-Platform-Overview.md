@@ -24,14 +24,14 @@ iOS 应用程序通过Apple的iOS沙箱（历史上称为Seatbelt）彼此隔离
 
 ### iOS 安全架构
 
-Apple在iOS安全指南中正式记录的[iOS安全体系结构](https://www.apple.com/business/docs/iOS_Security_Guide.pdf "Apple iOS Security Guide"),包含六个核心功能。 Apple针对每个主要的iOS版本更新了此安全指南：
+Apple在iOS安全指南中正式记录着[iOS安全体系结构](https://www.apple.com/business/docs/iOS_Security_Guide.pdf "Apple iOS Security Guide"),6个核心功能。 Apple针对每个主要的iOS版本更新了此安全指南：
 
 - 硬件安全
 - 安全启动
 - 代码签名
 - 沙盒
 - 加密和数据保护
-- 一般利用漏洞
+- 普通漏洞利用
 
 <img src="Images/Chapters/0x06a/iOS_Security_Architecture.png" alt="iOS Security Architecture" width="275">
 
