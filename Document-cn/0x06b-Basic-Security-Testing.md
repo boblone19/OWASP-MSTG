@@ -341,6 +341,10 @@ OWASP.iGoat-Swift on (iPhone: 12.0) [usb] # ios bundles list_bundles
 
 ###### 安装 Objection
 
+Objection 支持2种不同的安装方式：
+ - 原生态安装
+ - 虚拟化安装
+
 可以按照所述通过pip安装Objection [Objection's Wiki](https://github.com/sensepost/objection/wiki/Installation "Objection Wiki - Installation").
 
 ```shell
@@ -349,7 +353,7 @@ $ pip3 install objection
 
 ```
 
-如果您的设备已越狱，则现在可以与该设备上运行的任何应用程序进行交互，并且可以跳到下面的“使用异议”部分。
+如果您的设备已越狱，则现在可以与该设备上运行的任何应用程序进行交互，并且可以跳到下面的“使用Objection”部分。
 
 但是，如果要在非越狱设备上进行测试，则首先需要在应用程序中包括Frida小工具。 [Objection Wiki](https://github.com/sensepost/objection/wiki/Patching-iOS-Applications "Patching iOS Applications") 详细描述了所需的步骤，但是在进行了正确的准备后，您将能够 通过调用异议命令来修补IPA：
 
