@@ -252,24 +252,24 @@ public static SecretKey generateStrongAESKey(char[] password, int keyLength)
 }
 ```
 
-上面的方法需要一组字符数组(byte[])，数组中包含了密码和所需要的密钥长度（以 ‘二进制’ 为长度）。例如，128 或者 256 位的AES密钥。我们通过PBKDF2算法，定义 10000 次的重复计数. 这个大大增加了暴力破解的攻击难度。我们定义了盐的大小长度，并且除以8来处理二进制到字节的转换。我们使用 `SecureRandom` 类来任意生成‘盐’对象。显然, 盐对象 将保持不变，以确保在每次密码替代的时候生成同样的加密密钥。Note that you can store the salt privately in `SharedPreferences`. It is recommended to exclude the salt from the Android backup mechanism to prevent synchronization in case of higher risk data. See the "[Data Storage on Android](0x05d-Testing-Data-Storage.md)" chapter for more details.
-Note that if you take a rooted device, or unpatched device, or a patched (e.g. repackaged) application into account as a threat to the data, it might be better to encrypt the salt with a key in the `AndroidKeystore`. Afterwards the Password-based Encryption (PBE) key is generated using the recommended `PBKDF2WithHmacSHA1` algorithm till Android 8.0 (API level 26). From there on, it is best to use `PBKDF2withHmacSHA256`, which will end up with a different key size.
+上面的方法需要一组字符数组(byte[])，数组中包含了密码和所需要的密钥长度（以 ‘二进制’ 为长度）。例如，128 或者 256 位的AES密钥。我们通过PBKDF2算法，定义 10000 次的重复计数. 这个大大增加了暴力破解的攻击难度。我们定义了盐的大小长度，并且除以8来处理二进制到字节的转换。我们使用 `SecureRandom` 类来任意生成‘盐’对象。显然, 盐对象 将保持不变，以确保在每次密码替代的时候生成同样的加密密钥。值得注意是你可以通过 `SharedPreferences` 文件私密的存储‘盐’对象. 根据安全建议，盐对象应该被排出在Android备份机制中，来防止同步高风险的数据。获取更多的信息 "[Data Storage on Android](0x05d-Testing-Data-Storage.md)".
+值得注意，如果你包括越狱设备，或者微打布丁的设备，或者补丁过的 (e.g. 重新打包) 应用视为堆数据的威胁, 那么最好使用 `AndroidKeystore` 中的密钥堆 盐对象进行加密. 然后，使用推荐的方法生成 以密码-为基础的加密密钥 (PBE) `PBKDF2WithHmacSHA1` 算法，支持版本从 Android 8.0 (API 等级 26). 在这个基础上, 最好使用 `PBKDF2withHmacSHA256`, 它将生成不同的密钥大小.
 
-Now, it is clear that regularly prompting the user for its passphrase is not something that works for every application. In that case make sure you use the [Android KeyStore API](https://developer.android.com/reference/java/security/KeyStore.html "Android AndroidKeyStore API"). This API has been specifically developed to provide a secure storage for key material. Only your application has access to the keys that it generates. Starting from Android 6.0 (API level 23) it is also enforced that the AndroidKeyStore is hardware-backed in case a fingerprint sensor is present. This means a dedicated cryptography chip or trusted platform module (TPM) is being used to secure the key material.
+至此, 很明显的，经常提示用户输入密码并不适用于每个应用程序. 在这种情况下，请务必使用 [Android KeyStore API](https://developer.android.com/reference/java/security/KeyStore.html "Android AndroidKeyStore API"). 此 API 是专门为密钥素材提供安全存储而开发的。只有你的应用程序恶意访问自身的密钥。从 Android 6.0 (API 等级23)开始，AndroidKeyStore 被强制提供硬件支持，以防止指纹传感器的出现。 这意味着一个专属的加密芯片 或者 守信平台模块(TPM)将会用来保护密钥素材。
 
-However, be aware that the `AndroidKeyStore` API has been changed significantly throughout various versions of Android. In earlier versions, the `AndroidKeyStore` API only supported storing public/private key pairs (e.g., RSA). Symmetric key support has only been added since Android 6.0 (API level 23). As a result, a developer needs to take care when he wants to securely store symmetric keys on different Android API levels.
+但是, 值得注意的是 `AndroidKeyStore` 的API在不同Android版本中发生来很大的变化。在早期的版本中, `AndroidKeyStore` API 只支持存储公共密钥/私有密钥/密钥对(e.g., RSA). 对称密钥从Android 6.0(API level 23)开始添加来支持. 因此，开发人员需要额外注意，通过不同Android API版本来实现对称密钥的安全存储。
 
-In order to securely store symmetric keys on devices running on Android 5.1 (API level 22) or lower, we need to generate a public/private key pair. We encrypt the symmetric key using the public key and store the private key in the `AndroidKeyStore`. The encrypted symmetric key can now be safely stored in the `SharedPreferences`. Whenever we need the symmetric key, the application retrieves the private key from the `AndroidKeyStore` and decrypts the symmetric key.
+为了在 Android 5.1 (API 版本 22) 或者更低的版本上实现安全存储 对称密钥，我们需要生成一个公密钥/私钥的密钥对. 我们使用公钥来加密对称密钥并且把私钥存储在文件 `AndroidKeyStore`中. 已经加密的对称密钥安全的存储在 `SharedPreferences`. 当我们需要对称密钥的时候，应用程序通过 `AndroidKeyStore` 中的私钥来解密对称密钥。
 
-When keys are generated and used within the `AndroidKeyStore` and the `KeyInfo.isinsideSecureHardware` returns `true`, then we know that we cannot just dump the keys nor monitor its cryptographic operations. It becomes debatable what will be eventually more safe: using `PBKDF2withHmacSHA256` to generate a key that is still in reachable dumpable memory, or using the `AndroidKeyStore` for which the keys might never get into memory. With Android 9 (API level 28) we see that additional security enhancements have been implemented in order to separate the TEE from the `AndroidKeyStore` which make it favorable over using `PBKDF2withHmacSHA256`. However, more testing and investigating will take place on that subject in the near future.
+当密钥生成并且使用在 `AndroidKeyStore` 和 `KeyInfo.isinsideSecureHardware` 中，我们可以通过返回值 `true` 来确认, 由此我们可以判断，我们不能通过密钥dump的方式，或者监控加密操作过程来获取。 最终什么方式更加安全还具有争议: 使用 `PBKDF2withHmacSHA256` 生成密钥仍然可以通过可以访问内存中获取，或者使用 `AndroidKeyStore` 密钥可能永远不会进入内存。在 Android 9 (API 版本 28) 中，我们看到了而外的安全增强功能被实现，为了更好的把 TEE 从 `AndroidKeyStore` 区分， 这使得使用 `PBKDF2withHmacSHA256` 更加有利. 然而, 对于这个问题将来会进行更多的测试和调查。
 
 #### Secure Key Import into Keystore
 
-Android 9 (API level 28) adds the ability to import keys securely into the `AndroidKeystore`. First `AndroidKeystore` generates a key pair using `PURPOSE_WRAP_KEY` which should also be protected with an attestation certificate, this pair aims to protect the Keys being imported to `AndroidKeystore`. The encrypted keys are generated as ASN.1-encoded message in the `SecureKeyWrapper` format which also contains a description of the ways the imported key is allowed to be used. The keys are then decrypted inside the `AndroidKeystore` hardware belonging to the specific device that generated the wrapping key so they never appear as plaintext in the device's host memory.
+Android 9 (API 版本 28) 添加了导入安全密钥的能力，通过功能 `AndroidKeystore`. 首先 `AndroidKeystore` 通过 `PURPOSE_WRAP_KEY` 生成一对密钥，这对密钥的目的是为了保护导入到 `AndroidKeystore` 的密钥，并且通过认证证书被保护. 加密的密钥通过 `SecureKeyWrapper` 格式生成asn.1 编码消息，该格式还包含通过导入密钥的方式的描述。密钥在 特定设备的 `AndroidKeystore` 硬件中被解密，这样它们就不会以明文的形式出现在设备的主机内存当中。 
 
 <img src="Images/Chapters/0x5e/Android9_secure_key_import_to_keystore.png" alt="Secure key import into Keystore" width="500">
 
-```java
+```JAVA 案例
 KeyDescription ::= SEQUENCE {
     keyFormat INTEGER,
     authorizationList AuthorizationList
