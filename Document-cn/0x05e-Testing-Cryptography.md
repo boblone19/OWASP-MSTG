@@ -1,4 +1,4 @@
-## Android Cryptographic APIs
+## Android 加密 APIs
 
 In the chapter "[Cryptography for Mobile Apps](0x04g-Testing-Cryptography.md)", we introduced general cryptography best practices and described typical flaws that can occur when cryptography is used incorrectly in mobile apps. In this chapter, we'll go into more detail on Android's cryptography APIs. We'll show how to identify uses of those APIs in the source code and how to interpret the configuration. When reviewing code, make sure to compare the cryptographic parameters used with the current best practices linked from this guide.
 
@@ -223,13 +223,13 @@ Once an attacker is knowing what type of weak pseudo-random number generator (PR
 
 If you want to test for randomness, you can try to capture a large set of numbers and check with the Burp's [sequencer](https://portswigger.net/burp/documentation/desktop/tools/sequencer "Burp's Sequencer") to see how good the quality of the randomness is.
 
-### Testing Key Management (MSTG-STORAGE-1, MSTG-CRYPTO-1 and MSTG-CRYPTO-5)
+### 测试密钥管理 (MSTG-STORAGE-1, MSTG-CRYPTO-1 and MSTG-CRYPTO-5)
 
-#### Overview
+#### 概览
 
-In this section we will discuss different ways to store cryptographic keys and how to test for them. We discuss the most secure way, down to the less secure way of generating and storing key material.
+在本章节中，我们将会讨论存储加密密钥的不同方式，以及如何测试它们的安全性。我们将从最安全的方式来讨论，衍生到不太安全的生成和存储密钥的方法。
 
-The most secure way of handling key material, is simply never storing it on the device. This means that the user should be prompted to input a passphrase every time the application needs to perform a cryptographic operation. Although this is not the ideal implementation from a user experience point of view, it is however the most secure way of handling key material. The reason is because key material will only be available in an array in memory while it is being used. Once the key is not needed anymore, the array can be zeroed out. This minimizes the attack window as good as possible. No key material touches the filesystem and no passphrase is stored. However, note that some ciphers do not properly clean up their byte-arrays. For instance, the AES Cipher in BouncyCastle does not always clean up its latest working key. Next, BigInteger based keys (e.g. private keys) cannot be removed from the heap nor zeroed out just like that. Last, take care when trying to zero out the key. See the chapter "[Data Storage on Android](0x05d-Testing-Data-Storage.md)" on how to make sure that the contents of the key indeed are zeroed out.
+最安全的处理密钥的方式是永远不要将它们存储在设备上。这意味着用户每次都要通过输入密码提示的方式来实现加密操作。虽然从用户体验角度来说，这不是一种理想的实现方式，但是它是处理关键密钥的最安全的方法。其原因是密钥的信息在使用的时候，只会在内存中的数组中找到。一旦密钥不再被需要的情况下， 内存数组将归零。这样尽可能的降低了攻击窗口. 没有密钥关键资料接触文件系统，也不会存储任何密码。但是，值得注意的是，不是所有的密码算法正确的清理它们的字节组数。例如，在 BouncyCastle 中的AES 密码并不总是清理最新的工作密钥。接下来，以 BigInteger 为基础的密钥 (e.g. 私有密钥) 无法从堆（heap）或者清零来移除密钥。Last, take care when trying to zero out the key. See the chapter "[Data Storage on Android](0x05d-Testing-Data-Storage.md)" on how to make sure that the contents of the key indeed are zeroed out.
 
 A symmetric encryption key can be generated from the passphrase by using the Password Based Key Derivation Function version 2 (PBKDF2). This cryptographic protocol is designed to generate secure and non brute-forceable keys. The code listing below illustrates how to generate a strong encryption key based on a password.
 
