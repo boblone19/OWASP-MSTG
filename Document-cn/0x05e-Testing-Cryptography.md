@@ -1,6 +1,6 @@
 ## Android 加密 APIs
 
-In the chapter "[Cryptography for Mobile Apps](0x04g-Testing-Cryptography.md)", we introduced general cryptography best practices and described typical flaws that can occur when cryptography is used incorrectly in mobile apps. In this chapter, we'll go into more detail on Android's cryptography APIs. We'll show how to identify uses of those APIs in the source code and how to interpret the configuration. When reviewing code, make sure to compare the cryptographic parameters used with the current best practices linked from this guide.
+在本章节中 "[Cryptography for Mobile Apps](0x04g-Testing-Cryptography.md)", 我们将介绍一般密码学的最佳实践和常见的移动软件缺陷（缺陷是因为通过使用不正确的加密方式导致的）. 在本章节当中, 我们将更加详细的介绍 Android's 加密的 APIs 功能. 我们将展示如何在源代码中识别这些 API 的使用，以及如何解释配置信息。在检查代码时候，请确保以使用的加密参数与本文最佳实践进行对比。 When reviewing code, make sure to compare the cryptographic parameters used with the current best practices linked from this guide.
 
 ### Testing the Configuration of Cryptographic Standard Algorithms (MSTG-CRYPTO-2, MSTG-CRYPTO-3 and MSTG-CRYPTO-4)
 
@@ -289,9 +289,9 @@ SecureKeyWrapper ::= SEQUENCE {
 
 定义密钥描述授权列表时，以下参数将影响加密密钥的安全性:
 
-- The `algorithm` parameter Specifies the cryptographic algorithm with which the key is used
-- The `keySize` parameter Specifies the size, in bits, of the key, measuring in the normal way for the key's algorithm
-- The `digest` parameter Specifies the digest algorithms that may be used with the key to perform signing and verification operations
+- `algorithm` 参数指定使用密钥的加密算法。
+- `keySize` 参数指定密钥大小以bit为单位，通过常规的方式来侧拉密钥算法。
+- `digest` 参数特指完整性算法 - 及通过使用密钥来进行签名和验证操作。
 
 #### 密钥 证据
 
