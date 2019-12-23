@@ -229,19 +229,19 @@ If you want to test for randomness, you can try to capture a large set of number
 
 在本章节中，我们将会讨论存储加密密钥的不同方式，以及如何测试它们的安全性。我们将从最安全的方式来讨论，衍生到不太安全的生成和存储密钥的方法。
 
-最安全的处理密钥的方式是永远不要将它们存储在设备上。这意味着用户每次都要通过输入密码提示的方式来实现加密操作。虽然从用户体验角度来说，这不是一种理想的实现方式，但是它是处理关键密钥的最安全的方法。其原因是密钥的信息在使用的时候，只会在内存中的数组中找到。一旦密钥不再被需要的情况下， 内存数组将归零。这样尽可能的降低了攻击窗口. 没有密钥关键资料接触文件系统，也不会存储任何密码。但是，值得注意的是，不是所有的密码算法正确的清理它们的字节组数。例如，在 BouncyCastle 中的AES 密码并不总是清理最新的工作密钥。接下来，以 BigInteger 为基础的密钥 (e.g. 私有密钥) 无法从堆（heap）或者清零来移除密钥。Last, take care when trying to zero out the key. See the chapter "[Data Storage on Android](0x05d-Testing-Data-Storage.md)" on how to make sure that the contents of the key indeed are zeroed out.
+最安全的处理密钥的方式是永远不要将它们存储在设备上。这意味着用户每次都要通过输入密码提示的方式来实现加密操作。虽然从用户体验角度来说，这不是一种理想的实现方式，但是它是处理关键密钥的最安全的方法。其原因是密钥的信息在使用的时候，只会在内存中的数组中找到。一旦密钥不再被需要的情况下， 内存数组将归零。这样尽可能的降低了攻击窗口. 没有密钥关键资料接触文件系统，也不会存储任何密码。但是，值得注意的是，不是所有的密码算法正确的清理它们的字节组数。例如，在 BouncyCastle 中的AES 密码并不总是清理最新的工作密钥。接下来，以 BigInteger 为基础的密钥 (e.g. 私有密钥) 无法从堆（heap）或者清零来移除密钥。最后, 小心处理清理密钥的情况。请参考章节 "[Data Storage on Android](0x05d-Testing-Data-Storage.md)" 如何确保密钥相关内容被清零.
 
-A symmetric encryption key can be generated from the passphrase by using the Password Based Key Derivation Function version 2 (PBKDF2). This cryptographic protocol is designed to generate secure and non brute-forceable keys. The code listing below illustrates how to generate a strong encryption key based on a password.
+对称加密密钥可以通过使用基于密码的密钥衍生函数来实现(PBKDF2). 这种加密协议的目的是生成安全的，不可篡改的密钥。下面的代码案例演示了“如何根据密码生成更强的加密密钥。” 
 
-```java
+```JAVA 语言
 public static SecretKey generateStrongAESKey(char[] password, int keyLength)
 {
-    //Initiliaze objects and variables for later use
+    //对象 和 变量的初始化 提供后续的调用
     int iterationCount = 10000;
     int saltLength     = keyLength / 8;
     SecureRandom random = new SecureRandom();
 
-    //Generate the salt
+    //生成 盐 对象
     byte[] salt = new byte[saltLength];
     random.nextBytes(salt);
 
@@ -252,7 +252,7 @@ public static SecretKey generateStrongAESKey(char[] password, int keyLength)
 }
 ```
 
-The above method requires a character array containing the password and the needed key length in bits, for instance a 128 or 256-bit AES key. We define an iteration count of 10000 rounds which will be used by the PBKDF2 algorithm. This significantly increases the workload for a brute-force attack. We define the salt size equal to the key length, we divide by 8 to take care of the bit to byte conversion. We use the `SecureRandom` class to randomly generate a salt. Obviously, the salt is something you want to keep constant to ensure the same encryption key is generated time after time for the same supplied password. Note that you can store the salt privately in `SharedPreferences`. It is recommended to exclude the salt from the Android backup mechanism to prevent synchronization in case of higher risk data. See the "[Data Storage on Android](0x05d-Testing-Data-Storage.md)" chapter for more details.
+上面的方法需要一组字符数组(byte[])，数组中包含了密码和所需要的密钥长度（以 ‘二进制’ 为长度）。例如，128 或者 256 位的AES密钥。我们通过PBKDF2算法，定义 10000 次的重复计数. 这个大大增加了暴力破解的攻击难度。我们定义了盐的大小长度，并且除以8来处理二进制到字节的转换。我们使用 `SecureRandom` 类来任意生成‘盐’对象。显然, 盐对象 将保持不变，以确保在每次密码替代的时候生成同样的加密密钥。Note that you can store the salt privately in `SharedPreferences`. It is recommended to exclude the salt from the Android backup mechanism to prevent synchronization in case of higher risk data. See the "[Data Storage on Android](0x05d-Testing-Data-Storage.md)" chapter for more details.
 Note that if you take a rooted device, or unpatched device, or a patched (e.g. repackaged) application into account as a threat to the data, it might be better to encrypt the salt with a key in the `AndroidKeystore`. Afterwards the Password-based Encryption (PBE) key is generated using the recommended `PBKDF2WithHmacSHA1` algorithm till Android 8.0 (API level 26). From there on, it is best to use `PBKDF2withHmacSHA256`, which will end up with a different key size.
 
 Now, it is clear that regularly prompting the user for its passphrase is not something that works for every application. In that case make sure you use the [Android KeyStore API](https://developer.android.com/reference/java/security/KeyStore.html "Android AndroidKeyStore API"). This API has been specifically developed to provide a secure storage for key material. Only your application has access to the keys that it generates. Starting from Android 6.0 (API level 23) it is also enforced that the AndroidKeyStore is hardware-backed in case a fingerprint sensor is present. This means a dedicated cryptography chip or trusted platform module (TPM) is being used to secure the key material.
