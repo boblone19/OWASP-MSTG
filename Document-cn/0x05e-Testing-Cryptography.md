@@ -263,7 +263,7 @@ public static SecretKey generateStrongAESKey(char[] password, int keyLength)
 
 当密钥生成并且使用在 `AndroidKeyStore` 和 `KeyInfo.isinsideSecureHardware` 中，我们可以通过返回值 `true` 来确认, 由此我们可以判断，我们不能通过密钥dump的方式，或者监控加密操作过程来获取。 最终什么方式更加安全还具有争议: 使用 `PBKDF2withHmacSHA256` 生成密钥仍然可以通过可以访问内存中获取，或者使用 `AndroidKeyStore` 密钥可能永远不会进入内存。在 Android 9 (API 版本 28) 中，我们看到了而外的安全增强功能被实现，为了更好的把 TEE 从 `AndroidKeyStore` 区分， 这使得使用 `PBKDF2withHmacSHA256` 更加有利. 然而, 对于这个问题将来会进行更多的测试和调查。
 
-#### Secure Key Import into Keystore
+#### 安全密钥导入到 Keystore
 
 Android 9 (API 版本 28) 添加了导入安全密钥的能力，通过功能 `AndroidKeystore`. 首先 `AndroidKeystore` 通过 `PURPOSE_WRAP_KEY` 生成一对密钥，这对密钥的目的是为了保护导入到 `AndroidKeystore` 的密钥，并且通过认证证书被保护. 加密的密钥通过 `SecureKeyWrapper` 格式生成asn.1 编码消息，该格式还包含通过导入密钥的方式的描述。密钥在 特定设备的 `AndroidKeystore` 硬件中被解密，这样它们就不会以明文的形式出现在设备的主机内存当中。 
 
@@ -285,15 +285,15 @@ SecureKeyWrapper ::= SEQUENCE {
 }
 ```
 
-The code above present the different parameters to be set when generating the encrypted keys in the SecureKeyWrapper format. Check the Android documentation on [`WrappedKeyEntry`](https://developer.android.com/reference/android/security/keystore/WrappedKeyEntry "WrappedKeyEntry") for more details.
+上面的代码给出了在以 SecureKeyWrapper 格式生成加密密钥时需要设置的不同参数。查看 Android 文档 [`WrappedKeyEntry`](https://developer.android.com/reference/android/security/keystore/WrappedKeyEntry "WrappedKeyEntry") 获取更多的消息.
 
-When defining the KeyDescription AuthorizationList, the following parameters will affect the encrypted keys security:
+定义密钥描述授权列表时，以下参数将影响加密密钥的安全性:
 
 - The `algorithm` parameter Specifies the cryptographic algorithm with which the key is used
 - The `keySize` parameter Specifies the size, in bits, of the key, measuring in the normal way for the key's algorithm
 - The `digest` parameter Specifies the digest algorithms that may be used with the key to perform signing and verification operations
 
-#### Key Attestation
+#### 密钥 证据
 
 For the applications which heavily rely on Android Keystore for business-critical operations such as multi-factor authentication through cryptographic primitives, secure storage of sensitive data at the client-side, etc. Android provides the feature of [Key Attestation](https://developer.android.com/training/articles/security-key-attestation "Key Attestation") which helps to analyze the security of cryptographic material managed through Android Keystore. From Android 8.0 (API level 26), the key attestation was made mandatory for all new(Android 7.0 or higher) devices that need to have device certification for Google suite of apps, such devices use attestation keys signed by the [Google hardware attestation root certificate](https://developer.android.com/training/articles/security-key-attestation#root_certificate "Google Hardware Attestation Root Certificate") and the same can be verified while key attestation process.
 
