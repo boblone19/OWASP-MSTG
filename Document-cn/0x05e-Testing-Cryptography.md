@@ -1,6 +1,6 @@
 ## Android 加密 APIs 接口
 
-在本章节中 "[Cryptography for Mobile Apps](0x04g-Testing-Cryptography.md)", 我们将介绍一般密码学的最佳实践和常见的移动软件缺陷（缺陷是因为通过使用不正确的加密方式导致的）. 在本章节当中, 我们将更加详细的介绍 Android's 加密的 APIs 功能. 我们将展示如何在源代码中识别这些 API 的使用，以及如何解释配置信息。在检查代码时候，请确保以使用的加密参数与本文最佳实践进行对比。 When reviewing code, make sure to compare the cryptographic parameters used with the current best practices linked from this guide.
+在本章节中 "[Cryptography for Mobile Apps](0x04g-Testing-Cryptography.md)", 我们将介绍‘普通密码学的最佳实践’和‘常见的移动软件缺陷’（缺陷是因为通过使用不正确的加密方式导致的）. 在本章节当中, 我们将更加详细的介绍 Android's 加密的 APIs 功能. 我们将展示如何在源代码中识别这些 API 的使用，以及如何解释配置信息。在检查代码时候，请确保以使用的加密参数与本文最佳实践进行对比。 When reviewing code, make sure to compare the cryptographic parameters used with the current best practices linked from this guide.
 
 ### Testing the Configuration of Cryptographic Standard Algorithms (MSTG-CRYPTO-2, MSTG-CRYPTO-3 and MSTG-CRYPTO-4)
 
@@ -217,7 +217,7 @@ public static void main (String args[]) {
 }
 ```
 
-#### Dynamic Analysis
+#### 动态分析方式 (Dynamic Analysis)
 
 Once an attacker is knowing what type of weak pseudo-random number generator (PRNG) is used, it can be trivial to write proof-of-concept to generate the next random value based on previously observed ones, as it was [done for Java Random](https://franklinta.com/2014/08/31/predicting-the-next-math-random-in-java/ "Predicting the next Math.random() in Java"). In case of very weak custom random generators it may be possible to observe the pattern statistically. Although the recommended approach would anyway be to decompile the APK and inspect the algorithm (see Static Analysis).
 
@@ -289,11 +289,11 @@ SecureKeyWrapper ::= SEQUENCE {
 
 定义密钥描述授权列表时，以下参数将影响加密密钥的安全性:
 
-- `algorithm` 参数指定使用密钥的加密算法。
-- `keySize` 参数指定密钥大小以bit为单位，通过常规的方式来侧拉密钥算法。
-- `digest` 参数特指完整性算法 - 及通过使用密钥来进行签名和验证操作。
+- `algorithm` 该参数指使用密钥的加密算法。
+- `keySize` 该参数指密钥大小，并以bit为单位，通过常规的方式来侧拉密钥算法。
+- `digest` 该参数特指完整性算法 - 及通过使用密钥来进行签名和验证操作。
 
-#### 密钥 证据
+#### 密钥认证 (Key Attestation)
 
 For the applications which heavily rely on Android Keystore for business-critical operations such as multi-factor authentication through cryptographic primitives, secure storage of sensitive data at the client-side, etc. Android provides the feature of [Key Attestation](https://developer.android.com/training/articles/security-key-attestation "Key Attestation") which helps to analyze the security of cryptographic material managed through Android Keystore. From Android 8.0 (API level 26), the key attestation was made mandatory for all new(Android 7.0 or higher) devices that need to have device certification for Google suite of apps, such devices use attestation keys signed by the [Google hardware attestation root certificate](https://developer.android.com/training/articles/security-key-attestation#root_certificate "Google Hardware Attestation Root Certificate") and the same can be verified while key attestation process.
 
