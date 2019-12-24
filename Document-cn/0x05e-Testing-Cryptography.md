@@ -1,18 +1,18 @@
 ## Android 加密 APIs 接口
 
-在本章节中 "[Cryptography for Mobile Apps](0x04g-Testing-Cryptography.md)", 我们将介绍'普通密码学的最佳实践'和'常见的移动软件缺陷'（缺陷是因为通过使用不正确的加密方式导致的）. 在本章节当中, 我们将更加详细的介绍 Android's 加密的 APIs 功能. 我们将展示如何在源代码中识别这些 API 的使用，以及如何解释配置信息。在检查代码时候，请确保以使用的加密参数与本文最佳实践进行对比。 When reviewing code, make sure to compare the cryptographic parameters used with the current best practices linked from this guide.
+在本章节中 "[Cryptography for Mobile Apps](0x04g-Testing-Cryptography.md)", 我们将介绍`普通密码学的最佳实践`和`常见的移动软件缺陷`（缺陷是因为通过使用不正确的加密方式导致的）. 在本章节当中, 我们将更加详细的介绍 Android's 加密 APIs 接口功能. 我们将展示如何在源代码中识别这些 API 的使用，以及如何解释配置信息。在进行代码检查的时候，确保与本指南中提到的加密参数最佳实践进行对比.
 
-### Testing the Configuration of Cryptographic Standard Algorithms (MSTG-CRYPTO-2, MSTG-CRYPTO-3 and MSTG-CRYPTO-4)
+### 测试 密码标准算法的配置 (MSTG-CRYPTO-2, MSTG-CRYPTO-3 and MSTG-CRYPTO-4)
 
-#### Overview
+#### 概述
 
-Android cryptography APIs are based on the Java Cryptography Architecture (JCA). JCA separates the interfaces and implementation, making it possible to include several [security providers](https://developer.android.com/reference/java/security/Provider.html "Android Security Providers") that can implement sets of cryptographic algorithms. Most of the JCA interfaces and classes are defined in the `java.security.*` and `javax.crypto.*` packages. In addition, there are Android specific packages `android.security.*` and `android.security.keystore.*`.
+Android 加密 APIs 接口是基于 Java 加密机构 及(JCA). JCA 将接口和执行分开,这样可以使用多个可执行的加密算法 [security providers](https://developer.android.com/reference/java/security/Provider.html "Android Security Providers"). 大多数的 JCA 接口 和 Java类 都定义在以下两个包中. `java.security.*` 和 `javax.crypto.*` . 此外, 还有特定于 Android 软件包的 `android.security.*` 和 `android.security.keystore.*`.
 
-The list of providers included in Android varies between versions of Android and the OEM-specific builds. Some provider implementations in older versions are now known to be less secure or vulnerable. Thus, Android applications should not only choose the correct algorithms and provide good configuration, in some cases they should also pay attention to the strength of the implementations in the legacy providers.
+不同的Android 版本和 OEM 厂商所提供的加密算法列表不同. 某些供应商执行了老版本的已经被定义为容易受到攻击的算法. 所以, Android 应用不仅仅是选择正确的算法和提供适当的配置,在某种情况下也应该注意执行加密机制的强度.
 
-You can list the set of existing providers as follows:
+你可以列出现有的加密提供选如下:
 
-```java
+```Java 案例
 StringBuilder builder = new StringBuilder();
 for (Provider provider : Security.getProviders()) {
     builder.append("provider: ")
@@ -24,10 +24,10 @@ for (Provider provider : Security.getProviders()) {
             .append(")\n");
 }
 String providers = builder.toString();
-//now display the string on the screen or in the logs for debugging.
+//现在将字符串显示在屏幕上或日志中以供调试。
 ```
 
-Below you can find the output of a running Android 4.4 (API level 19) in an emulator with Google Play APIs, after the security provider has been patched:
+下面你可以参考一个基于Android 4.4 (API 版本 19) 在Google 模拟器中运行的输出结果, 此结果已经修复过安全加密补丁包:
 
 ```text
 provider: GmsCore_OpenSSL1.0 (Android's OpenSSL-backed security provider)
@@ -39,30 +39,30 @@ provider: HarmonyJSSE1.0 (Harmony JSSE Provider)
 provider: AndroidKeyStore1.0 (Android AndroidKeyStore security provider)
 ```
 
-For some applications that support older versions of Android (e.g.: only used versions lower than Android 7.0 (API level 24)), bundling an up-to-date library may be the only option. Spongy Castle (a repackaged version of Bouncy Castle) is a common choice in these situations. Repackaging is necessary because Bouncy Castle is included in the Android SDK. The latest version of [Spongy Castle](https://rtyley.github.io/spongycastle/ "Spongy Castle") likely fixes issues encountered in the earlier versions of [Bouncy Castle](https://www.cvedetails.com/vulnerability-list/vendor_id-7637/Bouncycastle.html "CVE Details Bouncy Castle") that were included in Android. Note that the Bouncy Castle libraries packed with Android are often not as complete as their counterparts from the [legion of the Bouncy Castle](https://www.bouncycastle.org/java.html "Bouncy Castle in Java"). Lastly: bear in mind that packing large libraries such as Spongy Castle will often lead to a multidexed Android application.
+对于某些只支持老版本的 Android 的应用, (e.g.: 只使用低于 Android 7.0 (API 版本 24)), 绑定一个最新的库可能是唯一的选择. Spongy Castle (重新包装版本的 Bouncy Castle) 是这些情况下最常见的选择. 重新封包是必要的,因为 Bouncy Castle 被包含在 Android SDK. 最新版本的 [Spongy Castle](https://rtyley.github.io/spongycastle/ "Spongy Castle") 修复了早期版本中可能遇到的问题 [Bouncy Castle](https://www.cvedetails.com/vulnerability-list/vendor_id-7637/Bouncycastle.html "CVE Details Bouncy Castle") 并且包含在 Android 系统中. 注意, 绑定了Android 的 Bouncy Castle 库通常不来自于 [legion of the Bouncy Castle](https://www.bouncycastle.org/java.html "Bouncy Castle in Java"). 最后:请记住，打包像 Spongy Castle 这样的大型库通常会导致一个多目录的Android应用程序。
 
-Apps that target modern API levels, went through the following changes:
+针对于现代 API 版本的应用,经历了以下变化:
 
-- For Android 7.0 (API level 24) and above [the Android Developer blog shows that](https://android-developers.googleblog.com/2016/06/security-crypto-provider-deprecated-in.html "Security provider Crypto deprecated in Andorid N"):
-  - It is recommended to stop specifying a security provider. Instead, always use a patched security provider.
-  - The support for the `Crypto` provider has dropped and the provider is deprecated.
-  - There is no longer support for `SHA1PRNG` for secure random, but instead the runtime provides an instance of `OpenSSLRandom`.
-- For Android 8.1 (API level 27) and above the [Developer Documentation](https://developer.android.com/about/versions/oreo/android-8.1 "Cryptography updates") shows that:
-  - Conscrypt, known as `AndroidOpenSSL`, is preferred above using Bouncy Castle and it has new implementations: `AlgorithmParameters:GCM` , `KeyGenerator:AES`, `KeyGenerator:DESEDE`, `KeyGenerator:HMACMD5`, `KeyGenerator:HMACSHA1`, `KeyGenerator:HMACSHA224`, `KeyGenerator:HMACSHA256`, `KeyGenerator:HMACSHA384`, `KeyGenerator:HMACSHA512`, `SecretKeyFactory:DESEDE`, and `Signature:NONEWITHECDSA`.
-  - You should not use the `IvParameterSpec.class` anymore for GCM, but use the `GCMParameterSpec.class` instead.
-  - Sockets have changed from `OpenSSLSocketImpl` to `ConscryptFileDescriptorSocket`, and `ConscryptEngineSocket`.
-  - `SSLSession` with null parameters give an NullPointerException.
-  - You need to have large enough arrays as input bytes for generating a key otherwise, an InvalidKeySpecException is thrown.
-  - If a Socket read is interrupted, you get an `SocketException`.
-- For Android 9 (API level 28) and above the [Android Developer Blog](https://android-developers.googleblog.com/2018/03/cryptography-changes-in-android-p.html "Cryptography Changes in Android P") shows even more aggressive changes:
-  - You get a warning if you still specify a provider using the `getInstance` method and you target any API below 28. If you target Android 9 (API level 28) or above, you get an error.
-  - The `Crypto` provider is now removed. Calling it will result in a `NoSuchProviderException`.
+- 从 Android 7.0 (API 版本 24) 或者更高版本 [the Android Developer blog shows that](https://android-developers.googleblog.com/2016/06/security-crypto-provider-deprecated-in.html "Security provider Crypto deprecated in Andorid N"):
+  - 建议停止使用特定的安全供应方式, 相反, 总是使用一个已经打了补丁的安全供应方式.
+  - 对 `Crypto` 的支持已经被取消,并且强烈不建议使用.
+  - 不在支持通过 `SHA1PRNG` 实现随机数字, 而是提供了一个实时的 `OpenSSLRandom` 实例.
+- 从 Android 8.1 (API 版本 27) 或者更高 [Developer Documentation](https://developer.android.com/about/versions/oreo/android-8.1 "Cryptography updates") 显示:
+  - Conscrypt, 被称为 `AndroidOpenSSL`, 是首选使用 Bouncy Castle 和新的实现方式 : `AlgorithmParameters:GCM` , `KeyGenerator:AES`, `KeyGenerator:DESEDE`, `KeyGenerator:HMACMD5`, `KeyGenerator:HMACSHA1`, `KeyGenerator:HMACSHA224`, `KeyGenerator:HMACSHA256`, `KeyGenerator:HMACSHA384`, `KeyGenerator:HMACSHA512`, `SecretKeyFactory:DESEDE`, 和 `Signature:NONEWITHECDSA`.
+  - 你应该不在对 GCM 继续使用 `IvParameterSpec.class` , 而是使用 `GCMParameterSpec.class` 来替代.
+  - Sockets 已经由 `OpenSSLSocketImpl` 衍生到 `ConscryptFileDescriptorSocket`, 和 `ConscryptEngineSocket`.
+  - `SSLSession` 使用 null 参数给出一个 NullPointerException。
+  - 您需要有足够大的数组作为输入字节来生成密钥，否则将抛出 InvalidKeySpecException 错误。
+  - 如果一个 Socket 读取被中断, 你会得到一个 `SocketException`.
+- 基于 Android 9 (API level 28) 并且更高的版本 [Android Developer Blog](https://android-developers.googleblog.com/2018/03/cryptography-changes-in-android-p.html "Cryptography Changes in Android P") 显示出更激进的变化:
+  - 如果你仍然使用 `getInstance` 方法来 并且你的 API 版本低于 28, 你讲得到一个警告消息. 如果你的 Android 9 (API 版本 28) 或者更高, 你将得到一个错误消息.
+  - `Crypto` 提供方式已经被移除. 调用会最终出现 `NoSuchProviderException` 的结果.
 
-Android SDK provides mechanisms for specifying secure key generation and use. Android 6.0 (API level 23) introduced the `KeyGenParameterSpec` class that can be used to ensure the correct key usage in the application.
+Android SDK 提供了指定安全密钥生成 和使用的机制. Android 6.0 (API 版本 23) 引入 `KeyGenParameterSpec` 类, 此类可以确保应用程序中正确的使用密钥.
 
-Here's an example of using AES/CBC/PKCS7Padding on API 23+:
+以下是一个基于API版本 23+ 使用 AES/CBC/PKCS7Padding 的实例:
 
-```Java
+```Java 实例
 String keyAlias = "MySecretKey";
 
 KeyGenParameterSpec keyGenParameterSpec = new KeyGenParameterSpec.Builder(keyAlias,
@@ -79,15 +79,15 @@ keyGenerator.init(keyGenParameterSpec);
 SecretKey secretKey = keyGenerator.generateKey();
 ```
 
-The `KeyGenParameterSpec` indicates that the key can be used for encryption and decryption, but not for other purposes, such as signing or verifying. It further specifies the block mode (CBC), padding (PKCS #7), and explicitly specifies that randomized encryption is required (this is the default). `"AndroidKeyStore"` is the name of the cryptographic service provider used in this example. This will automatically ensure that the keys are stored in the `AndroidKeyStore` which is beneficiary for the protection of the key.
+`KeyGenParameterSpec` 功能指定密钥可以用来加密 和 解密, 但是不能用作其他用途, 比如说签名 或者 校正. 而且更近一步的指定了block 模式 (CBC), padding (PKCS #7), 并明确指定随机加密的必要性. (机制是默认的). `"AndroidKeyStore"` 是加密服务提供者的名称. 这将自动确保密钥存储在 `AndroidKeyStore` 中,以利于密钥的保护.
 
-GCM is another AES block mode that provides additional security benefits over other, older modes. In addition to being cryptographically more secure, it also provides authentication. When using CBC (and other modes), authentication would need to be performed separately, using HMACs (see the "[Tampering and Reverse Engineering on Android](0x05c-Reverse-Engineering-and-Tampering.md)" chapter). Note that GCM is the only mode of AES that [does not support paddings](https://developer.android.com/training/articles/keystore.html#SupportedCiphers "Supported Ciphers in AndroidKeyStore").
+GCM 是另一种 AES block 模式 与其他老的模式相比, 它提供了额外的安全优势. 除了加密方面更加安全意外, 它还提供了身份验证. 当使用CBC (和其他模式)的时候, 认证需要额外执行,通过使用 HMACs (具体参考 "[Tampering and Reverse Engineering on Android](0x05c-Reverse-Engineering-and-Tampering.md)" 章节). 注意 GCM 是唯一的AES 模式 [does not support paddings](https://developer.android.com/training/articles/keystore.html#SupportedCiphers "Supported Ciphers in AndroidKeyStore").
 
-Attempting to use the generated key in violation of the above spec would result in a security exception.
+试图违反上述规范使用或生成的密钥,将导致安全异常错误。
 
-Here's an example of using that key to encrypt:
+下面是一个使用该密钥加密的例子:
 
-```Java
+```Java 实例
 String AES_MODE = KeyProperties.KEY_ALGORITHM_AES
         + "/" + KeyProperties.BLOCK_MODE_CBC
         + "/" + KeyProperties.ENCRYPTION_PADDING_PKCS7;
@@ -104,7 +104,7 @@ byte[] iv = cipher.getIV();
 // save both the IV and the encryptedBytes
 ```
 
-Both the IV (initialization vector) and the encrypted bytes need to be stored; otherwise decryption is not possible.
+ IV (initialization vector) 和加密字节两者都需要保存; 否则无法解密. 
 
 Here's how that cipher text would be decrypted. The `input` is the encrypted byte array and `iv` is the initialization vector from the encryption step:
 
