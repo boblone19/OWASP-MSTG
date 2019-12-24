@@ -106,7 +106,7 @@ byte[] iv = cipher.getIV();
 
  IV (initialization vector) 和加密字节两者都需要保存; 否则无法解密. 
 
-Here's how that cipher text would be decrypted. The `input` is the encrypted byte array and `iv` is the initialization vector from the encryption step:
+下面演示密码文件如何被解密. `input` 是加密后的字节数组 和 `iv` 初始化矢量, 加密步骤如下:
 
 ```Java
 // byte[] input
@@ -120,7 +120,7 @@ cipher.init(Cipher.DECRYPT_MODE, key, params);
 byte[] result = cipher.doFinal(input);
 ```
 
-Since the IV is randomly generated each time, it should be saved along with the cipher text (`encryptedBytes`) in order to decrypt it later.
+由于 IV 每次都是随机生成, 所以应该将其与密码文本 (`encryptedBytes`) 一起保存,以便以后对其进行解密操作. 
 
 Prior to Android 6.0 (API level 23), AES key generation was not supported. As a result, many implementations chose to use RSA and generated a public-private key pair for asymmetric encryption using `KeyPairGeneratorSpec` or used `SecureRandom` to generate AES keys.
 
