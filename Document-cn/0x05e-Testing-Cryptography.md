@@ -354,22 +354,23 @@ SecureKeyWrapper ::= SEQUENCE {
 
 #### StrongBox 硬件安全模块
 
-Devices running Android 9 (API level 28) and higher can have a `StrongBox Keymaster`, an implementation of the Keymaster HAL that resides in a hardware security module which has its own CPU, Secure storage, a true random number generator and a mechanism to resist package tampering. To use this feature, `true` must be passed to the `setIsStrongBoxBacked` method in either the `KeyGenParameterSpec.Builder` class or the `KeyProtection.Builder` class when generating or importing keys using `AndroidKeystore`. To make sure that StrongBox is used during runtime check that `isInsideSecureHardware` returns `true` and that the system does not throw `StrongBoxUnavailableException` which get thrown if the StrongBox Keymaster isn't available for the given algorithm and key size associated with a key.
+运行在 Android 9 (API 版本 28) 及更高版本的设备具有 `StrongBox Keymaster`, Keymaster HAL 的实现通过依赖于自己硬件安全模块中的CPU, 安全存储, 真正随机数生成器和防篡改机制. 使用这个机制, `true` 值必须传递给 `setIsStrongBoxBacked` 方法在任意 `KeyGenParameterSpec.Builder` 类或者 `KeyProtection.Builder` 类中, 每次生成或者导入密钥使用 `AndroidKeystore`. 为了确保 StrongBox 在使用时做实时监测, 方法 `isInsideSecureHardware` 必须返回 `true` 并且系统不会抛出 `StrongBoxUnavailableException` 错误, StrongBox Keymaster 对于指定算法和密钥管理大小不可用.
 
-#### Key Use Authorizations
+#### 密钥使用 授权
 
-To mitigate unauthorized use of keys on the Android device, Android KeyStore lets apps specify authorized uses of their keys when generating or importing the keys. Once made, authorizations cannot be changed.
+为了减少 Android 设备上未授权使用密钥, Android KeyStore 准许应用程序在生成或者导入密钥的时候使用指定密钥权限. 一定授权,就无法修改.
 
-Another API offered by Android is the `KeyChain`, which provides access to private keys and their corresponding certificate chains in credential storage, which is often not used due to the interaction necessary and the shared nature of the Keychain. See the [Developer Documentation](https://developer.android.com/reference/android/security/KeyChain "Keychain") for more details.
+另外一个 API 供给 Android 使用的是 `KeyChain`, 提供在凭据存储中访问私钥和对应的证书链, 因为交互作用和对Keychian共享特性, 所以通常情况下不是用它. 请参考 [Developer Documentation](https://developer.android.com/reference/android/security/KeyChain "Keychain") 获取更多细节.
 
-A slightly less secure way of storing encryption keys, is in the SharedPreferences of Android. When [SharedPreferences](https://developer.android.com/reference/android/content/SharedPreferences.html "Android SharedPreference API") are initialized in [MODE_PRIVATE](https://developer.android.com/reference/android/content/Context.html#MODE_PRIVATE "MODE_PRIVATE"), the file is only readable by the application that created it. However, on rooted devices any other application with root access can simply read the SharedPreference file of other apps, it does not matter whether `MODE_PRIVATE` has been used or not. This is not the case for the AndroidKeyStore. Since AndroidKeyStore access is managed on kernel level, which needs considerably more work and skill to bypass without the AndroidKeyStore clearing or destroying the keys.
+一种不太安全的存储加密密钥的方法,是保存在 Android 的 SharedPreferences 文件中. 在 [SharedPreferences](https://developer.android.com/reference/android/content/SharedPreferences.html "Android SharedPreference API") 时 [MODE_PRIVATE](https://developer.android.com/reference/android/content/Context.html#MODE_PRIVATE "MODE_PRIVATE"), 只有创建该文件的应用程序才可以读取该文件. 但是, 在越狱的设备中,任何拥有 root 权限的应用能够读取 其他应用程序的 SharedPreference 文件, 不管是否使用了 `MODE_PRIVATE` . AndroidKeyStore 却并非如此. 由于 AndroidKeyStore 访问时在内核管理级别, 因此需要大量的工作和技术来绕过它, 无需 AndroidKeyStore 清除或销毁密钥. 
 
-The last three options are to use hardcoded encryption keys in the source code, having a predictable key derivation function based on stable attributes, and storing generated keys in public places like `/sdcard/`. Obviously, hardcoded encryption keys are not the way to go. This means every instance of the application uses the same encryption key. An attacker needs only to do the work once, to extract the key from the source code - whether stored natively or in Java/Kotlin. Consequently, he can decrypt any other data that he can obtain which was encrypted by the application.
-Next, when you have a predictable key derivation function based on identifiers which are accessible to other applications, the attacker only needs to find the KDF and apply it to the device in order to find the key. Lastly, storing encryption keys publicly also is highly discouraged as other applications can have permission to read the public partition and steal the keys.
+最后三个选项是在源代码中使用硬编码的加密密钥, 具有基于稳定属性的可预测的密钥派生功能，以及将生成的密钥存储在 `/sdcard/` 等公共场所. 显然, 硬编码的加密密钥方式不是推荐的方式. 这意味着应用程序的每个实例都使用相同的加密密钥. 攻击者只需做一次工作即可从源代码中提取密钥-无论是本地存储还是Java / Kotlin存储。 因此，他可以解密他获得的任何应用程序加密数据。
 
-#### Static Analysis
+接下来，当您具有基于其他应用程序可访问的标识符的可预测密钥派生功能时，攻击者只需找到 KDF 并将其应用于设备即可找到密钥。 最后，强烈不建议公开存储加密密钥，因为其他应用程序可以读取公共分区并窃取密钥。
 
-Locate uses of the cryptographic primitives in the code. Some of the most frequently used classes and interfaces:
+#### 静态 分析
+
+在代码中找到加密 语言的使用。 一些最常用的 类 和 接口：
 
 - `Cipher`
 - `Mac`
@@ -379,40 +380,40 @@ Locate uses of the cryptographic primitives in the code. Some of the most freque
 - `Key`, `PrivateKey`, `PublicKey`, `SecretKeySpec`, `KeyInfo`
 - And a few others in the `java.security.*` and `javax.crypto.*` packages.
 
-As an example we illustrate how to locate the use of a hardcoded encryption key. First disassemble the DEX bytecode to a collection of Smali bytecode files using ```Baksmali```.
+作为实例,我们将演示怎样定位硬件编码加密密钥. 第一步,反编译 DEX 字节代码文件获取 使用Smali 字节代码文件的集合, 通过工具 ```[Baksmali](https://github.com/JesusFreke/smali)```.
 
 ```shell
 $ baksmali d file.apk -o smali_output/
 ```
 
-Now that we have a collection of Smali bytecode files, we can search the files for the usage of the ```SecretKeySpec``` class. We do this by simply recursively grepping on the Smali source code we just obtained. Please note that class descriptors in Smali start with `L` and end with `;`:
+现在我们有了Smali 字节代码文件集合, 我们可以搜索文件中的 ```SecretKeySpec``` 类的用法. 我们只需要轮训的对获得的 Smali 源代码进行 grep 过滤扫描. 注意, Smali中的类描述符以 `L` 开头,以 `;`结尾:
 
 ```shell
 $ grep -r "Ljavax\crypto\spec\SecretKeySpec;"
 ```
 
-This will highlight all the classes that use the `SecretKeySpec` class, we now examine all the highlighted files and trace which bytes are used to pass the key material. The figure below shows the result of performing this assessment on a production ready application. For sake of readability we have reverse engineered the DEX bytecode to Java code. We can clearly locate the use of a static encryption key that is hardcoded and initialized in the static byte array `Encrypt.keyBytes`.
+这将突出显示所有使用 `SecretKeySpec` 类, 我们现在检查所有标记显示的文件并跟踪哪些字节用于传递密钥材料. 下图显示了在生产就绪应用程序上执行此评估的结果。 为了便于阅读，我们将 DEX 字节码反向工程为Java代码。 我们可以清楚地找到在静态加密密钥 `Encrypt.keyBytes`.
 
 ![Use of a static encryption key in a production ready application.](Images/Chapters/0x5e/static_encryption_key.png).
 
-When you have access to the source code, check at least for the following:
+当您有权访问源代码时，请至少检查以下内容：
 
-- Check which mechanism is used to store a key: prefer the `AndroidKeyStore` over all other solutions.
+- 检查用于存储密钥的机制：与所有其他解决方案相比，首选 `AndroidKeyStore`.
 - Check if defense in depth mechanisms are used to ensure usage of a TEE. For instance: is temporal validity enforced? Is hardware security usage evaluated by the code? See the [KeyInfo documentation](https://developer.android.com/reference/android/security/keystore/KeyInfo "KeyInfo") for more details.
 - In case of whitebox cryptography solutions: study their effectiveness or consult a specialist in that area.
 - Take special care on verifying the purposes of the keys, for instance:
   - make sure that for asymmetric keys, the private key is exclusively used for signing and the public key is only used for encryption.
   - make sure that symmetric keys are not reused for multiple purposes. A new symmetric key should be generated if it's used in a different context.
 
-#### Dynamic Analysis
+#### 动态 分析
 
-Hook cryptographic methods and analyze the keys that are being used. Monitor file system access while cryptographic operations are being performed to assess where key material is written to or read from.
+加密挂钩方法 和 分析被使用的密钥. 在执行加密操作时监视文件系统访问，以评估密钥文件的 写入 或 读取位置。
 
-### References
+### 参考文献
 
-- [#nelenkov] - N. Elenkov, Android Security Internals, No Starch Press, 2014, Chapter 5.
+- [#nelenkov] - N. Elenkov, Android 安全性内部, No Starch Press, 2014, Chapter 5.
 
-#### Cryptography references
+#### 密码学参考
 
 - Android Developer blog: Changes for NDK Developers - <https://android-developers.googleblog.com/2016/06/android-changes-for-ndk-developers.html>
 - Android Developer blog: Crypto Provider Deprecated - <https://android-developers.googleblog.com/2016/06/security-crypto-provider-deprecated-in.html>
@@ -425,12 +426,12 @@ Hook cryptographic methods and analyze the keys that are being used. Monitor fil
 - Security Providers -  <https://developer.android.com/reference/java/security/Provider.html>
 - Spongy Castle  - <https://rtyley.github.io/spongycastle/>
 
-#### SecureRandom references
+#### SecureRandom 参考
 
 - Burpproxy its Sequencer - <https://portswigger.net/burp/documentation/desktop/tools/sequencer>
 - Proper Seeding of SecureRandom - <https://www.securecoding.cert.org/confluence/display/java/MSC63-J.+Ensure+that+SecureRandom+is+properly+seeded>
 
-#### Testing Key Management references
+#### 测试密钥管理 参考
 
 - Android Keychain API - <https://developer.android.com/reference/android/security/KeyChain>
 - Android KeyStore API - <https://developer.android.com/reference/java/security/KeyStore.html>
@@ -439,7 +440,7 @@ Hook cryptographic methods and analyze the keys that are being used. Monitor fil
 - KeyInfo Documentation - <https://developer.android.com/reference/android/security/keystore/KeyInfo>
 - SharedPreferences - <https://developer.android.com/reference/android/content/SharedPreferences.html>
 
-#### Key Attestation References
+#### 密钥认证 参考
 
 - Android Key Attestation - <https://developer.android.com/training/articles/security-key-attestation>
 - Attestation and Assertion - <https://developer.mozilla.org/en-US/docs/Web/API/Web_Authentication_API/Attestation_and_Assertion>
@@ -449,9 +450,9 @@ Hook cryptographic methods and analyze the keys that are being used. Monitor fil
 - Verifying Android Key Attestation - <https://medium.com/@herrjemand/webauthn-fido2-verifying-android-keystore-attestation-4a8835b33e9d>
 - W3C Android Key Attestation - <https://www.w3.org/TR/webauthn/#android-key-attestation>
 
-##### OWASP Mobile Top 10 2016
+##### OWASP 移动 Top 10 2016
 
-- M5 - Insufficient Cryptography - <https://www.owasp.org/index.php/Mobile_Top_10_2016-M5-Insufficient_Cryptography>
+- M5 - 加密机制不足 - <https://www.owasp.org/index.php/Mobile_Top_10_2016-M5-Insufficient_Cryptography>
 
 ##### OWASP MASVS
 
