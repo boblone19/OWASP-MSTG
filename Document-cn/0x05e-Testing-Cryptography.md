@@ -386,10 +386,21 @@ SecureKeyWrapper ::= SEQUENCE {
 $ baksmali d file.apk -o smali_output/
 ```
 
-现在我们有了Smali 字节代码文件集合, 我们可以搜索文件中的 ```SecretKeySpec``` 类的用法. 我们只需要轮训的对获得的 Smali 源代码进行 grep 过滤扫描. 注意, Smali中的类描述符以 `L` 开头,以 `;`结尾:
+```shell
+# For Mac
+java -jar baksmali-x.x.x.jar disassemble app.apk -o xxx_folder/
+```
+
+现在我们有了Smali 字节代码文件集合, 我们可以搜索文件中的 ```SecretKeySpec``` 类的用法. 我们只需要轮询的对获得的 Smali 源代码进行 grep 过滤扫描. 注意, Smali中的类描述符以 `L` 开头,以 `;`结尾:
 
 ```shell
+# For Linux
 $ grep -r "Ljavax\crypto\spec\SecretKeySpec;"
+```
+
+```shell
+# For Mac
+% grep -r "Ljavax/crypto/spec/SecretKeySpec;" ./*
 ```
 
 这将突出显示所有使用 `SecretKeySpec` 类, 我们现在检查所有标记显示的文件并跟踪哪些字节用于传递密钥材料. 下图显示了在生产就绪应用程序上执行此评估的结果。 为了便于阅读，我们将 DEX 字节码反向工程为Java代码。 我们可以清楚地找到在静态加密密钥 `Encrypt.keyBytes`.
