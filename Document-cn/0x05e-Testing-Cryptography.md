@@ -380,7 +380,7 @@ SecureKeyWrapper ::= SEQUENCE {
 - `Key`, `PrivateKey`, `PublicKey`, `SecretKeySpec`, `KeyInfo`
 - And a few others in the `java.security.*` and `javax.crypto.*` packages.
 
-作为实例,我们将演示怎样定位硬件编码加密密钥. 第一步,反编译 DEX 字节代码文件获取 使用Smali 字节代码文件的集合, 通过工具 [Baksmali](https://github.com/JesusFreke/smali).
+作为实例,我们将演示怎样定位硬件编码加密密钥. 第一步,反编译 DEX 字节代码文件获取 使用Smali 字节代码文件的集合, 通过工具 [Baksmali](https://github.com/JesusFreke/smali),下载链接[Baksmali Download](https://bitbucket.org/JesusFreke/smali/downloads/).
 
 ```shell
 $ baksmali d file.apk -o smali_output/
@@ -399,11 +399,11 @@ $ grep -r "Ljavax\crypto\spec\SecretKeySpec;"
 当您有权访问源代码时，请至少检查以下内容：
 
 - 检查用于存储密钥的机制：与所有其他解决方案相比，首选 `AndroidKeyStore`.
-- Check if defense in depth mechanisms are used to ensure usage of a TEE. For instance: is temporal validity enforced? Is hardware security usage evaluated by the code? See the [KeyInfo documentation](https://developer.android.com/reference/android/security/keystore/KeyInfo "KeyInfo") for more details.
-- In case of whitebox cryptography solutions: study their effectiveness or consult a specialist in that area.
-- Take special care on verifying the purposes of the keys, for instance:
-  - make sure that for asymmetric keys, the private key is exclusively used for signing and the public key is only used for encryption.
-  - make sure that symmetric keys are not reused for multiple purposes. A new symmetric key should be generated if it's used in a different context.
+- 检查是否使用深度防御机制来确保使用 TEE. 例如：时间有效性是否得到加强？ 是否通过代码评估硬件安全性使用情况？ 有关更多详细信息，请参见 [KeyInfo documentation](https://developer.android.com/reference/android/security/keystore/KeyInfo "KeyInfo").
+- 如果是白盒密码解决方案：请研究其有效性或咨询该领域的专家。
+- 请特别注意验证密钥的用途，例如：
+  - 确保对于非对称密钥，专用密钥专用于签名，而公用密钥仅用于加密。
+  - 确保对称密钥不会重复使用。 如果在不同的上下文中使用新的对称密钥，则应生成该对称密钥。
 
 #### 动态 分析
 
