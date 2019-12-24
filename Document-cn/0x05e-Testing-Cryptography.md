@@ -380,7 +380,7 @@ SecureKeyWrapper ::= SEQUENCE {
 - `Key`, `PrivateKey`, `PublicKey`, `SecretKeySpec`, `KeyInfo`
 - And a few others in the `java.security.*` and `javax.crypto.*` packages.
 
-作为实例,我们将演示怎样定位硬件编码加密密钥. 第一步,反编译 DEX 字节代码文件获取 使用Smali 字节代码文件的集合, 通过工具 ```[Baksmali](https://github.com/JesusFreke/smali)```.
+作为实例,我们将演示怎样定位硬件编码加密密钥. 第一步,反编译 DEX 字节代码文件获取 使用Smali 字节代码文件的集合, 通过工具 [Baksmali](https://github.com/JesusFreke/smali).
 
 ```shell
 $ baksmali d file.apk -o smali_output/
