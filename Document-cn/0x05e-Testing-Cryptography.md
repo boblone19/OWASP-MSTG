@@ -122,11 +122,11 @@ byte[] result = cipher.doFinal(input);
 
 由于 IV 每次都是随机生成, 所以应该将其与密码文本 (`encryptedBytes`) 一起保存,以便以后对其进行解密操作. 
 
-Prior to Android 6.0 (API level 23), AES key generation was not supported. As a result, many implementations chose to use RSA and generated a public-private key pair for asymmetric encryption using `KeyPairGeneratorSpec` or used `SecureRandom` to generate AES keys.
+在 Android 6.0 (API 版本 23)之前, AES 密钥生成不被支持. 因此, 通过 `KeyPairGeneratorSpec` 许多执行方式通过使用 RSA 和 生成一个 公钥-私钥 密钥对用来做不对称加密 或者使用 `SecureRandom` 来生成 AES 密钥.
 
-Here's an example of `KeyPairGenerator` and `KeyPairGeneratorSpec` used to create the RSA key pair:
+下面是一个利用 `KeyPairGenerator` 和 `KeyPairGeneratorSpec` 来创建 RSA 密钥对的实例:
 
-```Java
+```Java 实例
 Date startDate = Calendar.getInstance().getTime();
 Calendar endCalendar = Calendar.getInstance();
 endCalendar.add(Calendar.YEAR, 1);
@@ -147,70 +147,70 @@ keyPairGenerator.initialize(keyPairGeneratorSpec);
 KeyPair keyPair = keyPairGenerator.generateKeyPair();
 ```
 
-This sample creates the RSA key pair with a key size of 4096-bit (i.e. modulus size).
+此案例创建密钥大小为 4096比特 的RSA 密钥对.(i.e. 模数大小).
 
-Note: there is a widespread false believe that the NDK should be used to hide cryptographic operations and hardcoded keys. However, using this mechanisms is not effective. Attackers can still use tools to find the mechanism used and make dumps of the key in memory. Next, the control flow can be analyzed with e.g. radare2 and the keys extracted with the help of Frida or the combination of both: r2frida (see sections "[Disassembling Native Code](0x05c-Reverse-Engineering-and-Tampering.md#disassembling-native-code "Disassembling Native Code")", "[Memory Dump](0x05c-Reverse-Engineering-and-Tampering.md#memory-dump "Memory Dump")" and "[In-Memory Search](0x05c-Reverse-Engineering-and-Tampering.md#in-memory-search "In-Memory Search")" in the chapter "Tampering and Reverse Engineering on Android" for more details). From Android 7.0 (API level 24) onward, it is not allowed to use private APIs, instead: public APIs need to be called, which further impacts the effectiveness of hiding it away as described in the [Android Developers Blog](https://android-developers.googleblog.com/2016/06/android-changes-for-ndk-developers.html "Android changes for NDK developers")
+注意: 人们普遍错误的相信 NDK 应该用来隐藏加密操作和硬编码密钥生成. 然而, 使用这种机制并不有效. 攻击者仍然可以使用工具来查找所使用的机制, 并在内存当中转存密钥. 接下来, 控制流可以通过类似分析工具来分析: e.g. radare2 通过 Frida 的帮助来提取密钥, 详细请参考: r2frida (看章节 "[Disassembling Native Code](0x05c-Reverse-Engineering-and-Tampering.md#disassembling-native-code "Disassembling Native Code")", "[Memory Dump](0x05c-Reverse-Engineering-and-Tampering.md#memory-dump "Memory Dump")" 和 "[In-Memory Search](0x05c-Reverse-Engineering-and-Tampering.md#in-memory-search "In-Memory Search")" 在章节 "篡改 与 Android 逆向工程" 获取更多的细节). 从 Android 7.0 (API 版本 24) 更早, 私有 APIs 是不被准许使用的, 相反: 公用 APIs 被调用, 影响了隐藏它的有效性,相关描述参考 [Android Developers Blog](https://android-developers.googleblog.com/2016/06/android-changes-for-ndk-developers.html "Android changes for NDK developers")
 
-#### Static Analysis
+#### 静态 分析
 
-Locate uses of the cryptographic primitives in code. Some of the most frequently used classes and interfaces:
+查找代码中密码参数的使用. 一些最常见使用的 类 和 接口 如下:
 
 - `Cipher`
 - `Mac`
 - `MessageDigest`
 - `Signature`
 - `Key`, `PrivateKey`, `PublicKey`, `SecretKey`
-- And a few others in the `java.security.*` and `javax.crypto.*` packages.
+- 还有另外一些存在于 `java.security.*` 和 `javax.crypto.*` 包中.
 
-Ensure that the best practices outlined in the "Cryptography for Mobile Apps" chapter are followed. Verify that the configuration of cryptographic algorithms used are aligned with best practices from [NIST](https://www.keylength.com/en/4/ "NIST recommendations - 2016") and [BSI](https://www.keylength.com/en/8/ "BSI recommendations - 2017") and are considered as strong. Make sure that `SHA1PRNG` is no longer used as it is not cryptographically secure.
-Lastly, make sure that keys are not hardcoded in native code and that no insecure mechanisms are used at this level.
+确保遵循了 "移动应用程序密码学" 章节中的最佳实践. 验证所有使用的密码算法的配置是否与以下最佳实践一致 [NIST](https://www.keylength.com/en/4/ "NIST recommendations - 2016") 和 [BSI](https://www.keylength.com/en/8/ "BSI recommendations - 2017"). 确保 `SHA1PRNG` 的算法不在使用, 因为它在密码上是不安全的.
+最后, 确保密钥不是在本地代码中硬编码中, 并且在这个级别上没有使用不安全的机制.
 
-### Testing Random Number Generation (MSTG-CRYPTO-6)
+### 测试 随机数生成 方法 (MSTG-CRYPTO-6)
 
-#### Overview
+#### 概述
 
-Cryptography requires secure pseudo random number generation (PRNG). Standard Java classes do not provide sufficient randomness and in fact may make it possible for an attacker to guess the next value that will be generated, and use this guess to impersonate another user or access sensitive information.
+密码学-加密需要安全的生成任意数字(PRNG). 标准 Java 类无法提供足够强度的任意数, 事实上,攻击者有猜到下一个任意数字的可能性, 最终使用此猜测结果来模拟其他用户或者访问铭感信息.
 
-In general, `SecureRandom` should be used. However, if the Android versions below Android 4.4 (API level 19) are supported, additional care needs to be taken in order to work around the bug in Android 4.1-4.3 (API level 16-18) versions that [failed to properly initialize the PRNG](https://android-developers.googleblog.com/2013/08/some-securerandom-thoughts.html "Some SecureRandom Thoughts").
+一般情况下, `SecureRandom` 应该被使用. 然而, 如果Android 版本低于 4.4 (API 版本 19), 额外的加固需要执行,为了绕过 Android 4.1-4.3 (API 版本 16-18) 中的故障, 细节参考: [failed to properly initialize the PRNG](https://android-developers.googleblog.com/2013/08/some-securerandom-thoughts.html "Some SecureRandom Thoughts").
 
-Most developers should instantiate `SecureRandom` via the default constructor without any arguments. Other constructors are for more advanced uses and, if used incorrectly, can lead to decreased randomness and security. The PRNG provider backing `SecureRandom` uses the `/dev/urandom` device file as the source of randomness by default [#nelenkov].
+大多数开发人员应该使用不带有任何参数的,默认的构造器来实例化 `SecureRandom` . 而其他的构造器用于更高级用途, 如果使用不当, 可能导致随机性和安全性的下降. PRNG 提供了默认 `SecureRandom` 使用 `/dev/urandom` 设备文件作为随机性数字的来源 [#nelenkov].
 
-#### Static Analysis
+#### 静态 分析
 
-Identify all the instances of random number generators and look for either custom or known insecure `java.util.Random` class. This class produces an identical sequence of numbers for each given seed value; consequently, the sequence of numbers is predictable.
+识别所有关于随机生成数字的所有实例, 并且插在自定义或者已知不安全的 `java.util.Random` 类. 这个类生成相同的序列数字; 最终,导致数字的顺序可以被推测出来.
 
-The following sample source code shows weak random number generation:
+下面的样本源代码演示了一个弱的随机数字生成方式:
 
-```Java
+```Java 实例
 import java.util.Random;
 // ...
 
 Random number = new Random(123L);
 //...
 for (int i = 0; i < 20; i++) {
-  // Generate another random integer in the range [0, 20]
+  // 在 [0, 20] 中生成其他任意整数值
   int n = number.nextInt(21);
   System.out.println(n);
 }
 ```
 
-Instead a well-vetted algorithm should be used that is currently considered to be strong by experts in the field, and select well-tested implementations with adequate length seeds.
+相反, 一种经过严格审核的算法应该被本领域中的专家考虑, 并且通过足够长度的种子,选择良好测试的实施方式.
 
-Identify all instances of `SecureRandom` that are not created using the default constructor. Specifying the seed value may reduce randomness. Prefer the [no-argument constructor of `SecureRandom`](https://www.securecoding.cert.org/confluence/display/java/MSC02-J.+Generate+strong+random+numbers "Generation of Strong Random Numbers") that uses the system-specified seed value to generate a 128-byte-long random number.
+识别所有 `SecureRandom` 中没有通过默认构造器创建的实例. 特定函数种子值会减少随机性. 推荐 [no-argument constructor of `SecureRandom`](https://www.securecoding.cert.org/confluence/display/java/MSC02-J.+Generate+strong+random+numbers "Generation of Strong Random Numbers") 使用系统特定的函数种子值来生成一个 128-byte-long 任意数字.
 
-In general, if a PRNG is not advertised as being cryptographically secure (e.g. `java.util.Random`), then it is probably a statistical PRNG and should not be used in security-sensitive contexts.
-Pseudo-random number generators [can produce predictable numbers](https://www.securecoding.cert.org/confluence/display/java/MSC63-J.+Ensure+that+SecureRandom+is+properly+seeded "Proper seeding of SecureRandom") if the generator is known and the seed can be guessed. A 128-bit seed is a good starting point for producing a "random enough" number.
+一般来说, 如果 PRNG 没有被宣传成为加密安全性 (e.g. `java.util.Random`), 则有可能是统计 PRNG 并且不应该在敏感内容中使用.
+Pseudo-任意数字生成器 [can produce predictable numbers](https://www.securecoding.cert.org/confluence/display/java/MSC63-J.+Ensure+that+SecureRandom+is+properly+seeded "Proper seeding of SecureRandom") 如果生成器被知道,那么函数种子就能够被猜出. 对于生成 "足够安全的随机数字" , 128字节大小的函数种子是一个很好的起点.
 
-The following sample source code shows the generation of a secure random number:
+以下源代码演示了一个安全的任意数字生成方式: 
 
-```Java
+```Java 实例
 import java.security.SecureRandom;
 import java.security.NoSuchAlgorithmException;
 // ...
 
 public static void main (String args[]) {
   SecureRandom number = new SecureRandom();
-  // Generate 20 integers 0..20
+  // 生成 20 以内的任意整数 0..20
   for (int i = 0; i < 20; i++) {
     System.out.println(number.nextInt(21));
   }
@@ -219,9 +219,9 @@ public static void main (String args[]) {
 
 #### 动态分析方式 (Dynamic Analysis)
 
-Once an attacker is knowing what type of weak pseudo-random number generator (PRNG) is used, it can be trivial to write proof-of-concept to generate the next random value based on previously observed ones, as it was [done for Java Random](https://franklinta.com/2014/08/31/predicting-the-next-math-random-in-java/ "Predicting the next Math.random() in Java"). In case of very weak custom random generators it may be possible to observe the pattern statistically. Although the recommended approach would anyway be to decompile the APK and inspect the algorithm (see Static Analysis).
+一定攻击者知道应用使用了哪种 pseudo-任意数字生成器(PRNG), 它可以很轻易通过概念验证的方式来生成下一个随机数字.参考 [done for Java Random](https://franklinta.com/2014/08/31/predicting-the-next-math-random-in-java/ "Predicting the next Math.random() in Java"). 在非常弱的自定义随机生成器的情况下, 在使用非常弱的自定义任意数字方法的情况下,利用统计学可以观察到数字. 尽管推荐方法是远离反编译APK 文件和检查算法. (see Static Analysis).
 
-If you want to test for randomness, you can try to capture a large set of numbers and check with the Burp's [sequencer](https://portswigger.net/burp/documentation/desktop/tools/sequencer "Burp's Sequencer") to see how good the quality of the randomness is.
+如果你想测试你的任意数强度, 你可以尝试抓取大量的数字,通过 Burp's 工具 [sequencer](https://portswigger.net/burp/documentation/desktop/tools/sequencer "Burp's Sequencer") 来查看任意数字的强度性.
 
 ### 测试密钥管理 (MSTG-STORAGE-1, MSTG-CRYPTO-1 and MSTG-CRYPTO-5)
 
@@ -295,20 +295,20 @@ SecureKeyWrapper ::= SEQUENCE {
 
 #### 密钥认证 (Key Attestation)
 
-For the applications which heavily rely on Android Keystore for business-critical operations such as multi-factor authentication through cryptographic primitives, secure storage of sensitive data at the client-side, etc. Android provides the feature of [Key Attestation](https://developer.android.com/training/articles/security-key-attestation "Key Attestation") which helps to analyze the security of cryptographic material managed through Android Keystore. From Android 8.0 (API level 26), the key attestation was made mandatory for all new(Android 7.0 or higher) devices that need to have device certification for Google suite of apps, such devices use attestation keys signed by the [Google hardware attestation root certificate](https://developer.android.com/training/articles/security-key-attestation#root_certificate "Google Hardware Attestation Root Certificate") and the same can be verified while key attestation process.
+对于依赖于 Android Keystore 来实现重要业务运作的应用, 比如说 通过加密原语的多因素认证, 安全存储在客户端的敏感数据, 等等. Android 提供一个功能 [Key Attestation](https://developer.android.com/training/articles/security-key-attestation "Key Attestation") 有助于分析通过Android Keystore 管理的加密材料的安全性. 从 Android 8.0 (API 版本 26), 密钥认证机制在所有新设备中被强制执行 (Android 7.0 或者更高), 这些设备通过使用由 [Google hardware attestation root certificate](https://developer.android.com/training/articles/security-key-attestation#root_certificate "Google Hardware Attestation Root Certificate") 密钥认证签名和密钥认证过程进行验证.
 
-During key attestation, we can specify the alias of a key pair and in return, get a certificate chain, which we can use to verify the properties of that key pair. If the root certificate of the chain is [Google Hardware Attestation Root certificate](https://developer.android.com/training/articles/security-key-attestation#root_certificate "Google Hardware Attestation Root certificate") and the checks related to key pair storage in hardware are made it gives an assurance that the device supports hardware-level key attestation and the key is in hardware-backed keystore that Google believes to be secure. Alternatively, if the attestation chain has any other root certificate, then Google does not make any claims about the security of the hardware.
+在 密钥认证过程中, 我们可以指定密钥对的别名, 作为回应,获得一个证书链, 我们可以使用他来验证密钥对的属性. 如果 根 证书链是 [Google Hardware Attestation Root certificate](https://developer.android.com/training/articles/security-key-attestation#root_certificate "Google Hardware Attestation Root certificate") 和检查在硬件中相关密钥存储机制,确保设备支持硬件级别的密钥认证,密钥在Google认为安全的密钥库中. 或者, 如果认证链有任何其他根证书, 那么谷歌不会对硬件安全性做出任何声明. 
 
-Although the key attestation process can be implemented within the application directly but it is recommended that it should be implemented at the server-side for security reasons. The following are the high-level guidelines for the secure implementation of Key Attestation:
+虽然密钥认证过程可以通过应用程序直接实现,但是出于安全的考虑,建议在服务器端实现它. 以下是安全实施密钥证明的高级指南:
 
-- The server should initiate the key attestation process by creating a random number securely using CSPRNG(Cryptographically Secure Random Number Generator) and the same should be sent to the user as a challenge.
-- The client should call the `setAttestationChallenge` API with the challenge received from the server and should then retrieve the attestation certificate chain using the `KeyStore.getCertificateChain` method.
-- The attestation response should be sent to the server for the verification and following checks should be performed for the verification of the key attestation response:
-  - Verify the certificate chain, up to the root and perform certificate sanity checks such as validity, integrity and trustworthiness.
-  - Check if the root certificate is signed with the Google attestation root key which makes the attestation process trustworthy.
-  - Extract the attestation certificate extension data, which appears within the first element of the certificate chain and perform the following checks:
-    - Verify that the attestation challenge is having the same value which was generated at the server while initiating the attestation process.
-    - Verify the signature in the key attestation response.
+- 服务器必须触发密钥认证流程 - 通过创建任意数字安全的使用 CSPRNG(Cryptographically Secure Random Number Generator) 并且应将其作为质问发送给用户.
+- 客户端应该调用 `setAttestationChallenge` 来自服务器端的质问 API 并且, 使用 `KeyStore.getCertificateChain` 方法来检索认证证书链.
+- 认证响应应该发送到服务器进行验证,并应执行以下检查来验证密钥认证响应:
+  - 验证证书链, 直到根证书的完整性检查,列如有效性,完整性,和可信赖性.
+  - 检查是否是否使用Google 认证根密钥对证书进行签名,这样使得认证过程称为受信的. 
+  - 提取认证证书的扩展数据, 一般显示在证书链的第一个元素中,并执行以下检查: 
+    - 验证认证质问拥有与服务器初始化认证流程相同的值.
+    - 验证密钥认证响应中的签名.
     - Now check the security level of the Keymaster to determine if the device has secure key storage mechanism. Keymaster is a piece of software that runs in the security context and provides all the secure keystore operations. The security level will be one of `Software`, `TrustedEnvironment` or `StrongBox`.
     - Additionally, you can check the attestation security level which will be one of Software, TrustedEnvironment or StrongBox to check how the attestation certificate was generated. Also, some other checks pertaining to keys can be made such as purpose, access time, authentication requirement, etc. to verify the key attributes.
 
