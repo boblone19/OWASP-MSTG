@@ -89,11 +89,11 @@ isAdmin=True
 
 为了防篡改加密的签名，令牌被加入到客户端。当然，有些情况下，事情也不那么绝对安全， 流行的无状态认证实施方式就存在被攻击的可能。 举例， 某些JSON Web Tokens (JWT 网页令牌) 签名认证可能是无效的通过以下方式 [setting the signature type to "None"](https://auth0.com/blog/critical-vulnerabilities-in-json-web-token-libraries/ "Critical vulnerabilities in JSON Web Token libraries"). 我们将会更加深入的在 "测试 JSON Web Tokens" 章节来讨论.
 
-### Testing Best Practices for Passwords (MSTG-AUTH-5 and MSTG-AUTH-6)
+### 测试 密码安全的最佳实践 (MSTG-AUTH-5 and MSTG-AUTH-6)
 
-Password strength is a key concern when passwords are used for authentication. The password policy defines requirements to which end users should adhere. A password policy typically specifies password length, password complexity, and password topologies. A "strong" password policy makes manual or automated password cracking difficult or impossible. The following sections will cover various areas regarding password best practices. For further information please consult the [OWASP Authentication Cheat Sheet](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Authentication_Cheat_Sheet.md#implement-proper-password-strength-controls "Implement Proper Password Strength Controls").
+密码强度是用来认证的关键. 密码策略定义了终端用户需要遵循哪些策略. 密码策略一般定义密码长度, 密码复杂度, 密码拓扑. 一个 "高安全的" 密码策略使得手动或者自动破解密码难度增强或者无法实现. 以下的文章包含了不同方面的密码安全最佳实践. 获取更多信息请参考 [OWASP Authentication Cheat Sheet](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Authentication_Cheat_Sheet.md#implement-proper-password-strength-controls "Implement Proper Password Strength Controls").
 
-#### Static Analysis
+#### 静态 分析
 
 Confirm the existence of a password policy and verify the implemented password complexity requirements according to the [OWASP Authentication Cheat Sheet](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Authentication_Cheat_Sheet.md#implement-proper-password-strength-controls "Implement Proper Password Strength Controls") which focuses on length and an unlimited character set. Identify all password-related functions in the source code and make sure that a verification check is performed in each of them. Review the password verification function and make sure that it rejects passwords that violate the password policy.
 
