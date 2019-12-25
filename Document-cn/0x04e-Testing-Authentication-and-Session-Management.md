@@ -85,7 +85,7 @@ http://www.site.com/page.asp?authenticated=no
 isAdmin=True
 ```
 
-Security experts used to recommend using session-based authentication and maintaining session data on the server only. This prevents any form of client-side tampering with the session state. However, the whole point of using stateless authentication instead of session-based authentication is to *not* have session state on the server. Instead, state is stored in client-side tokens and transmitted with every request. In this case, seeing client-side parameters such as `isAdmin` is perfectly normal.
+安全专家建议使用基于会话为基础的认证 和 只在服务器上的保持会话数据. 这可以防止任何形式的客户端篡改会话状态。相反, 使用无状态认证机制而不用基于会话的认证的关键区别是在服务器上 *不* 存放会话状态. 状态存储在客户端的令牌当中, 并且随着每次请求而传输. 在这种情况下, 看见客户端类似 `isAdmin` 的参数是完全正常的.
 
 To prevent tampering cryptographic signatures are added to client-side tokens. Of course, things may go wrong, and popular implementations of stateless authentication have been vulnerable to attacks. For example, the signature verification of some JSON Web Token (JWT) implementations could be deactivated by [setting the signature type to "None"](https://auth0.com/blog/critical-vulnerabilities-in-json-web-token-libraries/ "Critical vulnerabilities in JSON Web Token libraries"). We'll discuss this attack in more detail in the "Testing JSON Web Tokens" chapter.
 
