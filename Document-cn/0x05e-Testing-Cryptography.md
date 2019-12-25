@@ -1,8 +1,8 @@
-## Android 加密 APIs 接口
+## Android 加密 APIs 接口 
 
 在本章节中 "[Cryptography for Mobile Apps](0x04g-Testing-Cryptography.md)", 我们将介绍`普通密码学的最佳实践`和`常见的移动软件缺陷`（缺陷是因为通过使用不正确的加密方式导致的）. 在本章节当中, 我们将更加详细的介绍 Android's 加密 APIs 接口功能. 我们将展示如何在源代码中识别这些 API 的使用，以及如何解释配置信息。在进行代码检查的时候，确保与本指南中提到的加密参数最佳实践进行对比.
 
-### 测试 密码标准算法的配置 (MSTG-CRYPTO-2, MSTG-CRYPTO-3 and MSTG-CRYPTO-4)
+### 测试 标准密码算法的配置 (MSTG-CRYPTO-2, MSTG-CRYPTO-3 and MSTG-CRYPTO-4)
 
 #### 概述
 
