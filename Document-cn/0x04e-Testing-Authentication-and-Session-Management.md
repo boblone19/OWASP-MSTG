@@ -106,6 +106,8 @@ isAdmin=True
 
 After adding the zxcvbn JavaScript library to the HTML page, you can execute the command `zxcvbn` in the browser console, to get back detailed information about how likely it is to crack the password including a score.
 
+[DEMO:](https://www.bennish.net/password-strength-checker/)
+
 <img src="Images/Chapters/0x04e/zxcvbn.png" alt="An example of a zxcvbn score" width="500">
 
 The score is defined as follows and can be used for a password strength bar for example:
@@ -122,7 +124,7 @@ The score is defined as follows and can be used for a password strength bar for 
 4 # very unguessable: strong protection from offline slow-hash scenario. (guesses >= 10^10)
 ```
 
-Note that zxcvbn can be implemented by the app-developer as well using the Java (or other) implementation in order to guide the user into creating a strong password.
+注意: zxcvbn 可以通过应用开发者执行到程序当中, 其目的是为了帮助用户创建真正意义上的安全密码.
 
 #### Have I Been Pwned: PwnedPasswords
 
