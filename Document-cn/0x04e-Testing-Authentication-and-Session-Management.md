@@ -87,7 +87,7 @@ isAdmin=True
 
 安全专家建议使用基于会话为基础的认证 和 只在服务器上的保持会话数据. 这可以防止任何形式的客户端篡改会话状态。相反, 使用无状态认证机制而不用基于会话的认证的关键区别是在服务器上 *不* 存放会话状态. 状态存储在客户端的令牌当中, 并且随着每次请求而传输. 在这种情况下, 看见客户端类似 `isAdmin` 的参数是完全正常的.
 
-To prevent tampering cryptographic signatures are added to client-side tokens. Of course, things may go wrong, and popular implementations of stateless authentication have been vulnerable to attacks. For example, the signature verification of some JSON Web Token (JWT) implementations could be deactivated by [setting the signature type to "None"](https://auth0.com/blog/critical-vulnerabilities-in-json-web-token-libraries/ "Critical vulnerabilities in JSON Web Token libraries"). We'll discuss this attack in more detail in the "Testing JSON Web Tokens" chapter.
+为了防篡改加密的签名，令牌被加入到客户端。当然，有些情况下，事情也不那么绝对安全， 流行的无状态认证实施方式就存在被攻击的可能。 举例， 某些JSON Web Tokens (JWT 网页令牌) 签名认证可能是无效的通过以下方式 [setting the signature type to "None"](https://auth0.com/blog/critical-vulnerabilities-in-json-web-token-libraries/ "Critical vulnerabilities in JSON Web Token libraries"). 我们将会更加深入的在 "测试 JSON Web Tokens" 章节来讨论.
 
 ### Testing Best Practices for Passwords (MSTG-AUTH-5 and MSTG-AUTH-6)
 
