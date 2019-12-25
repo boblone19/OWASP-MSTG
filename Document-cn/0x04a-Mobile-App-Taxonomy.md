@@ -1,4 +1,4 @@
-# General Testing Guide
+# 通用测试指南
 
 ## 移动应用分类
 
@@ -30,7 +30,7 @@ Web应用程序在浏览器范围内运行（即，它们被“沙盒化”）�
 
 Web到本地的抽象层允许访问纯混合的Web应用程序无法访问的混合应用程序的设备功能。 根据开发所使用的框架，一个代码库可以导致针对不同平台的多个应用程序，其UI与开发该应用程序的原始平台的UI非常相似。
 
-以下是用于开发*混合应用程序*的较流行框架的详尽列表：
+以下是用于开发 *混合移动应用程序* 比较流行框架详尽列表：
 
 - [Apache Cordova](https://cordova.apache.org/ "Apache Cordova")
 - [Framework 7](https://framework7.io/ "Framework 7")
