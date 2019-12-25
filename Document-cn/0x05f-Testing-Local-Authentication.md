@@ -1,18 +1,17 @@
-## Local Authentication on Android
+## Android 本地认证
 
-During local authentication, an app authenticates the user against credentials stored locally on the device. In other words, the user "unlocks" the app or some inner layer of functionality by providing a valid PIN, password, or fingerprint, verified by referencing local data. Generally, this process is invoked for reasons such as providing a user convenience for resuming an existing session with the remote service or as a means of step-up authentication to protect some critical function.
-As described earlier in chapter "[Mobile App Authentication Architectures](0x04e-Testing-Authentication-and-Session-Management.md)": it is important to reassure that authentication happens at least on a cryptographic primitive (e.g.: an authentication step which results in unlocking a key). Next, it is recommended that the authentication is verified at a remote endpoint.
-In Android, there are two mechanisms supported by the Android Runtime for local authentication: the Confirm Credential flow and the Biometric Authentication flow.
+在本地认证的期间, 应用认证用户对应的存在本地设备的凭证. 换句话说, 用户 "解锁" 应用或者某些内部功能可以通过提供有效的密码,PIN,或者指纹,以及本地数据进行验证. 一般来说, 这个过程被调用时因某种原因, 比如说,提供用户便捷用于还原已经存在的远程服务会话, 或者 进一步的认证机制来保护重要的功能. 如本章前面所描叙的一样 "[Mobile App Authentication Architectures](0x04e-Testing-Authentication-and-Session-Management.md)": 确保认证发生在加密源码层面是很重要的. (e.g.: 一种通过认证步骤最终实现`解锁密钥`). 最后, 建议身份认证被验证的过程发将发生在远程节点.
+在 Android 中, 本地认证的运行环境支持两种机制: 证实凭证流方式 和 生物认证流方式.
 
-### Testing Confirm Credentials (MSTG-AUTH-1 and MSTG-STORAGE-11)
+### 测试 证实凭证 方式 (MSTG-AUTH-1 and MSTG-STORAGE-11)
 
-#### Overview
+#### 概述
 
 The confirm credential flow is available since Android 6.0 and is used to ensure that users do not have to enter app-specific passwords together with the lock screen protection. Instead: if a user has logged in to his device recently, then confirm-credentials can be used to unlock cryptographic materials from the `AndroidKeystore`. That is, if the user unlocked his device within the set time limits (`setUserAuthenticationValidityDurationSeconds`), otherwise he has to unlock his device again.
 
 Note that the security of Confirm Credentials is only as strong as the protection set at the lock screen. This often means that simple predictive lock-screen patterns are used and therefore we do not recommend any apps which require L2 of security controls to use Confirm Credentials.
 
-#### Static Analysis
+#### 静态 测试
 
 Reassure that the lock screen is set:
 
@@ -80,13 +79,13 @@ Reassure that the lock screen is set:
 
 Make sure that the unlocked key is used during the application flow. For example, the key may be used to decrypt local storage or a message received from a remote endpoint. If the application simply checks whether the user has unlocked the key or not, the application may be vulnerable to a local authentication bypass.
 
-#### Dynamic Analysis
+#### 动态 测试
 
 Patch the app or use runtime instrumentation to bypass fingerprint authentication on the client. For example, you could use Frida to call the `onActivityResult` callback method directly to see if the cryptographic material (e.g. the setup cipher) can be ignored to proceed with the local authentication flow. Refer to the chapter "[Tampering and Reverse Engineering on Android](0x05c-Reverse-Engineering-and-Tampering.md)" for more information.
 
-### Testing Biometric Authentication (MSTG-AUTH-8)
+### 测试 生物认证 方式 (MSTG-AUTH-8)
 
-#### Overview
+#### 概述
 
 Android 6.0 (API level 23) introduced public APIs for authenticating users via fingerprint. Access to the fingerprint hardware is provided through the [FingerprintManager class](https://developer.android.com/reference/android/hardware/fingerprint/ "FingerprintManager"). An app can request fingerprint authentication by instantiating a `FingerprintManager` object and calling its `authenticate` method. The caller registers callback methods to handle possible outcomes of the authentication process (i.e. success, failure, or error). Note that this method doesn't constitute strong proof that fingerprint authentication has actually been performed - for example, the authentication step could be patched out by an attacker, or the "success" callback could be called using instrumentation.
 
@@ -96,7 +95,7 @@ An even more secure option is using asymmetric cryptography. Here, the mobile ap
 
 Note that there are quite some SDKs provided by vendors, which should provide biometric support, but which have their own insecurities. Be very cautious when using third party SDKs to handle sensitive authentication logic.
 
-#### Static Analysis
+#### 静态测试
 
 Begin by searching for `FingerprintManager.authenticate` calls. The first parameter passed to this method should be a `CryptoObject` instance which is a [wrapper class for crypto objects](https://developer.android.com/reference/android/hardware/fingerprint/FingerprintManager.CryptoObject.html "FingerprintManager.CryptoObject") supported by FingerprintManager. Should the parameter be set to `null`, this means the fingerprint authorization is purely event-bound, likely creating a security issue.
 
@@ -257,11 +256,11 @@ Android 8.0 (API level 26) adds two additional error codes:
 
 Make sure that fingerprint authentication and/or other types of biometric authentication happens based on the Android SDK and its APIs. If this is not the case, ensure that the alternative SDK has been properly vetted for any weaknesses. Make sure that the SDK is backed by the TEE/SE which unlocks a (cryptographic) secret based on the biometric authentication. This secret should not be unlocked by anything else, but a valid biometric entry. That way, it should never be the case that the fingerprint logic can just be bypassed.
 
-#### Dynamic Analysis
+#### 动态 测试
 
 Patch the app or use runtime instrumentation to bypass fingerprint authentication on the client. For example, you could use Frida to call the `onAuthenticationSucceeded` callback method directly. Refer to the chapter "Tampering and Reverse Engineering on Android" for more information.
 
-### References
+### 参考资料
 
 #### OWASP Mobile Top 10 2016
 
