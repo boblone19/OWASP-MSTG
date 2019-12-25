@@ -61,25 +61,25 @@ You can find details on how to test for the requirements above in the following 
 
 理想情况下, 将用户的过去行为记录与最新数据进行比较, 为了识别可能存在的账户滥用或者潜在欺诈的异常情况. 这个过程对客户来说是透明的, 但是可以成为攻击者最大的威胁.
 
-### Verifying that Appropriate Authentication is in Place (MSTG-ARCH-2 and MSTG-AUTH-1)
+### 验证 合适的身份认证机制在使用 (MSTG-ARCH-2 and MSTG-AUTH-1)
 
-Perform the following steps when testing authentication and authorization:
+进行以下步骤来测试身份验证 和 身份授权:
 
-- Identify the additional authentication factors the app uses.
-- Locate all endpoints that provide critical functionality.
-- Verify that the additional factors are strictly enforced on all server-side endpoints.
+- 确定移动应用程序是否使用的其他身份验证因素。
+- 定位所有提供关键业务功能的端点.
+- 验证所有服务器端点上的认证机制都严格的执行了附加的认证因素.
 
-Authentication bypass vulnerabilities exist when authentication state is not consistently enforced on the server and when the client can tamper with the state. While the backend service is processing requests from the mobile client, it must consistently enforce authorization checks: verifying that the user is logged in and authorized every time a resource is requested.
+当身份认证状态在服务器上没有强制执行时候,或在客户端篡改的时候, 绕过身份验证的漏洞便存在. 然而,当后端服务依然处理来自移动客户端的请求时, 始终执行授权检查: 及验证用户每次登陆的时候所请求的资源. 
 
-Consider the following example from the [OWASP Web Testing Guide](https://www.owasp.org/index.php/Testing_for_Bypassing_Authentication_Schema_%28OTG-AUTHN-004%29 "Testing for Bypassing Authentication Schema (OTG-AUTHN-004)"). In the example, a web resource is accessed through a URL, and the authentication state is passed through a GET parameter:
+考虑下面的例子 [OWASP Web Testing Guide](https://www.owasp.org/index.php/Testing_for_Bypassing_Authentication_Schema_%28OTG-AUTHN-004%29 "Testing for Bypassing Authentication Schema (OTG-AUTHN-004)"). 在此例子中, 网页资源通过 URL 访问, 然后身份认证状态信息通过 GET 参数传递:
 
 ```html
 http://www.site.com/page.asp?authenticated=no
 ```
 
-The client can arbitrarily change the GET parameters sent with the request. Nothing prevents the client from simply changing the value of the `authenticated` parameter to "yes", effectively bypassing authentication.
+客户端可以任意修改 GET 参数请求. 没有什么可以组织客户端简单的修改 `authenticated` 参数值为 "yes", 从而有效的绕过身份认证.
 
-Although this is a simplistic example that you probably won't find in the wild, programmers sometimes rely on "hidden" client-side parameters, such as cookies, to maintain authentication state. They assume that these parameters can't be tampered with. Consider, for example, the following [classic vulnerability in Nortel Contact Center Manager](http://seclists.org/bugtraq/2009/May/251 "SEC Consult SA-20090525-0 :: Nortel Contact Center Manager Server Authentication Bypass Vulnerability"). The administrative web application of Nortel's appliance relied on the cookie "isAdmin" to determine whether the logged-in user should be granted administrative privileges. Consequently, it was possible to get admin access by simply setting the cookie value as follows:
+虽然这是一个简单的示例,也行你在现实中找不到, 程序员有时候也会依赖 "隐藏的" 的客户端参数, 比如, cookies, 来维护身份验证状态. 他们认为这些参数不能被篡改. 例如，考虑以下内容 [classic vulnerability in Nortel Contact Center Manager](http://seclists.org/bugtraq/2009/May/251 "SEC Consult SA-20090525-0 :: Nortel Contact Center Manager Server Authentication Bypass Vulnerability"). Nortel 的设备的管理员网页应用程序依赖于 cookie, 当cookie 值等于 "isAdmin" 登陆用户就具有管理员权限. 最终, 获得管理员访问权限只需要设置 cookie 值如下:
 
 ```html
 isAdmin=True
