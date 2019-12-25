@@ -95,7 +95,7 @@ isAdmin=True
 
 #### 静态 分析
 
-Confirm the existence of a password policy and verify the implemented password complexity requirements according to the [OWASP Authentication Cheat Sheet](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Authentication_Cheat_Sheet.md#implement-proper-password-strength-controls "Implement Proper Password Strength Controls") which focuses on length and an unlimited character set. Identify all password-related functions in the source code and make sure that a verification check is performed in each of them. Review the password verification function and make sure that it rejects passwords that violate the password policy.
+确认已经存在的密码策略机制和验证执行的密码复杂程度要求是否符合 [OWASP Authentication Cheat Sheet](https://github.com/OWASP/CheatSheetSeries/blob/master/cheatsheets/Authentication_Cheat_Sheet.md#implement-proper-password-strength-controls "Implement Proper Password Strength Controls") 长度和字符集要求. 识别源代码中所有密码相关的功能, 并且保证每个功能函数都执行了验证检查. 检查密码验证功能，确保它拒绝接受违反密码策略的密码。
 
 <br/>
 <br/>
@@ -151,7 +151,7 @@ Observe the following best practices when implementing anti-brute-force controls
 
 Additional brute force mitigation techniques are described on the OWASP page [Blocking Brute Force Attacks](https://www.owasp.org/index.php/Blocking_Brute_Force_Attacks "OWASP - Blocking Brute Force Attacks").
 
-#### Dynamic Testing (MSTG-AUTH-6)
+#### 动态 测试 (MSTG-AUTH-6)
 
 Automated password guessing attacks can be performed using a number of tools. For HTTP(S) services, using an interception proxy is a viable option. For example, you can use [Burp Suite Intruder](https://portswigger.net/burp/help/intruder_using.html "Using Burp Suite Intruder") to perform both wordlist-based and brute-force attacks.
 
@@ -183,7 +183,7 @@ To test if your own test accounts are prone to brute forcing, append the correct
 
 > Tip: Perform these kinds of tests only at the very end of your penetration test. You don't want to lock out your account on the first day of testing and potentially having to wait for it to be unlocked. For some projects unlocking accounts might be more difficult than you think.
 
-### Testing Stateful Session Management (MSTG-AUTH-2)
+### 测试 有状态的回话管理 (MSTG-AUTH-2)
 
 Stateful (or "session-based") authentication is characterized by authentication records on both the client and server. The authentication flow is as follows:
 
@@ -195,7 +195,7 @@ Stateful (or "session-based") authentication is characterized by authentication 
 
 When sessions are improperly managed, they are vulnerable to a variety of attacks that may compromise the session of a legitimate user, allowing the attacker to impersonate the user. This may result in lost data, compromised confidentiality, and illegitimate actions.
 
-#### Session Management Best Practices
+#### 会话管理最佳实践
 
 Locate any server-side endpoints that provide sensitive information or functions and verify the consistent enforcement of authorization. The backend service must verify the user's session ID or token and make sure that the user has sufficient privileges to access the resource. If the session ID or token is missing or invalid, the request must be rejected.
 
@@ -217,11 +217,11 @@ Authentication shouldn't be implemented from scratch but built on top of proven 
 
 A great resource for testing server-side authentication is the OWASP Web Testing Guide, specifically the [Testing Authentication](https://www.owasp.org/index.php/Testing_for_authentication) and [Testing Session Management](https://www.owasp.org/index.php/Testing_for_Session_Management) chapters.
 
-### Testing Session Timeout (MSTG-AUTH-7)
+### 测试会话超时 (MSTG-AUTH-7)
 
 Minimizing the lifetime of session identifiers and tokens decreases the likelihood of successful account hijacking.
 
-#### Static Analysis
+#### 静态 分析
 
 In most popular frameworks, you can set the session timeout via configuration options. This parameter should be set according to the best practices specified in the framework documentation. The recommended timeout may be between 10 minutes and two hours, depending on the app's sensitivity. Refer to the framework documentation for examples of session timeout configuration:
 
@@ -230,7 +230,7 @@ In most popular frameworks, you can set the session timeout via configuration op
 - [PHP](https://php.net/manual/en/session.configuration.php#ini.session.gc-maxlifetime "PHP")
 - [ASP.Net](https://goo.gl/qToQuL "ASP.NET")
 
-#### Dynamic Analysis
+#### 动态 分析
 
 To verify if a session timeout is implemented, proxy your requests through an interception proxy and perform the following steps:
 
@@ -243,7 +243,7 @@ After you have identified the session timeout, verify whether it has an appropri
 
 > When using Burp Proxy, you can use the [Session Timeout Test extension](https://portswigger.net/bappstore/c4bfd29882974712a1d69c6d8f05874e "Session Timeout Test extension") to automate this test.
 
-### Testing User Logout (MSTG-AUTH-4)
+### 测试 用户登出 (MSTG-AUTH-4)
 
 The purpose of this test case is verifying logout functionality and determining whether it effectively terminates the session on both client and server and invalidates a stateless token.
 
@@ -252,7 +252,7 @@ Failing to destroy the server-side session is one of the most common logout func
 Many mobile apps don't automatically log users out. There can be various reasons, such as: because it is inconvenient for customers, or because of decisions made when implementing stateless authentication. The application should still have a logout function, and it should be implemented according to best practices, destroying all locally stored tokens or session identifiers. If session information is stored on the server, it should also be destroyed by sending a logout request to that server. In case of a high-risk application, tokens should be blacklisted. Not removing tokens or session identifiers can result in unauthorized access to the application in case the tokens are leaked.
 Note that other sensitive types of information should be removed as well, as any information that is not properly cleared may be leaked later, for example during a device backup.
 
-#### Static Analysis
+#### 静态 分析
 
 If server code is available, make sure logout functionality terminates the session correctly. This verification will depend on the technology. Here are different examples of session termination for proper server-side logout:
 
@@ -262,7 +262,7 @@ If server code is available, make sure logout functionality terminates the sessi
 
 If access and refresh tokens are used with stateless authentication, they should be deleted from the mobile device. The [refresh token should be invalidated on the server](https://auth0.com/blog/blacklist-json-web-token-api-keys/ "Blacklisting JSON Web Token API Keys").
 
-#### Dynamic Analysis
+#### 动态 分析
 
 Use an interception proxy for dynamic application analysis and execute the following steps to check whether the logout is implemented properly:
 
@@ -274,7 +274,7 @@ Use an interception proxy for dynamic application analysis and execute the follo
 If the logout is correctly implemented on the server, an error message or redirect to the login page will be sent back to the client. On the other hand, if you receive the same response you got in step 2, the token or session ID is still valid and hasn't been correctly terminated on the server.
 The OWASP Web Testing Guide ([OTG-SESS-006](https://www.owasp.org/index.php/Testing_for_logout_functionality_%28OTG-SESS-006%29 "OTG-SESS-006")) includes a detailed explanation and more test cases.
 
-### Testing Two-Factor Authentication and Step-up Authentication (MSTG-AUTH-9 and MSTG-AUTH-10)
+### 测试 双因素认证 和 进阶认证 (MSTG-AUTH-9 and MSTG-AUTH-10)
 
 Two-factor authentication (2FA) is standard for apps that allow users to access sensitive functions and data. Common implementations use a password for the first factor and any of the following as the second factor:
 
@@ -287,7 +287,7 @@ Whatever option is used as 2nd factor, it always must be enforced and verified o
 
 The secondary authentication can be performed at login or later in the user's session. For example, after logging in to a banking app with a username and PIN, the user is authorized to perform non-sensitive tasks. Once the user attempts to execute a bank transfer, the second factor ("step-up authentication") must be presented.
 
-#### Dangers of SMS-OTP
+#### SMS-OTP 的风险
 
 Although one-time passwords (OTP) sent via SMS are a common second factor for two-factor authentication, this method has its shortcomings. In 2016, NIST suggested: "Due to the risk that SMS messages may be intercepted or redirected, implementers of new systems SHOULD carefully consider alternative authenticators.". Below you will find a list of some related threats and suggestions to avoid successful attacks on SMS-OTP.
 
@@ -330,7 +330,7 @@ To test this, the captured request should be sent 10-15 times to the endpoint wi
 
 Consult the [OWASP Testing Guide](https://www.owasp.org/index.php/Testing_for_Session_Management "OWASP Testing Guide V4 (Testing for Session Management)") for more information about testing session management.
 
-### Testing Stateless (Token-Based) Authentication (MSTG-AUTH-3)
+### 测试 基于令牌的无状态认证 (Token-Based) (MSTG-AUTH-3)
 
 Token-based authentication is implemented by sending a signed token (verified by the server) with each HTTP request. The most commonly used token format is the JSON Web Token, defined in [RFC7519](https://tools.ietf.org/html/rfc7519 "RFC7519"). A JWT may encode the complete session state as a JSON object. Therefore, the server doesn't have to store any session data or authentication information.
 
@@ -567,7 +567,7 @@ You should also test if using different IPs, different locations and/or differen
 Lastly, the blocking of the devices should be tested, by blocking a registered instance of the app and see if it is then no longer allowed to authenticate.
 Note: in case of an application which requires L2 protection, it can be a good idea to warn a user even before the first authentication on a new device. Instead: warn the user already when a second instance of the app is registered.
 
-### References
+### 参考资料
 
 #### OWASP Mobile Top 10 2016
 
