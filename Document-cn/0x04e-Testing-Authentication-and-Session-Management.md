@@ -334,45 +334,45 @@ Consult the [OWASP Testing Guide](https://www.owasp.org/index.php/Testing_for_Se
 
 ### 测试 基于令牌的无状态认证 (Token-Based) (MSTG-AUTH-3)
 
-Token-based authentication is implemented by sending a signed token (verified by the server) with each HTTP request. The most commonly used token format is the JSON Web Token, defined in [RFC7519](https://tools.ietf.org/html/rfc7519 "RFC7519"). A JWT may encode the complete session state as a JSON object. Therefore, the server doesn't have to store any session data or authentication information.
+基于令牌身份认证 通过每次 HTTP 访问来发送一个已签名的令牌(被服务器验证).最常见使用的令牌格式是 JSON 网页令牌 (简称 JWT), 详细定义 [RFC7519](https://tools.ietf.org/html/rfc7519 "RFC7519"). 一个 JWT 可以把整个会话状态定义成 JASON 编码对象. 所以, 服务器不需要存储任何会话数据或者认证信息.
 
-JWT tokens consist of three Base64Url-encoded parts separated by dots. Token structure example:
+JWT 令牌包是由3 部分Base64Url-编码组成, 分别有点来区分. 令牌架构示例如下:
 
-```plain
+```铭文
 <base64UrlEncode(header)>.<base64UrlEncode(payload)>.<base64UrlEncode(signature)>
 ```
 
-The following example shows a [Base64Url-encoded JSON Web Token](https://jwt.io/#debugger "JWT Example on jwt.io"):
+以下例子演示了一个真实的 JWT 令牌[Base64Url-encoded JSON Web Token](https://jwt.io/#debugger "JWT Example on jwt.io"):
 
 ```base64
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ
 ```
 
-The *header* typically consists of two parts: the token type, which is JWT, and the hashing algorithm being used to compute the signature. In the example above, the header decodes as follows:
+*header* 报文头部一般由2部分组成: 令牌类型, 一般是JWT, 以及用来签名的哈希算法. 在上面的举例中, 报文头部反解码得到的结果如下:
 
 ```json
 {"alg":"HS256","typ":"JWT"}
 ```
 
-The second part of the token is the *payload*, which contains so-called claims. Claims are statements about an entity (typically, the user) and additional metadata. For example:
+令牌的第二部分是报文的 *payload*, 包含了所谓的 宣称. 宣称 通常是关于实体(及用户)和其他元数据的语句. 举例:
 
 ```json
 {"sub":"1234567890","name":"John Doe","admin":true}
 ```
 
-The signature is created by applying the algorithm specified in the JWT header to the encoded header, encoded payload, and a secret value. For example, when using the HMAC SHA256 algorithm the signature is created in the following way:
+签名通过应用特定算法在JWT 报头来对其进行编码, 加密payload, 和机密值. 举例, 当使用 HMAC SHA256 算法签名的时候,实际代码为以下模式:
 
 ```java
 HMACSHA256(base64UrlEncode(header) + "." + base64UrlEncode(payload), secret)
 ```
 
-Note that the secret is shared between the authentication server and the backend service - the client does not know it. This proves that the token was obtained from a legitimate authentication service. It also prevents the client from tampering with the claims contained in the token.
+值得注意的是 这个秘密在认证服务器和后端服务之间共享 - 客户端无需知道. 这证明该令牌是从合法的身份验证服务获得的。它还可以防止客户机篡改令牌中包含的声明。
 
-#### Static Analysis
+#### 静态 分析
 
-Identify the JWT library that the server and client use. Find out whether the JWT libraries in use have any known vulnerabilities.
+识别 服务器和客户端直接使用的JWT 库. 然后,查找正在使用的 JWT 库是否存在已知的漏洞.
 
-Verify that the implementation adheres to JWT [best practices](https://stormpath.com/blog/jwt-the-right-way "JWT the right way"):
+验证所实施的 JWT 是否符合最佳安全实践 [best practices](https://stormpath.com/blog/jwt-the-right-way "JWT the right way"):
 
 - Verify that the HMAC is checked for all incoming requests containing a token;
 - Verify the location of the private signing key or HMAC secret key. The key should remain on the server and should never be shared with the client. It should be available for the issuer and verifier only.
@@ -380,7 +380,7 @@ Verify that the implementation adheres to JWT [best practices](https://stormpath
 - Make sure that replay attacks are addressed with the `jti` (JWT ID) claim, which gives the JWT a unique identifier.
 - Verify that tokens are stored securely on the mobile phone, with, for example, KeyChain (iOS) or KeyStore (Android).
 
-##### Enforcing the Hashing Algorithm
+##### 强制 哈希算法
 
 An attacker executes this by altering the token and, using the 'none' keyword, changing the signing algorithm to indicate that the integrity of the token has already been verified. As explained at the link above, some libraries treated tokens signed with the none algorithm as if they were valid tokens with verified signatures, so the application will trust altered token claims.
 
