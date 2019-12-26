@@ -2,7 +2,7 @@
 
 ## 关于 OWASP 移动安全测试指南
 
-OWASP 移动安全测试指南 （MSTG） 是测试移动应用安全性的全面手册。它描述了验证 [移动应用程序安全验证标准 （MASVS） 中列出的要求]（https：//github.com/OWASP/owasp-masvs[MASVS]）中列出的要求的过程和技术，并为完整和一致的安全测试提供了基准。
+OWASP 移动安全测试指南 （MSTG） 是测试移动应用安全性的全面手册。它描述了如何验证 [移动应用程序安全验证标准 （MASVS） 中列出的要求]（https：//github.com/OWASP/owasp-masvs[MASVS]）中列出的要求的过程和技术观点，为完整和一致的安全测试提供了基础。
 
 OWASP 感谢许多作者、评论者和编辑在编写本指南方面所做的工作。如果您对《移动安全测试指南》有任何意见或建议，请加入[OWASP 移动安全项目Slack通道](https://owasp.slack.com/messages/project-mobile_omtg/details/ "OWASP Mobile Security Project Slack Channel"). 您可以使用 [此邀请]自行注册Slack频道 (https://join.slack.com/t/owasp/shared_invite/enQtNDI5MzgxMDQ2MTAwLTEyNzIzYWQ2NDZiMGIwNmJhYzYxZDJiNTM0ZmZiZmJlY2EwZmMwYjAyNmJjNzQxNzMyMWY4OTk3ZTQ0MzFhMDY "Slack 通道注册"). (如果邀请已过期，请打开 PR.)
 
