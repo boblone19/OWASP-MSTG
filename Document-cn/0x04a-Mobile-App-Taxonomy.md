@@ -50,7 +50,7 @@ PWA结合了现代浏览器提供的不同的Web开放标准，以提供丰富�
 
 Android和iOS支持PWA，但并非所有硬件功能都可用。 例如，推送通知，iPhone X或增强现实的ARKit上的人脸ID在iOS上尚不可用。 可以在[Maximiliano Firtman的中文章]中找到PWA和每个平台上支持的功能的概述。(https://medium.com/@firt/progressive-web-apps-on-ios-are-here-d00430dee3a7 "iOS上的渐进式Web应用程序在这里").
 
-### 移动测试指南涵盖的内容
+### 移动安全测试指南的涵盖内容
 
 在本指南中，我们将重点关注主导市场的两个平台的应用程序：Android和iOS。 移动设备是当前在这些平台上运行的最常见的设备类别–但是，越来越多的相同平台（尤其是Android）运行在其他设备上，例如智能手表，电视，汽车导航/音频系统和其他嵌入式系统。
 
