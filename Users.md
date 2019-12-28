@@ -1,6 +1,6 @@
-# Users applying the MASVS and MSTG
+# 正在使用 MASVS 和 MSTG 的用户
 
-## Companies
+## 公司
 
 Currently the MASVS and MSTG are used by at least the following companies:
 
