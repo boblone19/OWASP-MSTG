@@ -109,13 +109,13 @@ DAST 的重点是通过应用程序的实时执行对其进行测试和评估。
 
 被测试的应用安全级别必须在测试之前被确定. 安全要求需要在项目开始之前被确定. 不同的组织有不同的安全要求,以及能够调用资源来进行测试活动. 虽然 MASVS 级别 1 控制适用于所有的移动应用,与技术和业务人员一起审阅整个 L1 和 L2 MASVS 控制的列表是确定安全测试覆盖级别的最好方法. 
 
-在某些领域中,不同企业组织有着不同的要求和法务责任. 尽管应用不处理敏感数据, 一些 L2 的要求也可能是相关联的 (因为行业法规或者当地法律). 例如, two-factor authentication (2FA) may be obligatory for a financial app and enforced by a country's central bank and/or financial regulatory authorities.
+在某些领域中,不同企业组织有着不同的要求和法务责任. 尽管应用不处理敏感数据, 一些 L2 的要求也可能是相关联的 (因为行业法规或者当地法律). 例如, 双因素认证(2FA)可能是金融应用程序必须的,并由国家的中央银行和/或金融监管机构强制执行.
 
-Security goals/controls defined earlier in the development process may also be reviewed during the discussion with stakeholders. Some controls may conform to MASVS controls, but others may be specific to the organization or application.
+在开发流程的早期中,安全目标/管控可以与项目股东商量以及评审. 某些控制可能符合 MASVS 控制, 但是其他可以根据组织或者应用来特殊定义.
 
 ![Preparation](Images/Chapters/0x03/mstg-preparation.png)
 
-All involved parties must agree on the decisions and the scope in the checklist because these will define the baseline for all security testing.
+所有参与的团队必须就检查列表中的条目达成一致, 因为这定义了所有安全测试的基线.
 
 ###### 与 客户的协调
 
