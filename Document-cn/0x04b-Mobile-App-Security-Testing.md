@@ -125,21 +125,21 @@ DAST 的重点是通过应用程序的实时执行对其进行测试和评估。
 
 为了克服这些障碍, 你可能需要向开发团队申请两个不同的应用程序. 一个应该是发布的版本, 这样你就可以确定现实的控制是否工作正常, 并且不能轻易的绕过他们. 第二种变体应该是某个安全控制以及被停用的调试版本. 测试2个不同的架构的应用是覆盖所有测试用例的最有效的方法.
 
-Depending on the scope of the engagement, this approach may not be possible. Requesting both production and debug builds for a white-box test will help you complete all test cases and clearly state the app's security maturity. The client may prefer that black-box tests be focused on the production app and the evaluation of its security controls' effectiveness.
+根据约定的范围, 这种方法也许不行. 请求白盒测试生产和调试架构将帮助您完成所有的测试用例, 并清楚的说明了应用程序的安全成熟度. 客户可能更喜欢将黑盒测试集中在生产环境下的应用程序以及安全控制有效性的评估上.
 
-The scope of both types of testing should be discussed during the preparation phase. For example, whether the security controls should be adjusted should be decided before testing. Additional topics are discussed below.
+两种不同测试的范应该在准备阶段讨论. 列如, 在测试之前, 安全控制是否需要调整. 更多的标题将会在下面讨论.
 
 ###### 识别 敏感数据
 
-Classifications of sensitive information differ by industry and country. In addition, organizations may take a restrictive view of sensitive data, and they may have a data classification policy that clearly defines sensitive information.
+不同的行业和国家,对于敏感信息的分类不同. 此外, 组织可能对敏感数据采取限制性的观点, 并且他们可能有明确定义敏感信息好的数据,以及分类的策略.
 
-There are three general states from which data may be accessible:
+数据可以从以下三种状态获得:
 
-- **At rest** - the data is sitting in a file or data store
-- **In use** - an application has loaded the data into its address space
-- **In transit** - data has been exchanged between mobile app and endpoint or consuming processes on the device, e.g., during IPC (Inter-Process Communication)
+- **在保存的时候** - 数据存放在文件或者数据存储介质中
+- **在使用的时候** - 应用数据将数据加载到其他介质中
+- **在传输的时候** - 数据在移动应用和终端之间交换,或者在设备上消耗进程. 举例., 在 IPC 期间(Inter-Process Communication)
 
-The degree of scrutiny that's appropriate for each state may depend on the data's importance and likelihood of being accessed. For example, data held in application memory may be more vulnerable than data on web servers to access via core dumps because attackers are more likely to gain physical access to mobile devices than to web servers.
+对每个地域的审查程度取决于数据的重要性和被访问的可能性. 列如, 应用程序内存中的数据可能比 Web 服务器上的数据更容易通过 core dump 的方式访问, 因为攻击者更有可能获取移动设备的物理访问权限, 而不是网页访问服务器.
 
 When no data classification policy is available, use the following list of information that's generally considered sensitive:
 
