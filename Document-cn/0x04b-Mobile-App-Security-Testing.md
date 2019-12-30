@@ -119,11 +119,11 @@ DAST 的重点是通过应用程序的实时执行对其进行测试和评估。
 
 ###### 与 客户的协调
 
-Setting up a working test environment can be a challenging task. For example, restrictions on the enterprise wireless access points and networks may impede dynamic analysis performed at client premises. Company policies may prohibit the use of rooted phones or (hardware and software) network testing tools within enterprise networks. Apps that implement root detection and other reverse engineering countermeasures may significantly increase the work required for further analysis.
+搭建一个工作的测试环境是一种挑战的任务. 举例, 企业无线访问点的限制和网络访问限制可能阻碍在客户地方进行动态分析测试. 公司策略也许会阻止使用越狱过的手机(硬件 和 软件) 或者在企业网络中使用测试工具. 使用了越狱监测和其他反逆向工程对策的应用会增加分析的工作量.
 
-Security testing involves many invasive tasks, including monitoring and manipulating the mobile app's network traffic, inspecting the app data files, and instrumenting API calls. Security controls, such as certificate pinning and root detection, may impede these tasks and dramatically slow testing down.
+安全测试包括许多入侵任务, 包括监控和串改移动应用的网络流量, 监听应用数据文件, 以及插装 API 调用. 安全控制, 比如证书绑定 和 越狱监测机制 可能会妨碍这些任务, 并且极大的降低测试的速度.
 
-To overcome these obstacles, you may want to request two of the app's build variants from the development team. One variant should be a release build so that you can determine whether the implemented controls are working properly and can't be bypassed easily. The second variant should be a debug build for which certain security controls have been deactivated. Testing two different builds is the most efficient way to cover all test cases.
+为了克服这些障碍, 你可能需要向开发团队申请两个不同的应用程序. 一个应该是发布的版本, 这样你就可以确定现实的控制是否工作正常, 并且不能轻易的绕过他们. 第二种变体应该是某个安全控制以及被停用的调试版本. 测试2个不同的架构的应用是覆盖所有测试用例的最有效的方法.
 
 Depending on the scope of the engagement, this approach may not be possible. Requesting both production and debug builds for a white-box test will help you complete all test cases and clearly state the app's security maturity. The client may prefer that black-box tests be focused on the production app and the evaluation of its security controls' effectiveness.
 
