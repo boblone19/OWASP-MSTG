@@ -93,17 +93,17 @@ DAST 的重点是通过应用程序的实时执行对其进行测试和评估。
 - 屏蔽粘贴数据到应用的输入框,并不能防止用户拷贝任何敏感信息. 由于信息在用户发现无法使用粘贴功能之前就已经被复制率, 此时,一个恶意的应用程序已经嗅探到了剪切板中的内容.
 - 如果密码输入框的粘贴功能被禁用, 用户为了容易技术密码,从而使用较弱的密码, 他们从此不会再使用密码管理器, 这样将与我们为了让应用更加安全的初衷相违背.
 
-When using an app you should still be aware that other apps are reading the clipboard continuously, as the [Facebook app](https://www.thedailybeast.com/facebook-is-spying-on-your-clipboard "Facebook Is Spying On Your Clipboard") did. Still, copy-pasting passwords is a security risk you should be aware of, but also cannot be solved by an app.
+当你使用应用的时候, 你应该注意其他应用正在读取你剪切板内容, 比如说 [Facebook 应用](https://www.thedailybeast.com/facebook-is-spying-on-your-clipboard "Facebook 在监听你的剪切板"). 尽管如此, 复制黏贴密码是一个安全风险, 你应该意识到, 但也不能通过一个应用程序功能来解决.
 
 #### 渗透测试 (a.k.a. Pentesting)
 
-The classic approach involves all-around security testing of the app's final or near-final build, e.g., the build that's available at the end of the development process. For testing at the end of the development process, we recommend the [Mobile App Security Verification Standard (MASVS)](https://github.com/OWASP/owasp-masvs "OWASP MASVS") and the associated checklist as baseline for testing. A typical security test is structured as follows:
+传统的方式是在应用程序的最终或接近最终构建的阶段进行安全测试, 例如.,在开发过程结束时可用的构建. 为了在开发过程的最后进行测试, 我们建议使用 [移动应用安全验证标准 (MASVS)](https://github.com/OWASP/owasp-masvs "OWASP MASVS") 和相关的检查清单作为测试的基线, 一个经典的安全测试结构如下:
 
-- **准备(Preparation)** - defining the scope of security testing, including identifying applicable security controls, the organization's testing goals, and sensitive data. More generally, preparation includes all synchronization with the client as well as legally protecting the tester (who is often a third party). Remember, attacking a system without written authorization is illegal in many parts of the world!
-- **情报收集(Intelligence Gathering)** - analyzing the **environmental** and **architectural** context of the app to gain a general contextual understanding.
-- **综合应用功能分析(Mapping the Application)** - based on information from the previous phases; may be complemented by automated scanning and manually exploring the app. Mapping provides a thorough understanding of the app, its entry points, the data it holds, and the main potential vulnerabilities. These vulnerabilities can then be ranked according to the damage their exploitation would cause so that the security tester can prioritize them. This phase includes the creation of test cases that may be used during test execution.
-- **渗透(Exploitation)** - in this phase, the security tester tries to penetrate the app by exploiting the vulnerabilities identified during the previous phase. This phase is necessary for determining whether vulnerabilities are real and true positives.
-- **汇报(Reporting)** - in this phase, which is essential to the client, the security tester reports the vulnerabilities he or she has been able to exploit and documents the kind of compromise he or she has been able to perform, including the compromise's scope (for example, the data the tester has been able to access illegitimately).
+- **准备(Preparation)** - 定义安全测试的范围, 包括确定使用的安全控制, 组织和测试目标和敏感数据. 更粗略的来说, 准备工作包括与客户端的所有同步, 以及在法律上保护测试人员 (通常是第三方).请记住在很多国家, 未经书面授权的攻击系统是非法的!
+- **情报收集(Intelligence Gathering)** - 分析 **环境** 和 **架构** 应用的内容来获取对应用内容上的理解.
+- **综合应用功能分析(Mapping the Application)** - 根据上个阶段获取的信息; 通过自动扫描和手动探索应用程序来补充更多信息. 信息映射提供了对应应用程序, 入口点, 所保存的数据内容, 以及主要的潜在漏洞. 然后可以根据这些漏洞可能造成的损害对它们进行排序, 以便于安全测试人员对它们进行优先级处理. 此阶段包含了测试执行期间, 可能使用的测试用例的创建.
+- **渗透(Exploitation)** - 在这个阶段, 安全测试人员试图利用上个阶段发现的漏洞来渗透应用程序. 这个阶段对于确定漏洞是否真实存在和正确报警的必要性.
+- **汇报(Reporting)** - 在这个阶段, 对于客户来说也是关键,安全测试汇报发现的漏洞,以及他能够利用的漏洞, 并且记录下他能够实现的危害,包括危害范围. (举例, 测试员可以非法的访问数据).
 
 ##### Preparation
 
