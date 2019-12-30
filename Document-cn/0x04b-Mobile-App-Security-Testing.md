@@ -169,17 +169,17 @@ DAST 的重点是通过应用程序的实时执行对其进行测试和评估。
 
 架构信息包括:
 
-- **The mobile app:** How the app accesses data and manages it in-process, how it communicates with other resources and manages user sessions, and whether it detects itself running on jailbroken or rooted phones and reacts to these situations.
-- **The Operating System:** The operating systems and OS versions the app runs on (including Android or iOS version restrictions), whether the app is expected to run on devices that have Mobile Device Management (MDM) controls, and relevant OS vulnerabilities.
-- **Network:** Usage of secure transport protocols (e.g., TLS), usage of strong keys and cryptographic algorithms (e.g., SHA-2) to secure network traffic encryption, usage of certificate pinning to verify the endpoint, etc.
-- **Remote Services:** The remote services the app consumes and whether their being compromised could compromise the client.
+- **移动 应用:** 应用程序如何在访问数据和管理进程, 如何与其他资源通信和管理用户会话, 以及它是否检测到自己运行在越狱或者root过的手机, 并对这些情况作出反应.
+- **操作系统:** 应用程序运行的操作系统和操作系统版本 (包括 Android 或者 iOS 版本的限制), 应用程序是否应该运行在有移动设备管理 (MDM) 控制的设备上, 以及操作系统的漏洞.
+- **网络:** 使用安全传输协议 (e.g., TLS), 使用较强密钥 和加密算法 (e.g., SHA-2) 来保护加密网络流量, 使用证书来绑定认证的终端, 等等.
+- **远程服务:** 应用程序所使用的远程服务以及是否会影响到客户端.
 
-##### Mapping the Application
+##### 匹配 应用功能 
 
-Once the security tester has information about the app and its context, the next step is mapping the app's structure and content, e.g., identifying its entry points, features, and data.
+安全测试人员一旦拥有了应用和内容的信息, 下一步就是匹配应用的架构和内容, 列如., 识别切入点, 功能, 和数据.
 
-When penetration testing is performed in a white-box or grey-box paradigm, any documents from the interior of the project (architecture diagrams, functional specifications, code, etc.) may greatly facilitate the process. If source code is available, the use of SAST tools can reveal valuable information about vulnerabilities (e.g., SQL Injection).
-DAST tools may support black-box testing and automatically scan the app: whereas a tester will need hours or days, a scanner may perform the same task in a few minutes. However, it's important to remember that automatic tools have limitations and will only find what they have been programmed to find. Therefore, human analysis may be necessary to augment results from automatic tools (intuition is often key to security testing).
+当白盒渗透测试实施当渗透测试在白盒或灰盒范例中执行时，项目内部的任何文档 (架构图, 功能图, 代码 等等)可以加大的促进这个过程. 如果存在源代码, 使用 SAST 工具可以揭示关于漏洞的有价值的信息.(e.g., SQL 注入).
+DAST 工具只支持应用的黑盒测试和自动扫描: 测试人员可能需要几小时或几天的时间, 而扫描器可能在几分钟内就可以完成相同的任务. 然后, 需要记住的是, 自动工具存在局限性, 只能找到他们被编程要找到的东西. 因此, 可能需要人工分析来增强自动工具的最终结果. (直觉通常是安全测试的关键).
 
 Threat Modeling is an important artifact: documents from the workshop usually greatly support the identification of much of the information a security tester needs (entry points, assets, vulnerabilities, severity, etc.). Testers are strongly advised to discuss the availability of such documents with the client. Threat modeling should be a key part of the software development life cycle. It usually occurs in the early phases of a project.
 
