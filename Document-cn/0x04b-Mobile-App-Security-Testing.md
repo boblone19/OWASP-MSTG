@@ -67,31 +67,31 @@ DAST 的重点是通过应用程序的实时执行对其进行测试和评估。
 
 ##### 自动 扫描工具
 
-Automated testing tools' lack of sensitivity to app context is a challenge. These tools may identify a potential issue that's irrelevant. Such results are called "false positives".
+自动测试工具的挑战, 是缺乏对应用内容的准确度. 换句话来说,这些工具能够识别潜在的不相关的问题. 这种结果我们通常称之为 "误报". 
 
-For example, security testers commonly report vulnerabilities that are exploitable in a web browser but aren't relevant to the mobile app. This false positive occurs because automated tools used to scan the backend service are based on regular browser-based web applications. Issues such as CSRF (Cross-site Request Forgery) and Cross-Site Scripting (XSS) are reported accordingly.
+举例, 安全测试常报告的发生在网页浏览器中的漏洞不一定和移动应用相关联. 误报发生的原因是因为自动工具基于一般浏览器为主的网页应用,来扫描后端服务. 比如说 CSRF (跨站请求伪造) 和 跨站脚本 (XSS) .
 
-Let's take CSRF as an example. A successful CSRF attack requires the following:
+让我们拿 CSRF 来举例. 一个成功的 CSRF 攻击需要以下条件:
 
-- The ability to entice the logged-in user to open a malicious link in the web browser used to access the vulnerable site.
-- The client (browser) must automatically add the session cookie or other authentication token to the request.
+- 诱骗已经登录的用户通过网页浏览器打开可疑的链接, 从而访问有漏洞的站点. 
+- 客户端浏览器必须将会话 cookie 或者其他认证令牌自动添加到请求中.
 
-Mobile apps don't fulfill these requirements: even if WebViews and cookie-based session management are used, any malicious link the user clicks opens in the default browser, which has a separate cookie store.
+然而移动应用无法满足这些要求: 及时WebView 和 基于令牌的会话管理被使用, 任何可以链接被用户通过默认浏览器打开的行为, cookie 实际都是额外存放. 
 
-Stored Cross-Site Scripting (XSS) can be an issue if the app includes WebViews, and it may even lead to command execution if the app exports JavaScript interfaces. However, reflected Cross-Site Scripting is rarely an issue for the reason mentioned above (even though whether they should exist at all is arguable — escaping output is simply a best practice).
+如果应用存在了 WebView 的功能, 存在跨站脚本的可能是一个问题, 因为只有在应用程序导出JavaScript接口时, 才有可能执行命令. 然而, 由于上面提到的原因, 跨站脚本很少成为可利用的攻击点(是否应该存在就是有争议的 — 输出转义是最佳实践).
 
-> In any case, consider exploit scenarios when you perform the risk assessment; don't blindly trust your scanning tool's output.
+> 在任何情况下, 当你进行风险评估的时候,应该考虑到渗透场景; 不要盲目的相信你的扫描工具的结果.
 
 ##### 剪切板
 
-When typing data into input fields, the clipboard can be used to copy in data. The clipboard is accessible system-wide and is therefore shared by apps. This sharing can be misused by malicious apps to get sensitive data that has been stored in the clipboard.
+当你输入数据到输入栏, 剪切板可以用来拷贝数据. 剪切板可以通过系统整个系统来访问,所以与应用共享. 这种共享机制可以被可以应用程序利用来获取保存在剪切板中的敏感信息.
 
-Before iOS 9, a malicious app might monitor the pasteboard in the background while periodically retrieving `[UIPasteboard generalPasteboard].string`. As of iOS 9, pasteboard content is accessible to apps in the foreground only, which reduces the attack surface of password sniffing from the clipboard dramatically.
+在 iOS 版本 9之前, 某种可疑的应用可以在后台背景监控复制板, 并且周期性的获取当中的数据.a `[UIPasteboard generalPasteboard].string`. 自从 iOS 9 之后, 剪贴板内容只能被前台的应用程序访问, 这样大大的减少了从剪贴板嗅探密码的攻击面.
 
-For [Android there was a PoC exploit released](https://arstechnica.com/information-technology/2014/11/using-a-password-manager-on-android-it-may-be-wide-open-to-sniffing-attacks/ "Password Sniffing") in order to demonstrate the attack vector if passwords are stored within the clipboard. [Disabling pasting in passwords input fields](https://github.com/OWASP/owasp-masvs/issues/106 "Disabling Pasting for Password Input Fields") was a requirement in the MASVS 1.0, but was removed due to several reasons:
+对于 [Android 有一个 PoC 漏洞发布](https://arstechnica.com/information-technology/2014/11/using-a-password-manager-on-android-it-may-be-wide-open-to-sniffing-attacks/ "密码 嗅探") 为了掩饰如果密码被保存在剪贴板中的攻击方式. [屏蔽在输入框粘贴密码功能](https://github.com/OWASP/owasp-masvs/issues/106 "屏蔽在输入框粘贴密码功能") 是 MASVS 1.0 中的要求之一, 但是最终被移除了,因为以下原因:
 
-- Preventing pasting into input fields of an app, does not prevent that a user will copy sensitive information anyway. Since the information has already been copied before the user notices that it's not possible to paste it in, a malicious app has already sniffed the clipboard.
-- If pasting is disabled on password fields users might even choose weaker passwords that they can remember and they cannot use password managers anymore, which would contradict the original intention of making the app more secure.
+- 屏蔽粘贴数据到应用的输入框,并不能防止用户拷贝任何敏感信息. 由于信息在用户发现无法使用粘贴功能之前就已经被复制率, 此时,一个恶意的应用程序已经嗅探到了剪切板中的内容.
+- 如果密码输入框的粘贴功能被禁用, 用户为了容易技术密码,从而使用较弱的密码, 他们从此不会再使用密码管理器, 这样将与我们为了让应用更加安全的初衷相违背.
 
 When using an app you should still be aware that other apps are reading the clipboard continuously, as the [Facebook app](https://www.thedailybeast.com/facebook-is-spying-on-your-clipboard "Facebook Is Spying On Your Clipboard") did. Still, copy-pasting passwords is a security risk you should be aware of, but also cannot be solved by an app.
 
