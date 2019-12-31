@@ -1,14 +1,14 @@
-## Android Anti-Reversing Defenses
+## Android 反逆向 与 防御
 
-### Testing Root Detection (MSTG-RESILIENCE-1)
+### 越狱监测 测试 (MSTG-RESILIENCE-1)
 
-#### Overview
+#### 概述
 
 In the context of anti-reversing, the goal of root detection is to make running the app on a rooted device a bit more difficult, which in turn blocks some of the tools and techniques reverse engineers like to use. Like most other defenses, root detection is not very effective by itself, but implementing multiple root checks that are scattered throughout the app can improve the effectiveness of the overall anti-tampering scheme.
 
 For Android, we define "root detection" a bit more broadly, including custom ROMs detection, i.e., determining whether the device is a stock Android build or a custom build.
 
-#### Common Root Detection Methods
+#### 常见 越狱监测方法
 
 In the following section, we list some common root detection methods you'll encounter. You'll find some of these methods implemented in the [crackme examples](https://github.com/OWASP/owasp-mstg/tree/master/Crackmes "OWASP Mobile Crackmes") that accompany the OWASP Mobile Testing Guide.
 
@@ -58,7 +58,7 @@ On the other hand, `ctsProfileMatch` gives you a much stricter signal about the 
 - Devices with a system image built directly from the Android Open Source Program source files
 - Devices with a system image distributed as part of a beta or developer preview program (including the Android Beta Program)
 
-###### Recommendations when using `SafetyNetApi.attest`
+###### 使用 `SafetyNetApi.attest` 时的建议
 
 - Create a large (16 bytes or longer) random number on your server using a cryptographically-secure random function so that a malicious user can not reuse a successful attestation result in place of an unsuccessful result
 - Trust APK information (`apkPackageName`, `apkCertificateDigestSha256` and `apkDigestSha256`) only if the value of `ctsProfileMatch` is true.
@@ -69,9 +69,9 @@ On the other hand, `ctsProfileMatch` gives you a much stricter signal about the 
 
 Follow this [checklist](https://developer.android.com/training/safetynet/attestation-checklist "attestation checklist") to ensure that you've completed each of the steps needed to integrate the `SafetyNetApi.attest` API into the app.
 
-##### Programmatic Detection
+##### 编程检测
 
-###### File existence checks
+###### 检查文件存在 
 
 Perhaps the most widely used method of programmatic detection is checking for files typically found on rooted devices, such as package files of common rooting apps and their associated files and directories, including the following:
 
@@ -1010,25 +1010,31 @@ Work on bypassing the checks with the following techniques:
 
 Refer to the "[Tampering and Reverse Engineering on Android](0x05c-Reverse-Engineering-and-Tampering.md)" chapter for examples of patching, code injection, and kernel modules.
 
-### Testing Obfuscation (MSTG-RESILIENCE-9)
+### 测试 代码混淆 (MSTG-RESILIENCE-9)
 
-#### Overview
+#### 概述
 
-Obfuscation is the process of transforming code and data to make it more difficult to comprehend. It is an integral part of every software protection scheme. What's important to understand is that obfuscation isn't something that can be simply turned on or off. Programs can be made incomprehensible, in whole or in part, in many ways and to different degrees.
+混淆处理 是转换代码和数据使其更难被反编译理解的过程. 他是每一个软件保护方案的集成组成部分. 关键理解的是混淆不是一种能简单开启或者关闭的功能. 程序可以变得部分或者全部难以反被编译.
 
-In this test case, we describe a few basic obfuscation techniques that are commonly used on Android.
+在这个测试案例中, 我们将描叙一些基础的 混淆技术 被常用语 Android 应用当中.
 
-#### Effectiveness Assessment
+#### 有效性 评估
 
-Attempt to decompile the byte-code, disassemble any included library files, and perform static analysis. At the very least, the app's core functionality (i.e., the functionality meant to be obfuscated) shouldn't be easily discerned. Verify that
+尝试反编译字节代码, 拆解所有库中的文件, 并执行静态分析. 至少, 应用的核功能 (i.e., 需要被混淆的功能) 不应该轻易的辨识. 验证
 
-- meaningful identifiers, such as class names, method names, and variable names, have been discarded,
-- string resources and strings in binaries are encrypted,
-- code and data related to the protected functionality is encrypted, packed, or otherwise concealed.
+- 有意义的标识符, 比如, 类名, 方法名, 变量名,
+- 字符串资源 和 二进制字符串 应该被加密,
+- 与受保护功能相关的代码和数据应该被加密, 打包或者其他方式隐藏.
 
-For a more detailed assessment, you need a detailed understanding of the relevant threats and the obfuscation methods used.
+要进行更详细的评估，您需要详细了解相关威胁和使用混淆处理的方法。
 
-### Testing Device Binding (MSTG-RESILIENCE-10)
+工具: 
+- ProGuard
+- DashO Android & Java Obfuscator
+
+(reference:https://www.owasp.org/index.php/Bytecode_obfuscation)
+
+### 测试 设备绑定 (MSTG-RESILIENCE-10)
 
 #### Overview
 
