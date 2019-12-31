@@ -282,84 +282,84 @@ SDLCs 总是有相同的步骤组成 (在瀑布流中, 整个过程是连续的,
 
 ##### 什么是 瀑布流 和 怎样安排测试任务
 
-Basically, SDLC doesn't mandate the use of any development life cycle: it is safe to say that security can (and must!) be addressed in any situation.
+基本上，SDLC 并不要求使用任何开发生命周期：可以放心地说，安全性问题在任何情况下都可以（而且必须）被处理。
 
-Waterfall methodologies were popular before the 21st century. The most famous application is called the "V model", in which phases are performed in sequence and you can backtrack only a single step.
-The testing activities of this model occur in sequence and are performed as a whole, mostly at the point in the life cycle when most of the app development is complete. This activity sequence means that changing the architecture and other factors that were set up at the beginning of the project is hardly possible even though code may be changed after defects have been identified.
+瀑布方法在21世纪之前很流行。最著名的应用程序称为"V 模型"，在其中阶段按顺序执行，并且只能回溯一个步骤。
+此模型的测试活动按顺序进行，并作为一个整体执行，主要在生命周期中大多数应用开发完成时执行。此活动序列意味着，即使代码在识别缺陷后可能更改，也很难更改在项目开始时设置的体系结构和其他因素。
 
-#### Security Testing for Agile/DevOps and DevSecOps
+#### 对于 Agile/DevOps 和 DevSecOps 的安全测试
 
-DevOps refers to practices that focus on a close collaboration between all stakeholders involved in software development (generally called Devs) and operations (generally called Ops). DevOps is not about merging Devs and Ops.
-Development and operations teams originally worked in silos, when pushing developed software to production could take a significant amount of time. When development teams made moving more deliveries to production necessary by working with Agile, operation teams had to speed up to match the pace. DevOps is the necessary evolution of the solution to that challenge in that it allows software to be released to users more quickly. This is largely accomplished via extensive build automation, the process of testing and releasing software, and infrastructure changes (in addition to the collaboration aspect of DevOps). This automation is embodied in the deployment pipeline with the concepts of Continuous Integration and Continuous Delivery (CI/CD).
+DevOps 是指侧重于参与软件开发（通常称为 Devs）和操作（通常称为运营）的所有利益相关者之间的密切合作的实践。DevOps 不是要合并开发人员和操作。
+开发和操作团队最初在孤岛中工作，将开发的软件推向生产可能需要大量时间。当开发团队通过使用敏捷将更多的交付转移到生产中时，运营团队必须加快速度以跟上速度。DevOps 是解决方案应对这一挑战的必要演进，因为它允许更快地向用户发布软件。这主要通过广泛的构建自动化、测试和发布软件的过程以及基础结构更改（除了 DevOps 的协作方面）来实现。这种自动化体现在部署管道中，具有持续集成和持续交付 （CI/CD） 的概念。
 
-People may assume that the term "DevOps" represents collaboration between development and operations teams only, however, as DevOps thought leader Gene Kim puts it: "At first blush, it seems as though the problems are just between Devs and Ops, but test is in there, and you have information security objectives, and the need to protect systems and data. These are top-level concerns of management, and they have become part of the DevOps picture."
+P人们可能认为术语"DevOps"只代表开发和运营团队之间的协作，但是，正如 DevOps 思想领袖 Gene Kim 所说："乍一看，问题似乎只是 Devs 和 Ops 之间，但测试就在那里，您有信息安全目标，以及保护系统和数据的必要性。这些是管理层最关心的问题，它们已成为 DevOps 图片的一部分。
 
-In other words, DevOps collaboration includes quality teams, security teams, and many other teams related to the project. When you hear "DevOps" today, you should probably be thinking of something like [DevOpsQATestInfoSec](https://techbeacon.com/evolution-devops-new-thinking-gene-kim "The evolution of DevOps: Gene Kim on getting to continuous delivery"). Indeed, DevOps values pertain to increasing not only speed but also quality, security, reliability, stability, and resilience.
+换句话说，DevOps 协作包括质量团队、安全团队以及与项目相关的许多其他团队。当你今天听到"DevOps"时，你也许应该想到类似 [DevOpsQATestInfoSec](https://techbeacon.com/evolution-devops-new-thinking-gene-kim "DevOps 的演变：吉恩·金关于的持续交付"). 事实上，DevOps 价值不仅与提高速度有关，还与质量、安全性、可靠性、稳定性和弹性有关。
 
-Security is just as critical to business success as the overall quality, performance, and usability of an application. As development cycles are shortened and delivery frequencies increased, making sure that quality and security are built in from the very beginning becomes essential. **DevSecOps** is all about adding security to DevOps processes. Most defects are identified during production. DevOps specifies best practices for identifying as many defects as possible early in the life cycle and for minimizing the number of defects in the released application.
+安全性与应用程序的整体质量、性能和可用性一样，对业务成功至关重要。随着开发周期的缩短和交付频率的增加，确保质量和安全性从一开始就内置起来就变得至关重要。**DevSecOps** 是所有关于添加安全性的 DevOps 进程。大多数缺陷是在生产过程中识别的。DevOps 指定最佳做法，用于在生命周期的早期识别尽可能多的缺陷，并最大限度地减少已发布应用程序中的缺陷数量。
 
-However, DevSecOps is not just a linear process oriented towards delivering the best possible software to operations; it is also a mandate that operations closely monitor software that's in production to identify issues and fix them by forming a quick and efficient feedback loop with development. DevSecOps is a process through which Continuous Improvement is heavily emphasized.
+然而，DevSecOps不仅仅是一个线性过程，旨在向运营部门提供最好的软件;它还要求操作密切监视正在生产中的软件，通过通过开发形成快速高效的反馈循环来识别问题并修复问题。DevSecOps 是一个强调持续改进的过程。
 
 ![DevSecOps process](Images/Chapters/0x04b/DevSecOpsProcess.JPG)
 
-The human aspect of this emphasis is reflected in the creation of cross-functional teams that work together to achieve business outcomes. This section is focused on necessary interactions and integrating security into the development life cycle (which starts with project inception and ends with the delivery of value to users).
+这种强调的人力方面体现在创建跨职能团队，共同实现业务成果。本节重点介绍必要的交互并将安全性集成到开发生命周期中（从项目开始开始，到向用户交付价值结束）。
 
-##### What Agile and DevSecOps Are and How Testing Activities Are Arranged
+##### 什么是 敏捷开发(Agile) 和 DevSecOps 以及 怎样安排测试任务  and How Testing Activities Are Arranged
 
-###### Overview
+###### 概述
 
-Automation is a key DevSecOps practice: as stated earlier, the frequency of deliveries from development to operation increases when compared to the traditional approach, and activities that usually require time need to keep up, e.g. deliver the same added value while taking more time. Unproductive activities must consequently be abandoned, and essential tasks must be fastened. These changes impact infrastructure changes, deployment, and security:
+自动化是 DevSecOps 的一项关键实践：如前所述，与传统方法相比，从开发到操作的交付频率增加，并且通常需要时间才能跟上的活动，例如，提供相同的附加值而需要更多的时间。因此，必须放弃非生产性活动，必须固定基本任务。这些更改会影响基础结构更改、部署和安全性：
 
-- infrastructure is being implemented as **Infrastructure as Code**
-- deployment is becoming more scripted, translated through the concepts of **Continuous Integration** and **Continuous Delivery**
-- **security activities** are being automated as much as possible and taking place throughout the life cycle
+- 基础架构正以 **基础架构为代码** 实施
+- 部署正变得更加脚本化，通过 **继续集成** 和 **持续交付** 的概念进行
+- **安全活动** 正在尽可能自动化，并在整个生命周期内进行
 
-The following sections provide more details about these three points.
+以下各节提供了有关这三点的更多详细信息。
 
-###### Infrastructure as Code
+###### 继续架构为代码
 
-Instead of manually provisioning computing resources (physical servers, virtual machines, etc.) and modifying configuration files, Infrastructure as Code is based on the use of tools and automation to fasten the provisioning process and make it more reliable and repeatable. Corresponding scripts are often stored under version control to facilitate sharing and issue resolution.
+基础架构代码不是手动预配计算资源（物理服务器、虚拟机等）和修改配置文件，而是基于使用工具和自动化来加快预配过程，使其更加可靠，重复。相应的脚本通常存储在版本控制之下，以便于共享和问题解决。
 
-Infrastructure as Code practices facilitate collaboration between development and operations teams, with the following results:
+基础设施作为代码的实践可促进开发和运营团队之间的协作，结果如下：
 
-- Devs better understand infrastructure from a familiar point of view and can prepare resources that the running application will require.
-- Ops operate an environment that better suits the application, and they share a language with Devs.
+- 开发人员从熟悉的角度更好地了解基础结构，并可以准备正在运行的应用程序所需的资源。
+- Ops 操作的环境更适合应用程序，并且它们与 Devs 共享一种语言。
 
-Infrastructure as Code also facilitates the construction of the environments required by classical software creation projects, for **development** ("DEV"), **integration** ("INT"), **testing** ("PPR" for Pre-Production. Some tests are usually performed in earlier environments, and PPR tests mostly pertain to non-regression and performance with data that's similar to data used in production), and **production** ("PRD"). The value of infrastructure as code lies in the possible similarity between environments (they should be the same).
+基础设施作为代码还有助于构建经典软件创建项目所需的环境，用于 **开发** ("DEV"), **集成** ("INT"), **测试** ("PPR" 用于预生产。某些测试通常在较早的环境中执行，PPR 测试主要涉及非回归和性能，数据与生产中使用的数据类似), 和 **生产** ("PRD"). 基础结构作为代码的价值在于环境之间的可能相似性（它们应该是相同的）。
 
-Infrastructure as Code is commonly used for projects that have Cloud-based resources because many vendors provide APIs that can be used for provisioning items (such as virtual machines, storage spaces, etc.) and working on configurations (e.g., modifying memory sizes or the number of CPUs used by virtual machines). These APIs provide alternatives to administrators' performing these activities from monitoring consoles.
+基础结构即代码通常用于具有基于云的资源的项目，因为许多供应商提供可用于预配项目（如虚拟机、存储空间等）和配置（例如，修改内存）的 API大小或虚拟机使用的 CPU 数量）。这些 API 提供了管理员从监视控制台执行这些活动的替代方法。
 
-The main tools in this domain are [Puppet](https://puppet.com/ "Puppet"), [Terraform](https://www.terraform.io/ "Terraform"), [Packer](https://www.packer.io/ "Packer"), [Chef](https://www.chef.io/chef/ "Chef") and [Ansible](https://www.ansible.com/ "Ansible").
+此域中的主要工具是 [Puppet](https://puppet.com/ "Puppet"), [Terraform](https://www.terraform.io/ "Terraform"), [Packer](https://www.packer.io/ "Packer"), [Chef](https://www.chef.io/chef/ "Chef") and [Ansible](https://www.ansible.com/ "Ansible").
 
-###### Deployment
+###### 开发
 
-The deployment pipeline's sophistication depends on the maturity of the project organization or development team. In its simplest form, the deployment pipeline consists of a commit phase. The commit phase usually involves running simple compiler checks and the unit test suite as well as creating a deployable artifact of the application. A release candidate is the latest version that has been checked into the trunk of the version control system. Release candidates are evaluated by the deployment pipeline for conformity to standards they must fulfill for deployment to production.
+部署管道的复杂性取决于项目组织或开发团队的成熟度。在最简单的形式中，部署管道由提交阶段组成。提交阶段通常涉及运行简单的编译器检查和单元测试套件，以及创建应用程序的可部署项目。候选版本是已签入版本控制系统中继的最新版本。部署管道对发布候选项进行评估，以确保其符合部署到生产时必须满足的标准。
 
-The commit phase is designed to provide instant feedback to developers and is therefore run on every commit to the trunk. Time constraints exist because of this frequency. The commit phase should usually be complete within five minutes, and it shouldn't take longer than ten. Adhering to this time constraint is quite challenging when it comes to security because many security tools can't be run quickly enough (#paul, #mcgraw).
+提交阶段旨在向开发人员提供即时反馈，因此在每次提交到主干时都会运行。由于此频率，存在时间限制。提交阶段通常应在五分钟内完成，并且不应超过十分钟。在安全性方面，遵守这种时间约束是相当具有挑战性的，因为许多安全工具运行速度不够快（#paul、#mcgraw）。
 
-CI/CD means "Continuous Integration/Continuous Delivery" in some contexts and "Continuous Integration/Continuous Deployment" in others. Actually, the logic is:
+CI/CD 在某些上下文中表示"持续集成/持续交付"，在另一些上下文中表示"持续集成/持续部署"。实际上，逻辑是：
 
-- Continuous Integration build actions (either triggered by a commit or performed regularly) use all source code to build a candidate release. Tests can then be performed and the release's compliance with security, quality, etc., rules can be checked. If case compliance is confirmed, the process can continue; otherwise, the development team must remediate the issue(s) and propose changes.
-- Continuous Delivery candidate releases can proceed to the pre-production environment. If the release can then be validated (either manually or automatically), deployment can continue. If not, the project team will be notified and proper action(s) must be taken.
-- Continuous Deployment releases are directly transitioned from integration to production, e.g., they become accessible to the user. However, no release should go to production if significant defects have been identified during previous activities.
+- 持续集成生成操作（由提交触发或定期执行）使用所有源代码生成候选版本。然后可以执行测试，并检查发布是否符合安全性、质量等规则。如果案例符合性得到确认，则该过程可以继续;否则，开发团队必须修复问题并提出更改建议。
+- 持续交付候选版本可以进入预生产环境。如果随后可以验证发布（手动或自动），则可以继续部署。如果没有，项目团队将收到通知，并且必须采取适当的行动。
+- 连续部署版本直接从集成过渡到生产，例如，用户可以访问它们。但是，如果在以前的活动中发现重大缺陷，则不应将任何版本用于生产。
 
-The delivery and deployment of applications with low or medium sensitivity may be merged into a single step, and validation may be performed after delivery. However, keeping these two actions separate and using strong validation are strongly advised for sensitive applications.
+低灵敏度或中等敏感度的应用程序的交付和部署可以合并到一个步骤中，并在交付后执行验证。但是，强烈建议敏感应用程序将这两个操作分开并使用强验证。
 
 ###### 安全
 
-At this point, the big question is: now that other activities required for delivering code are completed significantly faster and more effectively, how can security keep up? How can we maintain an appropriate level of security? Delivering value to users more often with decreased security would definitely not be good!
+此时，最大的问题是：现在交付代码所需的其他活动已显著更快、更高效地完成，安全性如何跟上？我们如何保持适当的安全级别？以降低安全性更频繁地向用户交付价值肯定不好！
 
-Once again, the answer is automation and tooling: by implementing these two concepts throughout the project life cycle, you can maintain and improve security. The higher the expected level of security, the more controls, checkpoints, and emphasis will take place. The following are examples:
+同样，答案是自动化和工具：通过在整个项目生命周期中实现这两个概念，您可以维护和提高安全性。预期安全级别越高，控制、检查点和重点就越多。以下是示例：
 
-- Static Application Security Testing can take place during the development phase, and it can be integrated into the Continuous Integration process with more or less emphasis on scan results. You can establish more or less demanding Secure Coding Rules and use SAST tools to check the effectiveness of their implementation.
-- Dynamic Application Security Testing may be automatically performed after the application has been built (e.g., after Continuous Integration has taken place) and before delivery, again, with more or less emphasis on results.
-- You can add manual validation checkpoints between consecutive phases, for example, between delivery and deployment.
+- 静态应用程序安全测试可以在开发阶段进行，并且可以集成到持续集成过程中，或多或少地强调扫描结果。您可以建立或多或少要求苛刻的安全编码规则，并使用 SAST 工具检查其实施的有效性。
+- 动态应用程序安全测试可以在应用程序构建后（例如，在持续集成完成后）和交付之前自动执行，并再次或多或少地强调结果。
+- 您可以在连续阶段之间添加手动验证检查点，例如，在交付和部署之间。
 
-The security of an application developed with DevOps must be considered during operations. The following are examples:
+在操作过程中必须考虑使用 DevOps 开发的应用程序的安全性。以下是示例：
 
-- Scanning should take place regularly (at both the infrastructure and application level).
-- Pentesting may take place regularly. (The version of the application used in production is the version that should be pentested, and the testing should take place in a dedicated environment and include data that's similar to the production version data. See the section on Penetration Testing for more details.)
-- Active monitoring should be performed to identify issues and remediate them as soon as possible via the feedback loop.
+- 扫描应定期进行（在基础结构和应用程序级别）。
+- 定期进行笔试。（生产中使用的应用程序版本是应进行笔测试的版本，测试应在专用环境中进行，并包含类似于生产版本数据的数据。有关详细信息，请参阅渗透测试部分。
+- 应执行主动监视，以识别问题并通过反馈循环尽快修复问题。
 
 ![Example of a DevSecOps process](Images/Chapters/0x04b/ExampleOfADevSecOpsProcess.jpg)
 
@@ -370,10 +370,10 @@ The security of an application developed with DevOps must be considered during o
 
 #### OWASP MASVS
 
-- V1.1: "All app components are identified and known to be needed."
-- V1.3: "A high-level architecture for the mobile app and all connected remote services has been defined and security has been addressed in that architecture."
-- V1.4: "Data considered sensitive in the context of the mobile app is clearly identified."
-- V1.5: "All app components are defined in terms of the business functions and/or security functions they provide."
-- V1.6: "A threat model for the mobile app and the associated remote services has been produced that identifies potential threats and countermeasures."
-- V1.7: "All security controls have a centralized implementation."
-- V1.10: "Security is addressed within all parts of the software development lifecycle."
+- V1.1："所有应用组件都已识别并已知需要。
+- V1.3："移动应用和所有连接的远程服务的高级体系结构已定义，该体系结构中已解决了安全性问题。
+- V1.4："在移动应用上下文中被视为敏感的数据已明确标识。
+- V1.5："所有应用组件都是根据它们提供的业务功能和/或安全功能定义的。
+- V1.6："已生成移动应用和相关远程服务的威胁模型，用于识别潜在威胁和对策。
+- V1.7："所有安全控制都有一个集中实现。
+- V1.10："安全性在软件开发生命周期的所有部分都得到解决。
