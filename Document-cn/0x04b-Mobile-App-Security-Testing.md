@@ -102,7 +102,7 @@ DAST 的重点是通过应用程序的实时执行对其进行测试和评估。
 - **准备(Preparation)** - 定义安全测试的范围, 包括确定使用的安全控制, 组织和测试目标和敏感数据. 更粗略的来说, 准备工作包括与客户端的所有同步, 以及在法律上保护测试人员 (通常是第三方).请记住在很多国家, 未经书面授权的攻击系统是非法的!
 - **情报收集(Intelligence Gathering)** - 分析 **环境** 和 **架构** 应用的内容来获取对应用内容上的理解.
 - **综合应用功能分析(Mapping the Application)** - 根据上个阶段获取的信息; 通过自动扫描和手动探索应用程序来补充更多信息. 信息映射提供了对应应用程序, 入口点, 所保存的数据内容, 以及主要的潜在漏洞. 然后可以根据这些漏洞可能造成的损害对它们进行排序, 以便于安全测试人员对它们进行优先级处理. 此阶段包含了测试执行期间, 可能使用的测试用例的创建.
-- **渗透(Exploitation)** - 在这个阶段, 安全测试人员试图利用上个阶段发现的漏洞来渗透应用程序. 这个阶段对于确定漏洞是否真实存在和正确报警的必要性.
+- **利用(Exploitation)** - 在这个阶段, 安全测试人员试图利用上个阶段发现的漏洞来渗透应用程序. 这个阶段对于确定漏洞是否真实存在和正确报警的必要性.
 - **汇报(Reporting)** - 在这个阶段, 对于客户来说也是关键,安全测试汇报发现的漏洞,以及他能够利用的漏洞, 并且记录下他能够实现的危害,包括危害范围. (举例, 测试员可以非法的访问数据).
 
 ##### 准备
@@ -181,59 +181,59 @@ DAST 的重点是通过应用程序的实时执行对其进行测试和评估。
 当白盒渗透测试实施当渗透测试在白盒或灰盒范例中执行时，项目内部的任何文档 (架构图, 功能图, 代码 等等)可以加大的促进这个过程. 如果存在源代码, 使用 SAST 工具可以揭示关于漏洞的有价值的信息.(e.g., SQL 注入).
 DAST 工具只支持应用的黑盒测试和自动扫描: 测试人员可能需要几小时或几天的时间, 而扫描器可能在几分钟内就可以完成相同的任务. 然后, 需要记住的是, 自动工具存在局限性, 只能找到他们被编程要找到的东西. 因此, 可能需要人工分析来增强自动工具的最终结果. (直觉通常是安全测试的关键).
 
-Threat Modeling is an important artifact: documents from the workshop usually greatly support the identification of much of the information a security tester needs (entry points, assets, vulnerabilities, severity, etc.). Testers are strongly advised to discuss the availability of such documents with the client. Threat modeling should be a key part of the software development life cycle. It usually occurs in the early phases of a project.
+威胁建模是一种重要的方法: 通过讨论后的文档通常极大的给安全测试人员带来需要的信息 (入口点, 资产, 漏洞, 严重等级, 等等.). 强烈建议测试人员与客户讨论此类文档的可用性. 威胁建模是软件开发生命周期的关键部分. 它通常发生在项目的最早期阶段.
 
-The [threat modeling guidelines defined in OWASP](https://www.owasp.org/index.php/Application_Threat_Modeling "OWASP Application Threat Modeling") are generally applicable to mobile apps.
+[OWASP 定义的 威胁建模指南](https://www.owasp.org/index.php/Application_Threat_Modeling "OWASP 应用 威胁模型") 是普遍适用于移动应用.
 
-##### Exploitation
+##### 漏洞利用
 
-Unfortunately, time or financial constraints limit many pentests to application mapping via automated scanners (for vulnerability analysis, for example). Although vulnerabilities identified during the previous phase may be interesting, their relevance must be confirmed with respect to five axes:
+不幸的是, 由于时间或者财务上的限制, 许多渗透人员是通过自动扫描的方式来完成应用程序测试. (例如, 漏洞分析). 虽然在上一个阶段发现漏洞是件很有趣的事情, 但是他们的相关性必须有以下五个点来确认:
 
-- **Damage potential** - the damage that can result from exploiting the vulnerability
-- **Reproducibility** - ease of reproducing the attack
-- **Exploitability** - ease of executing the attack
-- **Affected users** - the number of users affected by the attack
-- **Discoverability** - ease of discovering the vulnerability
+- **潜在威胁** - 漏洞利用可能造成的损害
+- **重现性** - 攻击重现的难易程度
+- **可利用性** - 执行攻击的容易程度
+- **受影响的用户** - 受影响的用户数量
+- **可发现性** - 漏洞被发现的容易程度
 
-Against all odds, some vulnerabilities may not be exploitable and may lead to minor compromises, if any. Other vulnerabilities may seem harmless at first sight, yet be determined very dangerous under realistic test conditions. Testers who carefully go through the exploitation phase support pentesting by characterizing vulnerabilities and their effects.
+尽管存在种种困难, 但是有些漏洞可能无法利用, 并可能导致较小的威胁. 其他漏洞乍一看似乎是无害的, 但是在实际测试条件下却被确定为非常危险的. 测试人员通过描述漏洞及其影响来仔细的通过开发阶段来支持测试.
 
-#### Reporting
+#### 报告
 
-The security tester's findings will be valuable to the client only if they are clearly documented. A good pentest report should include information such as, but not limited to, the following:
+对于客户来说安全测试人员的发现只有被完整记录下来才有价值. 一份优质的渗透报告必须包括以下信息, 但不限于以下:
 
-- an executive summary
-- a description of the scope and context (e.g., targeted systems)
-- methods used
-- sources of information (either provided by the client or discovered during the pentest)
-- prioritized findings (e.g., vulnerabilities that have been structured by DREAD classification)
-- detailed findings
-- recommendations for fixing each defect
+- 渗透内容摘要
+- 范围和内容的描述 (e.g., 目标系统)
+- 使用方法
+- 信息来源 (包括客户提供的信息或者在渗透过程中所发行的信息)
+- 优先级排序所有的发现 (e.g., 漏洞通过 DREAD 架构来分类)
+- 详细的发现
+- 每个缺陷的建议和修复方法
 
-Many pentest report templates are available on the Internet: Google is your friend!
+互联网上有很多渗透报告的模板: Google 是你最好的朋友!
 
-### Security Testing and the SDLC
+### 安全测试 和 SDLC (软件开发生命周期)
 
-Although the principles of security testing haven't fundamentally changed in recent history, software development techniques have changed dramatically. While the widespread adoption of Agile practices was speeding up software development, security testers had to become quicker and more agile while continuing to deliver trustworthy software.
+虽然在最佳的历史中, 安全测试的远程并没有从根本上改变, 但是软件开发技术以及发生了巨大的变化. 虽然敏捷实践的广泛采用加速了软件开发, 但是安全测试人员必须变得更快, 更敏捷, 同事继续交付值得信任的软件.
 
-The following section is focused on this evolution and describes contemporary security testing.
+下面章节将重点介绍这种演变和描叙当前的安全测试.
 
-#### Security Testing during the Software Development Life Cycle
+#### 在软件开发生命周期中的 安全测试
 
-Software development is not very old, after all, so the end of developing without a framework is easy to observe. We have all experienced the need for a minimal set of rules to control work as the source code grows.
+毕竟, 软件开发并不是很古老, 所以没有框架的开发是很容易观察到的. 许多开发人员都经历过, 他们需要最少一组规则来控制他们源代码的增长.
 
-In the past, "Waterfall" methodologies were the most widely adopted: development proceeded by steps that had a predefined sequence. Limited to a single step, backtracking capability was a serious drawback of Waterfall methodologies. Although they have important positive features (providing structure, helping testers clarify where effort is needed, being clear and easy to understand, etc.), they also have negative ones (creating silos, being slow, specialized teams, etc.).
+在过去, "瀑布流" 方法被广泛的采用: 开发按照预先定义的顺序进行. 但是仅仅局限于单个步骤, 这是瀑布方法的一个重要缺陷. 尽管他们有重要的优质功能 (比如: 提供结构, 帮助测试人员找到需要努力的痛点, 清晰和容易理解, 等.), 他们也有劣质的特性 (创建 silos, 非常缓慢, 需要专门团队, 等等.).
 
-As software development matured, competition increased and developers needed to react to market changes more quickly while creating software products with smaller budgets. The idea of less structure became popular, and smaller teams collaborated, breaking silos throughout the organization. The "Agile" concept was born (Scrum, XP, and RAD are well-known examples of Agile implementations); it enabled more autonomous teams to work together more quickly.
+随着软件开发的成熟, 竞争加剧, 开发需要人员更快的对市场变化做出反应, 同时用更少的预算创建软件产品. 使用轻量级结构的想法越来越流行, 和更小的团队互相协作, 打破了整个组织的瓶颈. "敏捷" 概念衍生了其他 (Scrum, XP, 和 RAD 是敏捷实现的著名例子); 它让更多的自助团队能够更快的一起工作.
 
-Security wasn't originally an integral part of software development. It was an afterthought, performed at the network level by operation teams who had to compensate for poor software security! Although unintegrated security was possible when software programs were located inside a perimeter, the concept became obsolete as new kinds of software consumption emerged with web, mobile, and IoT technologies. Nowadays, security must be baked **inside** software because compensating for vulnerabilities is often very difficult.
+安全性最初并不是软件开发的一个组成部分. 而是一个事后的想法, 由网络运营团队执行, 他们必须弥补草稿的软件安全性! 虽然在网络边界内的软件有不集成安全的可能性, 但是随着网络, 移动和物联网技术的出现, 这种安全概念就变得过时了. 现在, 安全必须在 **内部** 软件开发中烘焙, 因为对漏洞进行弥补通常是非常困难的.
 
-> "SDLC" will be used interchangeably with "Secure SDLC" in the following section to help you internalize the idea that security is a part of software development processes. In the same spirit, we use the name DevSecOps to emphasize the fact that security is part of DevOps.
+> "SDLC" 将会与下一章节中的 "安全 SDLC" 相互使用, 以帮助你理解安全是软件开发过程的一部分的概念. 本着同样的精神, 我们使用 DevSecOps 这个名称来强调安全性是 DevOps 的一部分的事实.
 
 #### SDLC 概述
 
 ##### SDLC 的一般描述
 
-SDLCs always consist of the same steps (the overall process is sequential in the Waterfall paradigm and iterative in the Agile paradigm):
+SDLCs 总是有相同的步骤组成 (在瀑布流中, 整个过程是连续的, 而在敏捷中, 则是迭代的模式):
 
 - Perform a **risk assessment** for the application and its components to identify their risk profiles. These risk profiles typically depend on the organization's risk appetite and applicable regulatory requirements. The risk assessment is also based on factors, including whether the application is accessible via the Internet and the kind of data the application processes and stores. All kinds of risks must be taken into account: financial, marketing, industrial, etc. Data classification policies specify which data is sensitive and how it must be secured.
 - **Security Requirements** are determined at the beginning of a project or development cycle, when functional requirements are being gathered. **Abuse Cases** are added as use cases are created. Teams (including development teams) may be given security training (such as Secure Coding) if they need it.
@@ -251,7 +251,7 @@ The picture below illustrates all the phases and artifacts:
 
 Based on the project's general risk profile, you may simplify (or even skip) some artifacts, and you may add others (formal intermediary approvals, formal documentation of certain points, etc.). **Always remember two things: an SDLC is meant to reduce risks associated with software development, and it is a framework that helps you set up controls to that end.** This this is a generic description of SDLC; always tailor this framework to your projects.
 
-##### 确定 测试 方法
+##### 确定 测试方法
 
 Test strategies specify the tests that will be performed during the SDLC as well as testing frequency. Test strategies are used to make sure that the final software product meets security objectives, which are generally determined by clients' legal/marketing/corporate teams.
 The test strategy is usually created during the Secure Design phase, after risks have been clarified (during the Initiation phase) and before code development (the Secure Implementation phase) begins. The strategy requires input from activities such as Risk Management, previous Threat Modeling, and Security Engineering.
