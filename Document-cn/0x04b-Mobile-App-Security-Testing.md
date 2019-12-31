@@ -235,50 +235,52 @@ DAST 工具只支持应用的黑盒测试和自动扫描: 测试人员可能需�
 
 SDLCs 总是有相同的步骤组成 (在瀑布流中, 整个过程是连续的, 而在敏捷中, 则是迭代的模式):
 
-- Perform a **risk assessment** for the application and its components to identify their risk profiles. These risk profiles typically depend on the organization's risk appetite and applicable regulatory requirements. The risk assessment is also based on factors, including whether the application is accessible via the Internet and the kind of data the application processes and stores. All kinds of risks must be taken into account: financial, marketing, industrial, etc. Data classification policies specify which data is sensitive and how it must be secured.
-- **Security Requirements** are determined at the beginning of a project or development cycle, when functional requirements are being gathered. **Abuse Cases** are added as use cases are created. Teams (including development teams) may be given security training (such as Secure Coding) if they need it.
-You can use the [OWASP MASVS](https://mobile-security.gitbook.io/masvs/ "OWASP MASVS") to determine the security requirements of mobile applications on the basis of the risk assessment phase. Iteratively reviewing requirements when features and data classes are added is common, especially with Agile projects.
-- **Threat Modeling**, which is basically the identification, enumeration, prioritization, and initial handling of threats, is a foundational artifact that must be performed as architecture development and design progress. **Security Architecture**, a Threat Model factor, can be refined (for both software and hardware aspects) after the Threat Modeling phase. **Secure Coding rules** are established and the list of **Security tools** that will be used is created. The strategy for **Security testing** is clarified.
-- All security requirements and design considerations should be stored in the Application Life Cycle Management (ALM) system (also known as the issue tracker) that the development/ops team uses to ensure tight integration of security requirements into the development workflow. The security requirements should contain relevant source code snippets so that developers can quickly reference the snippets. Creating a dedicated repository that's under version control and contains only these code snippets is a secure coding strategy that's more beneficial than the traditional approach (storing the guidelines in word documents or PDFs).
-- **Securely develop the software**. To increase code security, you must complete activities such as **Security Code Reviews**, **Static Application Security Testing**, and **Security Unit Testing**. Although quality analogues of these security activities exist, the same logic must be applied to security, e.g., reviewing, analyzing, and testing code for security defects (for example, missing input validation, failing to free all resources, etc.).
-- Next comes the long-awaited release candidate testing: both manual and automated **Penetration Testing** ("Pentests"). **Dynamic Application Security Testing** is usually performed during this phase as well.
-- After the software has been **Accredited** during **Acceptance** by all stakeholders, it can be safely transitioned to **Operation** teams and put in Production.
-- The last phase, too often neglected, is the safe **Decommissioning** of software after its end of use.
+- 通过 **风险评估** 来识别应用和组件的风险状况. 这些风险概况通常取决于组织的风险偏好和监管要求. 风险评估基于一些因素, 包括应用程序是否可以访问互联网, 以及应用程式处理和存储数据的类型. 必须考虑的各种风险: 金融, 市场, 工厂等等. 数据分类策略指定那些数据是敏感的,以及需要被安全保护的. 
+- **安全 要求** 在项目开始或者开发周期前被确定, 即收集应用功能需求的时候确定. **滥用案例** 在创建用例的时候被添加. 如果需要, 团队(包括开发团队) 可以接受安全培训 (安全代码编写). ????
+你可以使用 [OWASP MASVS](https://mobile-security.gitbook.io/masvs/ "OWASP MASVS") 来确定移动应用程序在风险评估阶段的基础上的安全需求. 在添加特性和数据类时候迭代的检查需求是很正常的, 特别是在敏捷开发项目中.
+- **威胁 建模**, 基本上只指 识别, 枚举, 优先级划分和对威胁的初始处理, 这些事必须作为体系结构开发和设计过程执行的基本构件.**安全 架构**, 在威胁建模之后, 可以对威胁模型模型的因素 (软件和硬件) 方面进行细化. **安全代码 规则** 有一系列的 **安全 工具** 组成, 并且被使用和被创建.这样 **安全测试** 的策略被就被明确阐明了.
+- 所有的安全要求 和 设计考虑需要被保存在 应用生命周期管理系统中 (ALM),(有叫做事件跟踪平台) 这样开发/运维团队用于确保安全需求紧密的集成到开发工作流中. 安全需求应该包含相关的源代码片段, 以便开发人员可以快速的引用这些代码片段. 创建一个被版本控制的, 只包含代码片段的专用代码仓库是一种比传统方法(将指南以word 文档或者PDF 形式保存)更有效益的安全编码策略. 
+- **安全的开发 软件**. 提升代码安全, 我们必须完成以下活动, 比如 **安全代码 评估**, **静态 应用安全测试(SAST)**, 和 **安全 单元测试**. 虽然这些安全任务在代码质量任务中存在, 但是同样的逻辑必须应用到安全, 例如.,审查, 分析和测试安全缺陷的代码 (缺陷代码举例, 缺少输入验证, 未能释放所有资源, 等等.).
+- 接下来是期待已久的预发售测试: 手动 和 自动的 **渗透 测试** ("渗透测试"). **动态 应用安全测试(DAST)** 通常在此阶段进行..
+- 当软件被所有的参与者 **认证** 和 **验收** , 就可以安全的转移到 **运营** 团队 和 投入生产.
+- 最后一个阶段, 也是容易被忽略的 及当应用使用完后, 应用的 **停运(Decommissioning)** 流程.
 
-The picture below illustrates all the phases and artifacts:
+下图展示了所有的阶段和组件:
 
 ![General description of SDLC](Images/Chapters/0x04b/SDLCOverview.jpg)
 
-Based on the project's general risk profile, you may simplify (or even skip) some artifacts, and you may add others (formal intermediary approvals, formal documentation of certain points, etc.). **Always remember two things: an SDLC is meant to reduce risks associated with software development, and it is a framework that helps you set up controls to that end.** This this is a generic description of SDLC; always tailor this framework to your projects.
+根据项目的一般风险特征, 你可以简化一些组件, 你也可以添加其他的 (正式的批准，以及某些方面的正式文件，等等.). **永远记住两件事: SDLC 是为了减低软件开发中的风险, 并且框架可以帮助我们从头到尾的控制.** 这就是对于 SDLC 的通用描述; 可以根据项目时常修剪这个框架.
 
-##### 确定 测试方法
+##### 测试方法的确认
 
-Test strategies specify the tests that will be performed during the SDLC as well as testing frequency. Test strategies are used to make sure that the final software product meets security objectives, which are generally determined by clients' legal/marketing/corporate teams.
-The test strategy is usually created during the Secure Design phase, after risks have been clarified (during the Initiation phase) and before code development (the Secure Implementation phase) begins. The strategy requires input from activities such as Risk Management, previous Threat Modeling, and Security Engineering.
+指定测试策略可以提升整个 SDLC 测试的评率. 测试策略的目的是为了确保最终软件产品符合安全要求, 这种要求一般是有客户, 市场/企业团队/以及立法团队决定.
 
-A Test Strategy needn't be formally written: it may be described through Stories (in Agile projects), quickly enumerated in checklists, or specified as test cases for a given tool. However, the strategy must definitely be shared because it must be implemented by a team other than the team who defined it. Moreover, all technical teams must agree to it to ensure that it doesn't place unacceptable burdens on any of them.
+测试的策略一般在 安全设计阶段 被创建, 当威胁被分类后 (在启动期间)) 和代码开发 (及安全实施阶段)之前. 这种类型的 策略 需要不同活动的输出内容, 比如: 风险管理, 威胁建模,和安全工程.
 
-Test Strategies address topics such as the following:
+测试策略不需要正式的文本: 它有可能通过事件的模式来描述 (i在敏捷开发项目中), 快速的枚举检查列表, 或者由特定的工具来指定测试案例. 然而, 策略必须被共享因为它会被团队或者其他定义的团队实施. 更多的, 所有的技术团队必须确认不会给任何一个团队的人带来任何负担.
 
-- objectives and risk descriptions
-- plans for meeting objectives, risk reduction, which tests will be mandatory, who will perform them, how and when they will be performed
-- acceptance criteria
+测试策略 涉及以下主题:
 
-To track the testing strategy's progress and effectiveness, metrics should be defined, continually updated during the project, and periodically communicated. An entire book could be written about choosing relevant metrics; the most we can say here is that they depend on risk profiles, projects, and organizations. Examples of metrics include the following:
+- 风险描述 和 目标
+- 完成目标的计划, 风险减低, 那种测试需要强制, 谁来执行, 如何执行, 以及怎样验收.
+- 验收标准
 
-- the number of stories related to security controls that have been successfully implemented
-- code coverage for unit tests of security controls and sensitive features
-- the number of security bugs found for each build via static analysis tools
-- trends in security bug backlogs (which may be sorted by urgency)
+为了跟踪测试策略的流程 和 有效性, 标准应该被定义, 在项目期间不断的更新, 并定期沟通. 可以写一整本书来选择相关的度量标准; 我们这里最多只能说, 他们依赖于风险概况, 项目和组织. 度量标准的示例一般包含以下内容:
 
-These are only suggestions; other metrics may be more relevant to your project. Metrics are powerful tools for getting a project under control, provided they give project managers a clear and synthetic perspective on what is happening and what needs to be improved.
+- 和安全控制相关的故事已经成功的执行/实施
+- 安全控制和敏感功能的单元测试代码覆盖率
+- 通过静态分析工具所找到的每个版本的安全 bug 的数量
+- 安全缺陷积压的趋势 (根据紧急程度排序)
 
-Distinguishing between tests performed by an internal team and tests performed by an independent third party is important. Internal tests are usually useful for improving daily operations, while third-party tests are more beneficial to the whole organization. Internal tests can be performed quite often, but third-party testing happens at most once or twice a year; also, the former are less expensive than the latter.
-Both are necessary, and many regulations mandate tests from an independent third party because such tests can be more trustworthy.
+这些仅仅只是建议; 其他指标也许和你的项目更有关联. 指标是非常强大的工具, 因为它们为项目经理提供了正在发生的事情和需要改进的地方和清晰和中和的视角.
+
+测试有内部团队 和 测被独立第三方执行的区别是重要的. 对于提高日常操作来说,内部测试非常重要, 然而第三方测试对整个组织更加有利. 内部测试可以经常进行, 但是第三方测试每年最多只进行一次到两次;而且前者比后者便宜. 
+
+两者都是必要的, 而且许多法规要求从独立的第三方进行测试, 因为这样的测试更加值得信任.
 
 #### 瀑布流 安全测试
 
-##### What Waterfall Is and How Testing Activities Are Arranged
+##### 什么是 瀑布流 和 怎样安排测试任务
 
 Basically, SDLC doesn't mandate the use of any development life cycle: it is safe to say that security can (and must!) be addressed in any situation.
 
