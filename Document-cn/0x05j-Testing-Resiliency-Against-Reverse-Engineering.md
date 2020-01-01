@@ -61,15 +61,15 @@ SafetyNet API 认证机制 最初提供了一个名为 `basicIntegrity` 的值, 
 ###### 使用 `SafetyNetApi.attest` 时的建议
 
 - 创建一个大于 (16 字节 或者 更大) 任意数字在你的服务器上, 使用加密安全任意功能创建, 这样一个可疑的用户不能再重复使用成功认证的结果到一个不成功认证结果的设备中.
-- Trust APK information (`apkPackageName`, `apkCertificateDigestSha256` and `apkDigestSha256`) only if the value of `ctsProfileMatch` is true.
-- The entire JWS response should be sent to your server, using a secure connection, for verification. It isn't recommended to perform the verification directly in the app because, in that case, there is no guarantee that the verification logic itself hasn't been modified.
-- The `verify` method only validates that the JWS message was signed by SafetyNet. It doesn't verify that the payload of the verdict matches your expectations. As useful as this service may seem, it is designed for test purposes only, and it has very strict usage quotas of 10,000 requests per day, per project which will not be increased upon request. Hence, you should refer [SafetyNet Verification Samples](https://github.com/googlesamples/android-play-safetynet/tree/master/server/java/src/main/java "Google SafetyNet Sample") and implement the digital signature verification logic on your server in a way that it doesn't depend on Google's servers.
-- The SafetyNet Attestation API gives you a snapshot of the state of a device at the moment when the attestation request was made. A successful attestation doesn't necessarily mean that the device would have passed attestation in the past, or that it will in the future. It's recommended to plan a strategy to use the least amount of attestations required to satisfy the use case.
-- To prevent inadvertently reaching your `SafetyNetApi.attest` quota and getting attestation errors, you should build a system that monitors your usage of the API and warns you well before you reach your quota so you can get it increased. You should also be prepared to handle attestation failures because of an exceeded quota and avoid blocking all your users in this situation. If you are close to reaching your quota, or expect a short-term spike that may lead you to exceed your quota, you can submit this [form](https://support.google.com/googleplay/android-developer/contact/safetynetqr "quota request") to request short or long-term increases to the quota for your API key. This process, as well as the additional quota, is free of charge.
+- 信任 APK 信息值 (`apkPackageName`, `apkCertificateDigestSha256` 和 `apkDigestSha256`) 只有当 `ctsProfileMatch` 的值为 true 的时候.
+- 整个 JWS 响应过程应该被发送到服务器, 并且使用安全连接, 用于验证. 不建议在移动应用程序中直接执行验证, 因为在这种情况下, 不能保证验证逻辑本身没有被修改.
+- `verify` 方法只验证 JWS 消息是由 SafetyNet 签名的. 它并不能验证 payload的判决符合你的期望. 尽管这个服务看起来很有用, 但是他是为测试的目的而设计的, 并且他有非常杨哥的使用限额, 每天有10,000 次请求, 每个项目不会根据请求增加. 因此, 你可以参考 [SafetyNet 认证 举例](https://github.com/googlesamples/android-play-safetynet/tree/master/server/java/src/main/java "Google SafetyNet 案例") 并在你的服务器上施行数字签名认证逻辑, 这样就不用依赖于谷歌的服务器了.
+- SafetyNet 鉴证 API 提供了当你申请认证时候的设备状态的镜像. 成功的认证通过不代表设备在过去也通过的认证, 或者说在将来会通过认证. 建议计划一个策略, 使用最少数量的认证用例来满足要求.
+- 为了预防无意的触及你的 `SafetyNetApi.attest` 配额和鉴证错误, 你应该建立一个系统来监控你的 API 使用情况, 并且提醒你当你将要超过你的限额. 你应该准备好处理由于配额超出导致的认证识别, 并避免这种情况下阻塞的所有用户. If you are close to reaching your quota, or expect a short-term spike that may lead you to exceed your quota, you can submit this [form](https://support.google.com/googleplay/android-developer/contact/safetynetqr "quota request") to request short or long-term increases to the quota for your API key. This process, as well as the additional quota, is free of charge.
 
-Follow this [checklist](https://developer.android.com/training/safetynet/attestation-checklist "attestation checklist") to ensure that you've completed each of the steps needed to integrate the `SafetyNetApi.attest` API into the app.
+参照这个 [清单](https://developer.android.com/training/safetynet/attestation-checklist "鉴证 清单") to ensure that you've completed each of the steps needed to integrate the `SafetyNetApi.attest` API into the app.
 
-##### 编程检测
+##### 编程级别的 检测
 
 ###### 检查文件存在 
 
@@ -129,11 +129,11 @@ jboolean Java_com_example_statfile(JNIEnv * env, jobject this, jstring filepath)
 }
 ```
 
-###### Executing `su` and other commands
+###### 执行 `su` 和 其他命令
 
 Another way of determining whether `su` exists is attempting to execute it through the `Runtime.getRuntime.exec` method. An IOException will be thrown if `su` is not on the PATH. The same method can be used to check for other programs often found on rooted devices, such as busybox and the symbolic links that typically point to it.
 
-###### Checking running processes
+###### 检测巡行进程
 
 Supersu-by far the most popular rooting tool-runs an authentication daemon named `daemonsu`, so the presence of this process is another sign of a rooted device. Running processes can be enumerated with the `ActivityManager.getRunningAppProcesses` and `manager.getRunningServices` APIs, the `ps` command, and browsing through the `/proc` directory. The following is an example implemented in [rootinspector](https://github.com/devadvance/rootinspector/ "rootinspector"):
 
@@ -159,7 +159,7 @@ Supersu-by far the most popular rooting tool-runs an authentication daemon named
     }
 ```
 
-###### Checking installed app packages
+###### 检测 已经安全的应用包
 
 You can use the Android package manager to obtain a list of installed packages. The following package names belong to popular rooting tools:
 
@@ -173,7 +173,7 @@ com.ramdroid.appquarantine
 com.topjohnwu.magisk
 ```
 
-###### Checking for writable partitions and system directories
+###### 检测 for writable partitions and system directories
 
 Unusual permissions on system directories may indicate a customized or rooted device. Although the system and data directories are normally mounted read-only, you'll sometimes find them mounted read-write when the device is rooted. Look for these filesystems mounted with the "rw" flag or try to create a file in the data directories.
 
