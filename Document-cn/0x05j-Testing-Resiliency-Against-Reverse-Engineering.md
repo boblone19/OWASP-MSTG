@@ -4,15 +4,15 @@
 
 #### 概述
 
-In the context of anti-reversing, the goal of root detection is to make running the app on a rooted device a bit more difficult, which in turn blocks some of the tools and techniques reverse engineers like to use. Like most other defenses, root detection is not very effective by itself, but implementing multiple root checks that are scattered throughout the app can improve the effectiveness of the overall anti-tampering scheme.
+在逆向这个话题中, 越狱检测机制的目的是为了让应用程序在越狱设备上运行变得更加困难, 这样可以屏蔽一些工具和逆向工程技术的使用. 和其他防御机制一样, 越狱检测本身并不是很有效, 但是整个应用实现多次越狱检测机制可以提高反篡改方案的有效性.
 
-For Android, we define "root detection" a bit more broadly, including custom ROMs detection, i.e., determining whether the device is a stock Android build or a custom build.
+对于 Android 系统来说, 我们对 "越狱 检测" 的定义更为广泛, 其中包括自定义的 ROMs 检测, 例如., 确定设备是常规的 Android 版本还是自定义的版本.
 
 #### 常见 越狱监测方法
 
-In the following section, we list some common root detection methods you'll encounter. You'll find some of these methods implemented in the [crackme examples](https://github.com/OWASP/owasp-mstg/tree/master/Crackmes "OWASP Mobile Crackmes") that accompany the OWASP Mobile Testing Guide.
+在以下章节中, 我们将列出你会遇到的常见的越狱检测方法. 一些方法可以从这里找到样本 [破解我 样本](https://github.com/OWASP/owasp-mstg/tree/master/Crackmes "OWASP 移动破解我") 以及 OWASP 移动测试指南.
 
-Root detection can also be implemented through libraries such as [RootBeer](https://github.com/scottyab/rootbeer "RootBeer").
+越狱检测 可以通过执行程序库, 例如 [RootBeer](https://github.com/scottyab/rootbeer "RootBeer").
 
 ##### SafetyNet
 
