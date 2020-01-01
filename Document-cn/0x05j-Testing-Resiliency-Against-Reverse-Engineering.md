@@ -16,19 +16,19 @@
 
 ##### SafetyNet
 
-SafetyNet is an Android API that provides a set of services and creates profiles of devices according to software and hardware information. This profile is then compared to a list of whitelisted device models that have passed Android compatibility testing. Google [recommends](https://developers.google.com/android/reference/com/google/android/gms/safetynet/SafetyNet "SafetyNet Documentation") using the feature as "an additional in-depth defense signal as part of an anti-abuse system".
+SafetyNet 是 Android API 接口, 提供一系列的服务和根据软件和硬件信息, 创建设备的配置文件. 这个配置文件将会和通过 Android 兼容性测试的白名单设备型号列表对比. Google [建议](https://developers.google.com/android/reference/com/google/android/gms/safetynet/SafetyNet "SafetyNet 文档") 使用此功能当成 "一种额外的预防系统滥用的深入防御信号".
 
-How exactly SafetyNet works is not well documented and may change at any time. When you call this API, SafetyNet downloads a binary package containing the device validation code provided from Google, and the code is then dynamically executed via reflection. An [analysis by John Kozyrakis](https://koz.io/inside-safetynet/ "SafetyNet: Google's tamper detection for Android") showed that SafetyNet also attempts to detect whether the device is rooted, but exactly how that's determined is unclear.
+关于 SafetyNet 到底怎样工作的, 并没有很好的文档解释,也许以后会改变. 但是当你调用这个 API, SafetyNet 会下载一个二进制软件包, 软件包中有 Google 对设备验证的代码, 然后通过反射动态执行该代码. [分析报告 由 John Kozyrakis](https://koz.io/inside-safetynet/ "SafetyNet: Google's Android 篡改检测功能") 告知我们 SafetyNet 可以检测设备是否越狱, 但是关于怎样检测却没有明细说明.
 
-To use the API, an app may call the `SafetyNetApi.attest` method (which returns a JWS message with the *Attestation Result*) and then check the following fields:
+为了使用此 API, 应用可以调用 `SafetyNetApi.attest` 方法 (将会返回带有 *认证结果* 的 JWS 消息) 然后检查以下字段:
 
-- `ctsProfileMatch`: If 'true', the device profile matches one of Google's listed devices.
-- `basicIntegrity`: If 'true', the device running the app likely hasn't been tampered with.
-- `nonces`: To match the response to its request.
-- `timestampMs`: To check how much time has passed since you made the request and you got the response. A delayed response may suggest suspicious activity.
-- `apkPackageName`, `apkCertificateDigestSha256`, `apkDigestSha256`: Provide information about the APK, which is used to verify the identity of the calling app. These parameters are absent if the API cannot reliably determine the APK information.
+- `ctsProfileMatch`: 如果返回值为 'true', 此设备配置文件匹配谷歌列出的设备之一.
+- `basicIntegrity`: 如果返回值为 'true', 该设备运行的应用程序有可能没有被篡改.
+- `nonces`: 将响应与他的请求相匹配.
+- `timestampMs`: 查看 从发出请求到得到响应所使用的时间. 延迟的反应可能意味着可疑的活动.
+- `apkPackageName`, `apkCertificateDigestSha256`, `apkDigestSha256`: 提供有关于 APK 的信息, 用来验证调用程序的身份. 如果 API 不能可靠的确定 APK 信息, 则不提供这些参数.
 
-The following is a sample attestation result:
+以下是认证结果的样本:
 
 ```json
 {
@@ -45,22 +45,22 @@ The following is a sample attestation result:
 
 ###### ctsProfileMatch Vs basicIntegrity
 
-The SafetyNet Attestation API initially provided a single value called `basicIntegrity` to help developers determine the integrity of a device. As the API evolved, Google introduced a new, stricter check whose results appear in a value called `ctsProfileMatch`, which allows developers to more finely evaluate the devices on which their app is running.
+SafetyNet API 认证机制 最初提供了一个名为 `basicIntegrity` 的值, 用来帮助开发人员确定设备的完整性. 随着 API 的发展, 谷歌引入了一种新的, 更严格的检查, 其结果显示在一个名为 `ctsProfileMatch` 的值中, 该值准许开发人员更精确的评估其他应用程序锁运行的设备.
 
-In broad terms, `basicIntegrity` gives you a signal about the general integrity of the device and its API. Many Rooted devices fail `basicIntegrity`, as do emulators, virtual devices, and devices with signs of tampering, such as API hooks.
+从广义上讲, `basicIntegrity` 给你一个关于设备及其 API 整体完整性的信号. 许多越狱设备无法实现 `basicIntegrity`, 即使是模拟器, 虚拟设备和带有篡改标记的设备 (如 API 挂钩) 也是如此.
 
-On the other hand, `ctsProfileMatch` gives you a much stricter signal about the compatibility of the device. Only unmodified devices that have been certified by Google can pass `ctsProfileMatch`. Devices that will fail `ctsProfileMatch` include the following:
+另一方面, `ctsProfileMatch` 会给你一个关于设备兼容性的更严格的信号. 只有通过谷歌认证的未经过修改的设备才能通过 `ctsProfileMatch`. 包含在以下条件的设备将会被 `ctsProfileMatch` 否决:
 
-- Devices that fail `basicIntegrity`
-- Devices with an unlocked bootloader
-- Devices with a custom system image (custom ROM)
-- Devices for which the manufacturer didn't apply for, or pass, Google certification
-- Devices with a system image built directly from the Android Open Source Program source files
-- Devices with a system image distributed as part of a beta or developer preview program (including the Android Beta Program)
+- 设备无法通过 `basicIntegrity`
+- 设备存在未锁定的应到加载程序
+- 设备带有自定义系统镜像
+- 设备没有通过, 或者申请谷歌认证
+- 设备自带的系统镜像是从 Android 开源程序源文件构建的
+- 设备自带系统镜像带有测试或者开发人员预览的程序
 
 ###### 使用 `SafetyNetApi.attest` 时的建议
 
-- Create a large (16 bytes or longer) random number on your server using a cryptographically-secure random function so that a malicious user can not reuse a successful attestation result in place of an unsuccessful result
+- 创建一个大于 (16 字节 或者 更大) 任意数字在你的服务器上, 使用加密安全任意功能创建, 这样一个可疑的用户不能再重复使用成功认证的结果到一个不成功认证结果的设备中.
 - Trust APK information (`apkPackageName`, `apkCertificateDigestSha256` and `apkDigestSha256`) only if the value of `ctsProfileMatch` is true.
 - The entire JWS response should be sent to your server, using a secure connection, for verification. It isn't recommended to perform the verification directly in the app because, in that case, there is no guarantee that the verification logic itself hasn't been modified.
 - The `verify` method only validates that the JWS message was signed by SafetyNet. It doesn't verify that the payload of the verdict matches your expectations. As useful as this service may seem, it is designed for test purposes only, and it has very strict usage quotas of 10,000 requests per day, per project which will not be increased upon request. Hence, you should refer [SafetyNet Verification Samples](https://github.com/googlesamples/android-play-safetynet/tree/master/server/java/src/main/java "Google SafetyNet Sample") and implement the digital signature verification logic on your server in a way that it doesn't depend on Google's servers.
