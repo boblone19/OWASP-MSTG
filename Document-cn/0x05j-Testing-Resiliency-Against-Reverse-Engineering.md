@@ -67,13 +67,13 @@ SafetyNet API 认证机制 最初提供了一个名为 `basicIntegrity` 的值, 
 - SafetyNet 鉴证 API 提供了当你申请认证时候的设备状态的镜像. 成功的认证通过不代表设备在过去也通过的认证, 或者说在将来会通过认证. 建议计划一个策略, 使用最少数量的认证用例来满足要求.
 - 为了预防无意的触及你的 `SafetyNetApi.attest` 配额和鉴证错误, 你应该建立一个系统来监控你的 API 使用情况, 并且提醒你当你将要超过你的限额. 你应该准备好处理由于配额超出导致的认证识别, 并避免这种情况下阻塞的所有用户. 如果你接近你的额度, 或者期望短期暴涨会超过你的额度, 你可以提交这个 [论坛](https://support.google.com/googleplay/android-developer/contact/safetynetqr "额度 申请") 来申请你的短期 或者 长期的 API 秘钥的额度. 这个流程, 就类似于额外的额度, 不收取任何费用.
 
-参照这个 [清单](https://developer.android.com/training/safetynet/attestation-checklist "鉴证 清单") to ensure that you've completed each of the steps needed to integrate the `SafetyNetApi.attest` API into the app.
+参照这个 [清单](https://developer.android.com/training/safetynet/attestation-checklist "鉴证 清单") 来确定你完成了以下的每一步, 并且集成 `SafetyNetApi.attest` API 到你的应用程序当中.
 
 ##### 编程级别的 检测
 
 ###### 检查文件存在 
 
-Perhaps the most widely used method of programmatic detection is checking for files typically found on rooted devices, such as package files of common rooting apps and their associated files and directories, including the following:
+也许最广泛的使用方法是检查在越狱设备上的特定文件, 比如说共同越狱应用软件包文件 和 他们相关的文件和目录, 包含以下:
 
 ```text
 /system/app/Superuser.apk
