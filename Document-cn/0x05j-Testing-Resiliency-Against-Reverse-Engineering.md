@@ -82,7 +82,7 @@ SafetyNet API 认证机制 最初提供了一个名为 `basicIntegrity` 的值, 
 /system/xbin/daemonsu
 ```
 
-Detection code also often looks for binaries that are usually installed once a device has been rooted. These searches include checking for busybox and attempting to open the *su* binary at different locations:
+代码检测一般检测二进制文件, 这些文件在越狱后被安装到设备上.这些搜索的关键包含检测 Busybox 和尝试打开 *su* 二进制命令在不同的路径:
 
 ```text
 /sbin/su  
@@ -96,7 +96,7 @@ Detection code also often looks for binaries that are usually installed once a d
 /data/local/bin/su  
 ```
 
-Checking whether `su` is on the PATH also works:
+检查 `su` 命令是否存在在指定路径, 也可以通过代码的方式:
 
 ```java
     public static boolean checkRoot(){
@@ -109,7 +109,7 @@ Checking whether `su` is on the PATH also works:
     }
 ```
 
-File checks can be easily implemented in both Java and native code. The following JNI example (adapted from [rootinspector](https://github.com/devadvance/rootinspector/ "rootinspector")) uses the `stat` system call to retrieve information about a file and returns "1" if the file exists.
+文件检测机制能够很容易的在Java 和 原生代码上实现. 接下来的 JNI 实例 (改编自 [rootinspector](https://github.com/devadvance/rootinspector/ "rootinspector")) 使用 `stat` 系统调用获取相关文件信息, 并且如果文件存在时, 返回值为 "1".
 
 ```c
 jboolean Java_com_example_statfile(JNIEnv * env, jobject this, jstring filepath) {
@@ -131,7 +131,7 @@ jboolean Java_com_example_statfile(JNIEnv * env, jobject this, jstring filepath)
 
 ###### 执行 `su` 和 其他命令
 
-Another way of determining whether `su` exists is attempting to execute it through the `Runtime.getRuntime.exec` method. An IOException will be thrown if `su` is not on the PATH. The same method can be used to check for other programs often found on rooted devices, such as busybox and the symbolic links that typically point to it.
+判断 `su` 是否存在的另一种方法就是尝试通过 `Runtime.getRuntime.exec` 方法去执行它. 错误 IOException 会被程序抛出如果 `su` 不在指定的文件路径. 同样的方法可以使用在检查越狱过的设备的其他应用程序, 例如 busybox 和 指向它的符号链接.
 
 ###### 检测巡行进程
 
