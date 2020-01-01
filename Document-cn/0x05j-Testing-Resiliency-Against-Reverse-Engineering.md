@@ -65,7 +65,7 @@ SafetyNet API 认证机制 最初提供了一个名为 `basicIntegrity` 的值, 
 - 整个 JWS 响应过程应该被发送到服务器, 并且使用安全连接, 用于验证. 不建议在移动应用程序中直接执行验证, 因为在这种情况下, 不能保证验证逻辑本身没有被修改.
 - `verify` 方法只验证 JWS 消息是由 SafetyNet 签名的. 它并不能验证 payload的判决符合你的期望. 尽管这个服务看起来很有用, 但是他是为测试的目的而设计的, 并且他有非常杨哥的使用限额, 每天有10,000 次请求, 每个项目不会根据请求增加. 因此, 你可以参考 [SafetyNet 认证 举例](https://github.com/googlesamples/android-play-safetynet/tree/master/server/java/src/main/java "Google SafetyNet 案例") 并在你的服务器上施行数字签名认证逻辑, 这样就不用依赖于谷歌的服务器了.
 - SafetyNet 鉴证 API 提供了当你申请认证时候的设备状态的镜像. 成功的认证通过不代表设备在过去也通过的认证, 或者说在将来会通过认证. 建议计划一个策略, 使用最少数量的认证用例来满足要求.
-- 为了预防无意的触及你的 `SafetyNetApi.attest` 配额和鉴证错误, 你应该建立一个系统来监控你的 API 使用情况, 并且提醒你当你将要超过你的限额. 你应该准备好处理由于配额超出导致的认证识别, 并避免这种情况下阻塞的所有用户. If you are close to reaching your quota, or expect a short-term spike that may lead you to exceed your quota, you can submit this [form](https://support.google.com/googleplay/android-developer/contact/safetynetqr "quota request") to request short or long-term increases to the quota for your API key. This process, as well as the additional quota, is free of charge.
+- 为了预防无意的触及你的 `SafetyNetApi.attest` 配额和鉴证错误, 你应该建立一个系统来监控你的 API 使用情况, 并且提醒你当你将要超过你的限额. 你应该准备好处理由于配额超出导致的认证识别, 并避免这种情况下阻塞的所有用户. 如果你接近你的额度, 或者期望短期暴涨会超过你的额度, 你可以提交这个 [论坛](https://support.google.com/googleplay/android-developer/contact/safetynetqr "额度 申请") 来申请你的短期 或者 长期的 API 秘钥的额度. 这个流程, 就类似于额外的额度, 不收取任何费用.
 
 参照这个 [清单](https://developer.android.com/training/safetynet/attestation-checklist "鉴证 清单") to ensure that you've completed each of the steps needed to integrate the `SafetyNetApi.attest` API into the app.
 
