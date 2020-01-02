@@ -161,7 +161,7 @@ Supersu-by 至今为止最流行的越狱工具, 它运行一个名为 `daemonsu
 
 ###### 检测 已经安全的应用包
 
-You can use the Android package manager to obtain a list of installed packages. The following package names belong to popular rooting tools:
+你也可以使用 Android 软件包管理 来获取已经安装的软件包列表. 下面是越狱设备的主流工具软件包名称:
 
 ```text
 com.thirdparty.superuser
@@ -173,13 +173,13 @@ com.ramdroid.appquarantine
 com.topjohnwu.magisk
 ```
 
-###### 检测 for writable partitions and system directories
+###### 检测 可写的分区 和 系统目录
 
-Unusual permissions on system directories may indicate a customized or rooted device. Although the system and data directories are normally mounted read-only, you'll sometimes find them mounted read-write when the device is rooted. Look for these filesystems mounted with the "rw" flag or try to create a file in the data directories.
+系统目录上不正常的权限可能暗示此设备越狱或者是自定义修改过. 虽然系统和数据目录通常都是只读挂载的, 但是你有时候会发现越狱的设备挂载了读写权限. 寻找这些激活了 "rw" 标签的文件系统最简单的方式就是在其目录中创建一个文件.
 
-###### Checking for custom Android builds
+###### 检测 自定义的 Android 版本
 
-Checking for signs of test builds and custom ROMs is also helpful. One way to do this is to check the BUILD tag for test-keys, which normally [indicate a custom Android image](https://resources.infosecinstitute.com/android-hacking-security-part-8-root-detection-evasion// "InfoSec Institute - Android Root Detection and Evasion"). [Check the BUILD tag as follows](https://www.joeyconway.com/blog/2014/03/29/android-detect-root-access-from-inside-an-app/ "Android - Detect Root Access from inside an app"):
+检查测试版本和自定义的ROMs 的标识也非常有用. 其中一种方法是检测 BUILD 标签作为测试关键, 通常 [indicate a custom Android image](https://resources.infosecinstitute.com/android-hacking-security-part-8-root-detection-evasion// "InfoSec Institute - Android Root Detection and Evasion"). [Check the BUILD tag as follows](https://www.joeyconway.com/blog/2014/03/29/android-detect-root-access-from-inside-an-app/ "Android - Detect Root Access from inside an app"):
 
 ```java
 private boolean isTestKeyBuild()
@@ -191,9 +191,9 @@ for (int i = 1; ; i = 0)
 }
 ```
 
-Missing Google Over-The-Air (OTA) certificates is another sign of a custom ROM: on stock Android builds, [OTA updates Google's public certificates](https://blog.netspi.com/android-root-detection-techniques/ "Android Root Detection Techniques").
+缺少谷歌的 Over-The-Air (OTA) 证书也是自定义ROM的另外一个标志: 在 Android 原厂版本中, [OTA updates Google's public certificates](https://blog.netspi.com/android-root-detection-techniques/ "Android Root Detection Techniques").
 
-##### Bypassing Root Detection
+##### 绕过 越狱检测
 
 Run execution traces with JDB, DDMS, `strace`, and/or kernel modules to find out what the app is doing. You'll usually see all kinds of suspect interactions with the operating system, such as opening `su` for reading and obtaining a list of processes. These interactions are surefire signs of root detection. Identify and deactivate the root detection mechanisms, one at a time. If you're performing a black box resilience assessment, disabling the root detection mechanisms is your first step.
 
