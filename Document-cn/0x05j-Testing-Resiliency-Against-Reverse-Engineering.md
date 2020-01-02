@@ -135,7 +135,7 @@ jboolean Java_com_example_statfile(JNIEnv * env, jobject this, jstring filepath)
 
 ###### 检测巡行进程
 
-Supersu-by far the most popular rooting tool-runs an authentication daemon named `daemonsu`, so the presence of this process is another sign of a rooted device. Running processes can be enumerated with the `ActivityManager.getRunningAppProcesses` and `manager.getRunningServices` APIs, the `ps` command, and browsing through the `/proc` directory. The following is an example implemented in [rootinspector](https://github.com/devadvance/rootinspector/ "rootinspector"):
+Supersu-by 至今为止最流行的越狱工具, 它运行一个名为 `daemonsu` 的身份验证守护进程, 所以这个进程的出现是越狱设备的另外一个标志. 正在运行的进程可以通过 `ActivityManager.getRunningAppProcesses` 和 `manager.getRunningServices` APIs 枚举, `ps` 命令, 和通过 `/proc` 文件夹来浏览. 以下是一个在 [rootinspector](https://github.com/devadvance/rootinspector/ "rootinspector") 实现的示例:
 
 ```java
     public boolean checkRunningProcesses() {
