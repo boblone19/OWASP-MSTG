@@ -195,7 +195,7 @@ for (int i = 1; ; i = 0)
 
 ##### 绕过 越狱检测
 
-Run execution traces with JDB, DDMS, `strace`, and/or kernel modules to find out what the app is doing. You'll usually see all kinds of suspect interactions with the operating system, such as opening `su` for reading and obtaining a list of processes. These interactions are surefire signs of root detection. Identify and deactivate the root detection mechanisms, one at a time. If you're performing a black box resilience assessment, disabling the root detection mechanisms is your first step.
+通过JDB 运行执行命令跟踪, DDMS, `strace`, 和/或内核模块,以找出应用程序正在做什么. 你通常将会看见各种各样的操作系统层面的可疑互动, 比如, 执行 `su` 命令来读取和获取进程列表. 这些互动是越狱成功的检测标志. 识别 和 停用越狱检测机制, 一步一步的操作. 如果你进行黑盒弹性评估, 关闭越狱检测机制是你的第一步.
 
 To bypass these checks, you can use several techniques, most of which were introduced in the "Reverse Engineering and Tampering" chapter:
 
