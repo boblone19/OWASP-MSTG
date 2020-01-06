@@ -197,7 +197,7 @@ for (int i = 1; ; i = 0)
 
 通过JDB 运行执行命令跟踪, DDMS, `strace`, 和/或内核模块,以找出应用程序正在做什么. 你通常将会看见各种各样的操作系统层面的可疑互动, 比如, 执行 `su` 命令来读取和获取进程列表. 这些互动是越狱成功的检测标志. 识别 和 停用越狱检测机制, 一步一步的操作. 如果你进行黑盒弹性评估, 关闭越狱检测机制是你的第一步.
 
-To bypass these checks, you can use several techniques, most of which were introduced in the "Reverse Engineering and Tampering" chapter:
+为了绕过这些测试, 你可以使用几种技术, 最常见在 "逆向工程 和 篡改" 章节中已经被介绍:
 
 - Renaming binaries. For example, in some cases simply renaming the `su` binary is enough to defeat root detection (try not to break your environment though!).
 - Unmounting `/proc` to prevent reading of process lists. Sometimes, the unavailability of `/proc` is enough to bypass such checks.
