@@ -209,16 +209,16 @@ for (int i = 1; ; i = 0)
 
 检查越狱检测机制, 包括以下标准:
 
-- Multiple detection methods are scattered throughout the app (as opposed to putting everything into a single method).
-- The root detection mechanisms operate on multiple API layers (Java APIs, native library functions, assembler/system calls).
-- The mechanisms are somehow original (they're not copied and pasted from StackOverflow or other sources).
+- 多种检测方法分散在整个应用中 (而不是吧所有东西放在一个方法中).
+- 该越狱机制操作于多个 API 层 (Java APIs, 原生函数库, 编译器/系统调用).
+- 该机制在某些程度上是自创的 (它们不是从 StackOverflow 或者其他来源复制和粘贴的).
 
-Develop bypass methods for the root detection mechanisms and answer the following questions:
+开发绕过越狱检查机制的方法, 并回答一下问题:
 
-- Can the mechanisms be easily bypassed with standard tools, such as RootCloak?
-- Is static/dynamic analysis necessary to handle the root detection?
-- Do you need to write custom code?
-- How long did successfully bypassing the mechanisms take?
+- 该机制是否很容易通过标准工具绕过, 例如, RootCloak?
+- 是否 静态/动态分析 需要用来处理越狱检查?
+- 你是否需要写自定义代码?
+- 成功的绕过该机制需要多长的时间?
 - What is your assessment of the difficulty of bypassing the mechanisms?
 
 If root detection is missing or too easily bypassed, make suggestions in line with the effectiveness criteria listed above. These suggestions may include more detection mechanisms and better integration of existing mechanisms with other defenses.
