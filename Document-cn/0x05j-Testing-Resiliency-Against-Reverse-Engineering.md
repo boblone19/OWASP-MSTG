@@ -201,11 +201,11 @@ for (int i = 1; ; i = 0)
 
 - 二进制文件从命名. 举例, 在某些案例中, 简单的改变该 `su` 二进制就足够击败越狱 (尝试不要破坏了自己的环境.)
 - 卸载 `/proc` 路径来防止读取进程列表. 某些时候, 路径 `/proc` 的不可用足够可以绕过类似检查.
-- Using Frida or Xposed to hook APIs on the Java and native layers. This hides files and processes, hides the contents of files, and returns all kinds of bogus values that the app requests.
-- Hooking low-level APIs by using kernel modules.
-- Patching the app to remove the checks.
+- 使用 Frida 或者 Xposed 将 API 挂接到 Java 和 自身层上. 它隐藏了文件和进程, 隐藏文件的内容, 和返回应用程序请求的各种值.
+- 通过使用内核模块挂接底层 API.
+- 修补应用程序，以删除检查.
 
-#### Effectiveness Assessment
+#### 有效性 评估
 
 Check for root detection mechanisms, including the following criteria:
 
