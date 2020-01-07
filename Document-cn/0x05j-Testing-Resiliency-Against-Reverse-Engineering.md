@@ -219,25 +219,25 @@ for (int i = 1; ; i = 0)
 - 是否 静态/动态分析 需要用来处理越狱检查?
 - 你是否需要写自定义代码?
 - 成功的绕过该机制需要多长的时间?
-- What is your assessment of the difficulty of bypassing the mechanisms?
+- 你评估绕过该机制的难度是多少?
 
-If root detection is missing or too easily bypassed, make suggestions in line with the effectiveness criteria listed above. These suggestions may include more detection mechanisms and better integration of existing mechanisms with other defenses.
+如果没有越狱检测或者很容易绕过, 根据上述有效性标准提出建议. 这些建议也许包括更多的检查机制和更好的集成在现有的保护机制中. 
 
-### Testing Anti-Debugging Detection (MSTG-RESILIENCE-2)
+### 测试 反调试检查 (MSTG-RESILIENCE-2)
 
-#### Overview
+#### 概述
 
-Debugging is a highly effective way to analyze run-time app behavior. It allows the reverse engineer to step through the code, stop app execution at arbitrary points, inspect the state of variables, read and modify memory, and a lot more.
+调试 是一种高效的方式来分析实时应用行为. 能够让逆向工程师通过代码介入, 在任意点停止应用执行, 检查该变量的状态, 包括内存的读和修改, 或者更多.
 
-As mentioned in the "Reverse Engineering and Tampering" chapter, we have to deal with two debugging protocols on Android: we can debug on the Java level with JDWP or on the native layer via a ptrace-based debugger. A good anti-debugging scheme should defend against both types of debugging.
+在 "逆袭工程 和 篡改" 章节中提过的, 我们需要面对 2中调试协议: 我们可以基于 JDWP 在 Java 层面调试, 或者通过该原生层的 ptrace-based 调试器. 一种好的防-调用方法应该抵御以上两种调试方式.
 
-Anti-debugging features can be preventive or reactive. As the name implies, preventive anti-debugging prevents the debugger from attaching in the first place; reactive anti-debugging involves detecting debuggers and reacting to them in some way (e.g., terminating the app or triggering hidden behavior). The "more-is-better" rule applies: to maximize effectiveness, defenders combine multiple methods of prevention and detection that operate on different API layers and are distributed throughout the app.
+防-调试 特性可以被预防 或者 重新激活. 顾名思义, 预防性的防-调试在初期组织调试器的添加; 重新激活 防-调试包括检测调试器, 并以某种方式对它们做出反应. (举例., 应用终止或者触发隐藏行为). 就 "越多越好" 规则适用于: 为了最大化效率, 防御者将多种预防方法和检测机制结合起来, 并使用在不同层的 API 和分布式在整个应用程序中.
 
-##### Anti-JDWP-Debugging Examples
+##### 防-JDWP-调用 的实例
 
-In the chapter "Reverse Engineering and Tampering", we talked about JDWP, the protocol used for communication between the debugger and the Java Virtual Machine. We showed that it is easy to enable debugging for any app by patching its manifest file, and changing the `ro.debuggable` system property which enables debugging for all apps. Let's look at a few things developers do to detect and disable JDWP debuggers.
+在 "逆向工程 和 篡改"中, 我们谈到了 JDWP, 该协议用于该调试器于 Java 虚拟器之间的通信. 我们展示了通过修补自带的 manifest 文件, 我们可以非常容易的激活任何应用的调试模式, 并且修改该 `ro.debuggable` 系统属性可以激活所有应用的调用. 让我们来看看对于开发人员在检测和禁用 JDWP 调试器时所做的一些事情.
 
-###### Checking the Debuggable Flag in ApplicationInfo
+###### 检查 在应用信息中该调试标签 Checking the Debuggable Flag in ApplicationInfo
 
 We have already encountered the `android:debuggable` attribute. This flag in the Android Manifest determines whether the JDWP thread is started for the app. Its value can be determined programmatically, via the app's `ApplicationInfo` object. If the flag is set, the manifest has been tampered with and allows debugging.
 
