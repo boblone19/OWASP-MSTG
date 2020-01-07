@@ -239,7 +239,7 @@ for (int i = 1; ; i = 0)
 
 ###### 检查 在应用信息中该调试标签 Checking the Debuggable Flag in ApplicationInfo
 
-We have already encountered the `android:debuggable` attribute. This flag in the Android Manifest determines whether the JDWP thread is started for the app. Its value can be determined programmatically, via the app's `ApplicationInfo` object. If the flag is set, the manifest has been tampered with and allows debugging.
+我们已经遇到该 `android:debuggable` 属性. 这个在 Android Manifest 中的标识决定了应用程序是否启动了 JDWP 线程. 它的值可以通过应用程序的 `ApplicationInfo` 对象以编程的方式确定. 如果该标签设置了, 则该 manifest 已被篡改并允许调试.
 
 ```java
     public static boolean isDebuggable(Context context){
@@ -251,7 +251,7 @@ We have already encountered the `android:debuggable` attribute. This flag in the
 
 ###### isDebuggerConnected
 
-The `Android Debug` system class offers a static method to determine whether a debugger is connected. The method returns a boolean value.
+该 `Android Debug` 系统类提供了一个静态方法来确定是否一个调试器被连接. 该方法返回一个 boolean 值.
 
 ```java
     public static boolean detectDebugger() {
@@ -259,7 +259,7 @@ The `Android Debug` system class offers a static method to determine whether a d
     }
 ```
 
-The same API can be called via native code by accessing the DvmGlobals global structure.
+同样的 API 可以通过原生代码以访问该 DvmGlobals 全局结构的方式被调.
 
 ```c
 JNIEXPORT jboolean JNICALL Java_com_test_debugging_DebuggerConnectedJNI(JNIenv * env, jobject obj) {
@@ -269,7 +269,7 @@ JNIEXPORT jboolean JNICALL Java_com_test_debugging_DebuggerConnectedJNI(JNIenv *
 }
 ```
 
-###### Timer Checks
+###### 定时检查
 
 `Debug.threadCpuTimeNanos` indicates the amount of time that the current thread has been executing code. Because debugging slows down process execution, [you can use the difference in execution time to guess whether a debugger is attached](https://slides.night-labs.de/AndroidREnDefenses201305.pdf "Bluebox Security - Android Reverse Engineering & Defenses").
 
