@@ -207,7 +207,7 @@ for (int i = 1; ; i = 0)
 
 #### 有效性 评估
 
-Check for root detection mechanisms, including the following criteria:
+检查越狱检测机制, 包括以下标准:
 
 - Multiple detection methods are scattered throughout the app (as opposed to putting everything into a single method).
 - The root detection mechanisms operate on multiple API layers (Java APIs, native library functions, assembler/system calls).
