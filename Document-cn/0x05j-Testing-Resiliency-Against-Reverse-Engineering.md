@@ -293,7 +293,7 @@ static boolean detect_threadCpuTimeNanos(){
 
 ###### 扰乱于 JDWP-相关联的数据结构
 
-In Dalvik, the global virtual machine state is accessible via the `DvmGlobals` structure. The global variable gDvm holds a pointer to this structure. `DvmGlobals` contains various variables and pointers that are important for JDWP debugging and can be tampered with.
+在 Dalvik, 全局虚拟机状态是可以通过 `DvmGlobals` 结构访问. 全局变量 gDvm 拥有一个指向该结构的指针. `DvmGlobals` 包含各种变量和指针对于 JDWP 调试非常重要并且可以被篡改.
 
 ```c
 struct DvmGlobals {
@@ -319,7 +319,7 @@ struct DvmGlobals {
 };
 ```
 
-For example, [setting the gDvm.methDalvikDdmcServer_dispatch function pointer to NULL crashes the JDWP thread](https://slides.night-labs.de/AndroidREnDefenses201305.pdf "Bluebox Security - Android Reverse Engineering & Defenses"):
+举例, [setting the gDvm.methDalvikDdmcServer_dispatch function pointer to NULL crashes the JDWP thread](https://slides.night-labs.de/AndroidREnDefenses201305.pdf "Bluebox Security - Android Reverse Engineering & Defenses"):
 
 ```c
 JNIEXPORT jboolean JNICALL Java_poc_c_crashOnInit ( JNIEnv* env , jobject ) {
@@ -327,9 +327,9 @@ JNIEXPORT jboolean JNICALL Java_poc_c_crashOnInit ( JNIEnv* env , jobject ) {
 }
 ```
 
-You can disable debugging by using similar techniques in ART even though the gDvm variable is not available. The ART runtime exports some of the vtables of JDWP-related classes as global symbols (in C++, vtables are tables that hold pointers to class methods). This includes the vtables of the classes `JdwpSocketState` and `JdwpAdbState`, which handle JDWP connections via network sockets and ADB, respectively. You can manipulate the behavior of the debugging runtime [by overwriting the method pointers in the associated vtables](https://www.vantagepoint.sg/blog/88-anti-debugging-fun-with-android-art "Vantage Point Security - Anti-Debugging Fun with Android ART").
+你可以禁用调试通过使用在 ART 中类似技术, 哪怕该 gDvm 变量不可以用. 该 ART 运行时导出一些 JDWP 相关的类的虚函数表为全局符号 (在 C++ 中, 虚拟函数表存指针类方法).  这包括虚拟表类 `JdwpSocketState` 和 `JdwpAdbState`, 他们通过网络代理和 ADB 处理 JDWP 连接. 你可以操作调试运行时的行为 [通过覆盖指针相关联的虚拟函数表](https://www.vantagepoint.sg/blog/88-anti-debugging-fun-with-android-art "Vantage Point Security - Anti-Debugging Fun with Android ART").
 
-One way to overwrite the method pointers is to overwrite the address of the function `jdwpAdbState::ProcessIncoming` with the address of `JdwpAdbState::Shutdown`. This will cause the debugger to disconnect immediately.
+其中一种覆盖该指针方法是覆盖该函数 `jdwpAdbState::ProcessIncoming` 的 `JdwpAdbState::Shutdown`地址. 这将会导致调试器立即断开连接.
 
 ```c
 #include <jni.h>
@@ -341,7 +341,7 @@ One way to overwrite the method pointers is to overwrite the address of the func
 
 #define log(FMT, ...) __android_log_print(ANDROID_LOG_VERBOSE, "JDWPFun", FMT, ##__VA_ARGS__)
 
-// Vtable structure. Just to make messing around with it more intuitive
+// Vtable 架构. 只是为了让它更直观
 
 struct VT_JdwpAdbState {
     unsigned long x;
@@ -393,11 +393,11 @@ JNIEXPORT void JNICALL Java_sg_vantagepoint_jdwptest_MainActivity_JDWPfun(
 }
 ```
 
-##### Anti-Native-Debugging Examples
+##### 防原生调用机制 实例
 
-Most Anti-JDWP tricks (which may be safe for timer-based checks) won't catch classical, ptrace-based debuggers, so other defenses are necessary. Many "traditional" Linux anti-debugging tricks are used in this situation.
+大多数 Anti-JDWP 技巧 (可能是基于时间的安全检查) 无法捕获传统, 基于 ptrace 的调试器, 因此其他防御措施需要. 许多 "传统" Linux 反-调试技巧被用于在这种环境.
 
-###### Checking TracerPid
+###### 检查 TracerPid
 
 When the `ptrace` system call is used to attach to a process, the "TracerPid" field in the status file of the debugged process shows the PID of the attaching process. The default value of "TracerPid" is 0 (no process attached). Consequently, finding anything other than 0 in that field is a sign of debugging or other ptrace shenanigans.
 
@@ -607,9 +607,9 @@ public class CodeCheck {
 
 Please see [different proposed solutions for the Android Crackme Level 2](https://github.com/OWASP/owasp-mstg/tree/master/Crackmes#uncrackable-app-for-android-level-2 "Solutions Android Crackme Level 2") in GitHub.
 
-#### Effectiveness Assessment
+#### 有效的评估
 
-Check for anti-debugging mechanisms, including the following criteria:
+检查反调试机制时，以下标准可以考量:
 
 - Attaching JDB and ptrace-based debuggers fails or causes the app to terminate or malfunction.
 - Multiple detection methods are scattered throughout the app's source code (as opposed to their all being in a single method or function).
@@ -625,16 +625,16 @@ Work on bypassing the anti-debugging defenses and answer the following questions
 
 If anti-debugging mechanisms are missing or too easily bypassed, make suggestions in line with the effectiveness criteria above. These suggestions may include adding more detection mechanisms and better integration of existing mechanisms with other defenses.
 
-### Testing File Integrity Checks (MSTG-RESILIENCE-3)
+### 测试文件完整性检查 (MSTG-RESILIENCE-3)
 
-#### Overview
+#### 概述
 
-There are two topics related to file integrity:
+关于文件完整性有 2 个题目可以讨论:
 
  1. _Code integrity checks:_ In the "Tampering and Reverse Engineering" chapter, we discussed Android's APK code signature check. We also saw that determined reverse engineers can easily bypass this check by re-packaging and re-signing an app. To make this bypassing process more involved, a protection scheme can be augmented with CRC checks on the app byte-code, native libraries, and important data files. These checks can be implemented on both the Java and the native layer. The idea is to have additional controls in place so that the app only runs correctly in its unmodified state, even if the code signature is valid.
  2. _The file storage integrity checks:_ The integrity of files that the application stores on the SD card or public storage and the integrity of key-value pairs that are stored in `SharedPreferences` should be protected.
 
-##### Sample Implementation - Application Source Code
+##### 实施案例 - 应用源代码
 
 Integrity checks often calculate a checksum or hash over selected files. Commonly protected files include
 
