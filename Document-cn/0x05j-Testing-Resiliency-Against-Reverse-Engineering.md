@@ -271,7 +271,7 @@ JNIEXPORT jboolean JNICALL Java_com_test_debugging_DebuggerConnectedJNI(JNIenv *
 
 ###### 定时检查
 
-`Debug.threadCpuTimeNanos` indicates the amount of time that the current thread has been executing code. Because debugging slows down process execution, [you can use the difference in execution time to guess whether a debugger is attached](https://slides.night-labs.de/AndroidREnDefenses201305.pdf "Bluebox Security - Android Reverse Engineering & Defenses").
+`Debug.threadCpuTimeNanos` 指出该当前线程已经执行代码的总时间. 因为调试会减慢进程的执行, [you can use the difference in execution time to guess whether a debugger is attached](https://slides.night-labs.de/AndroidREnDefenses201305.pdf "Bluebox Security - Android Reverse Engineering & Defenses").
 
 ```java
 static boolean detect_threadCpuTimeNanos(){
@@ -291,7 +291,7 @@ static boolean detect_threadCpuTimeNanos(){
 }
 ```
 
-###### Messing with JDWP-Related Data Structures
+###### 扰乱于 JDWP-相关联的数据结构
 
 In Dalvik, the global virtual machine state is accessible via the `DvmGlobals` structure. The global variable gDvm holds a pointer to this structure. `DvmGlobals` contains various variables and pointers that are important for JDWP debugging and can be tampered with.
 
