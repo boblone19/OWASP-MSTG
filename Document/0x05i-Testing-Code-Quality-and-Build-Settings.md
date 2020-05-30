@@ -29,7 +29,7 @@ Make sure that the release build has been signed via both the v1 and v2 schemes 
 
 APK signatures can be verified with the `apksigner` tool. It is located at `[SDK-Path]/build-tools/[version]`.
 
-```shell
+```bash
 $ apksigner verify --verbose Desktop/example.apk
 Verifies
 Verified using v1 scheme (JAR signing): true
@@ -42,7 +42,7 @@ The contents of the signing certificate can be examined with `jarsigner`. Note t
 
 The output for an APK signed with a debug certificate is shown below:
 
-```shell
+```bash
 
 $ jarsigner -verify -verbose -certs example.apk
 
@@ -59,7 +59,7 @@ Ignore the "CertPath not validated" error. This error occurs with Java SDK 7 and
 
 The signing configuration can be managed through Android Studio or the `signingConfig` block in `build.gradle`. To activate both the v1 and v2 schemes, the following values must be set:
 
-```groovy
+```default
 v1SigningEnabled true
 v2SigningEnabled true
 ```
@@ -94,7 +94,7 @@ For a release build, this attribute should always be set to `"false"` (the defau
 
 Drozer can be used to determine whether an application is debuggable. The Drozer module `app.package.attacksurface` also displays information about IPC components exported by the application.
 
-```shell
+```bash
 dz> run app.package.attacksurface com.mwr.dz
 Attack Surface:
   1 activities exported
@@ -106,7 +106,7 @@ Attack Surface:
 
 To scan for all debuggable applications on a device, use the `app.package.debuggable` module:
 
-```shell
+```bash
 dz> run app.package.debuggable
 Package: com.mwr.dz
   UID: 10083
@@ -120,7 +120,7 @@ Package: com.vulnerable.app
 
 If an application is debuggable, executing application commands is trivial. In the `adb` shell, execute `run-as` by appending the package name and application command to the binary name:
 
-```shell
+```bash
 $ run-as com.vulnerable.app id
 uid=10084(u0_a84) gid=10084(u0_a84) groups=10083(u0_a83),1004(input),1007(log),1011(adb),1015(sdcard_rw),1028(sdcard_r),3001(net_bt_admin),3002(net_bt),3003(inet),3006(net_bw_stats) context=u:r:untrusted_app:s0:c512,c768
 ```
@@ -133,7 +133,7 @@ The following procedure can be used to start a debug session with `jdb`:
 
 1. Using `adb` and `jdwp`, identify the PID of the active application that you want to debug:
 
-    ```shell
+    ```bash
     $ adb jdwp
     2355
     16346  <== last launched, corresponds to our application
@@ -141,14 +141,14 @@ The following procedure can be used to start a debug session with `jdb`:
 
 2. Create a communication channel by using `adb` between the application process (with the PID) and the analysis workstation by using a specific local port:
 
-    ```shell
+    ```bash
     # adb forward tcp:[LOCAL_PORT] jdwp:[APPLICATION_PID]
     $ adb forward tcp:55555 jdwp:16346
     ```
 
 3. Using `jdb`, attach the debugger to the local communication channel port and start a debug session:
 
-    ```shell
+    ```bash
     $ jdb -connect com.sun.jdi.SocketAttach:hostname=localhost,port=55555
     Set uncaught java.lang.Throwable
     Set deferred uncaught java.lang.Throwable
@@ -159,8 +159,8 @@ The following procedure can be used to start a debug session with `jdb`:
 A few notes about debugging:
 
 - The tool [`JADX`](https://github.com/skylot/jadx "JADX") can be used to identify interesting locations for breakpoint insertion.
-- Help with `jdb` is available [here](https://www.tutorialspoint.com/jdb/jdb_basic_commands.htm "JDB basic commands").
-- If a "the connection to the debugger has been closed" error occurs while `jdb` is being binded to the local communication channel port, kill all `adb` sessions and start a single new session.
+- Usage of basic commands for jdb can be found at [Tutorialspoint](https://www.tutorialspoint.com/jdb/jdb_basic_commands.htm "jdb basic commands").
+- If you get an error telling that "the connection to the debugger has been closed" while `jdb` is being bound to the local communication channel port, kill all adb sessions and start a single new session.
 
 ### Testing for Debugging Symbols (MSTG-CODE-3)
 
@@ -176,20 +176,20 @@ Symbols are usually stripped during the build process, so you need the compiled 
 
 First, find the `nm` binary in your Android NDK and export it (or create an alias).
 
-```shell
+```bash
 export $NM = $ANDROID_NDK_DIR/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin/arm-linux-androideabi-nm
 ```
 
 To display debug symbols:
 
-```shell
+```bash
 $ $NM -a libfoo.so
 /tmp/toolchains/arm-linux-androideabi-4.9/prebuilt/darwin-x86_64/bin/arm-linux-androideabi-nm: libfoo.so: no symbols
 ```
 
 To display dynamic symbols:
 
-```shell
+```bash
 $ $NM -D libfoo.so
 ```
 
@@ -199,7 +199,7 @@ Dynamic symbols can be stripped via the `visibility` compiler flag. Adding this 
 
 Make sure that the following has been added to build.gradle:
 
-```groovy
+```default
 externalNativeBuild {
     cmake {
         cppFlags "-fvisibility=hidden"
@@ -219,7 +219,7 @@ StrictMode is a developer tool for detecting violations, e.g. accidental disk or
 
 Here is [an example of `StrictMode`](https://developer.android.com/reference/android/os/StrictMode.html "StrictMode Class") with policies enabled for disk and network access to the main thread:
 
-```Java
+```java
 public void onCreate() {
      if (DEVELOPER_MODE) {
          StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
@@ -296,7 +296,7 @@ Detecting vulnerabilities in third party dependencies can be done by means of th
 In order to use the plugin, the following steps need to be applied:
 Install the plugin from the Maven central repository by adding the following script to your build.gradle:
 
-```groovy
+```default
 buildscript {
     repositories {
         mavenCentral()
@@ -311,7 +311,7 @@ apply plugin: 'org.owasp.dependencycheck'
 
 Once gradle has invoked the plugin, you can create a report by running:
 
-```shell
+```bash
 $ gradle assemble
 $ gradle dependencyCheckAnalyze --info
 ```
@@ -339,7 +339,7 @@ In order to ensure that the copyright laws are not infringed, one can best check
 
 In your `build.gradle` file add:
 
-```groovy
+```default
 plugins {
     id "com.github.hierynomus.license-report" version"{license_plugin_version}"
 }
@@ -347,7 +347,7 @@ plugins {
 
 Now, after the plugin is picked up, use the following commands:
 
-```shell
+```bash
 $ gradle assemble
 $ gradle downloadLicenses
 ```
@@ -466,7 +466,7 @@ A memory leak is often an issue as well. This can happen for instance when a ref
 There are various items to look for:
 
 - Are there native code parts? If so: check for the given issues in the general memory corruption section. Native code can easily be spotted given JNI-wrappers, .CPP/.H/.C files, NDK or other native frameworks.
-- Is there Java code or Kotlin code? Look for Serialization/deserialization issues, such as described in [A brief history of Android deserialization vulnerabilities](https://lgtm.com/blog/android_deserialization "android deserialization").
+- Is there Java code or Kotlin code? Look for Serialization/deserialization issues, such as described in [A brief history of Android deserialization vulnerabilities](https://securitylab.github.com/research/android-deserialization-vulnerabilities "android deserialization").
 
 Note that there can be Memory leaks in Java/Kotlin code as well. Look for various items, such as: BroadcastReceivers which are not unregistered, static references to `Activity` or `View` classes, Singleton classes that have references to `Context`, Inner Class references, Anonymous Class references, AsyncTask references, Handler references, Threading done wrong, TimerTask references. For more details, please check:
 
@@ -488,20 +488,31 @@ There are various steps to take:
 
 Because decompiling Java classes is trivial, applying some basic obfuscation to the release byte-code is recommended. ProGuard offers an easy way to shrink and obfuscate code and to strip unneeded debugging information from the byte-code of Android Java apps. It replaces identifiers, such as class names, method names, and variable names, with meaningless character strings. This is a type of layout obfuscation, which is "free" in that it doesn't impact the program's performance.
 
-Since most Android applications are Java-based, they are [immune to buffer overflow vulnerabilities](https://www.owasp.org/index.php/Reviewing_Code_for_Buffer_Overruns_and_Overflows#.NET_.26_Java "Java Buffer Overflows"). Nevertheless, a buffer overflow vulnerability may still be applicable when you're using the Android NDK; therefore, consider secure compiler settings.
+Since most Android applications are Java-based, they are [immune to buffer overflow vulnerabilities](https://owasp.org/www-community/vulnerabilities/Buffer_Overflow "Java Buffer Overflows"). Nevertheless, a buffer overflow vulnerability may still be applicable when you're using the Android NDK; therefore, consider secure compiler settings.
 
 #### Static Analysis
 
-If source code is provided, you can check the build.gradle file to see whether obfuscation settings have been applied. In the example below, you can see that `minifyEnabled` and `proguardFiles` are set. Creating exceptions to protect some classes from obfuscation (with "-keepclassmembers" and "-keep class") is common. Therefore, auditing the ProGuard configuration file to see what classes are exempted is important. The `getDefaultProguardFile('proguard-android.txt')` method gets the default ProGuard settings from the `<Android SDK>/tools/proguard/` folder. The file `proguard-rules.pro` is where you define custom ProGuard rules. You can see that many extended classes in our sample `proguard-rules.pro` file are common Android classes. This should be defined more granularly on specific classes or libraries.
+If source code is provided, you can check the build.gradle file to see whether obfuscation settings have been applied. In the example below, you can see that `minifyEnabled` and `proguardFiles` are set. Creating exceptions to protect some classes from obfuscation (with `-keepclassmembers` and `-keep class`) is common. Therefore, auditing the ProGuard configuration file to see what classes are exempted is important. The `getDefaultProguardFile('proguard-android.txt')` method gets the default ProGuard settings from the `<Android SDK>/tools/proguard/` folder.
 
-By default, ProGuard removes attributes that are useful for debugging, including line numbers, source file names, and variable names. ProGuard is a free Java class file shrinker, optimizer, obfuscator, and pre-verifier. It is shipped with Android's SDK tools. To activate shrinking for the release build, add the following to build.gradle:
+Further information on how to shrink, obfuscate, and optimize your app can be found in the [Android developer documentation](https://developer.android.com/studio/build/shrink-code "Shrink, obfuscate, and optimize your app").
 
-```groovy
+> When you build you project using Android Studio 3.4 or Android Gradle plugin 3.4.0 or higher, the plugin no longer uses ProGuard to perform compile-time code optimization. Instead, the plugin works with the R8 compiler. R8 works with all of your existing ProGuard rules files, so updating the Android Gradle plugin to use R8 should not require you to change your existing rules.
+
+R8 is the new code shrinker from Google and was introduced in Android Studio 3.3 beta. By default, R8 removes attributes that are useful for debugging, including line numbers, source file names, and variable names. R8 is a free Java class file shrinker, optimizer, obfuscator, and pre-verifier and is faster than ProGuard, see also an [Android Developer blog post for further details](https://android-developers.googleblog.com/2018/11/r8-new-code-shrinker-from-google-is.html "R8"). It is shipped with Android's SDK tools. To activate shrinking for the release build, add the following to build.gradle:  
+
+```default
 android {
     buildTypes {
         release {
+            // Enables code shrinking, obfuscation, and optimization for only
+            // your project's release build type.
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'),
+
+            // Includes the default ProGuard rules files that are packaged with
+            // the Android Gradle plugin. To learn more, go to the section about
+            // R8 configuration files.
+            proguardFiles getDefaultProguardFile(
+                    'proguard-android-optimize.txt'),
                     'proguard-rules.pro'
         }
     }
@@ -509,19 +520,27 @@ android {
 }
 ```
 
-proguard-rules.pro
+The file `proguard-rules.pro` is where you define custom ProGuard rules. With the flag `-keep` you can keep certain code that is not being removed by R8, which might otherwise produce errors. For example to keep common Android classes, as in our sample configuration `proguard-rules.pro` file:
 
-```groovy
+```default
+...
 -keep public class * extends android.app.Activity
 -keep public class * extends android.app.Application
 -keep public class * extends android.app.Service
+...
+```
+
+You can define this more granularly on specific classes or libraries in your project with the [following syntax](https://developer.android.com/studio/build/shrink-code#configuration-files "Customize which code to keep"):
+
+```default
+-keep public class MyClass
 ```
 
 #### Dynamic Analysis
 
-If source code has not been provided, an APK can be decompiled to determine whether the codebase has been obfuscated. Several tools are available for converting DEX code to a JAR file (e.g., dex2jar). The JAR file can be opened with tools (such as JD-GUI) that can be used to make sure that class, method, and variable names are not human-readable.
+If source code has not been provided, an APK can be decompiled to determine whether the codebase has been obfuscated. Several tools are available for converting DEX code to a JAR file (e.g. dex2jar). The JAR file can be opened with tools such as JD-GUI that can be used to make sure that class, method, and variable names are not human-readable.
 
-Sample obfuscated code block:
+Below you can find a sample for an obfuscated code block:
 
 ```java
 package com.a.a.a;
@@ -551,30 +570,17 @@ class a$b
 
 ### References
 
-#### OWASP Mobile Top 10 2016
-
-- M7 - Poor Code Quality - <https://www.owasp.org/index.php/Mobile_Top_10_2016-M7-Poor_Code_Quality>
-
 #### OWASP MASVS
 
-- MSTG-CODE-1: "The app is signed and provisioned with valid certificate."
+- MSTG-CODE-1: "The app is signed and provisioned with a valid certificate, of which the private key is properly protected."
 - MSTG-CODE-2: "The app has been built in release mode, with settings appropriate for a release build (e.g. non-debuggable)."
 - MSTG-CODE-3: "Debugging symbols have been removed from native binaries."
-- MSTG-CODE-4: "Debugging code has been removed, and the app does not log verbose errors or debugging messages."
+- MSTG-CODE-4: "Debugging code and developer assistance code (e.g. test code, backdoors, hidden settings) have been removed. The app does not log verbose errors or debugging messages."
 - MSTG-CODE-5: "All third party components used by the mobile app, such as libraries and frameworks, are identified, and checked for known vulnerabilities."
 - MSTG-CODE-6: "The app catches and handles possible exceptions."
 - MSTG-CODE-7: "Error handling logic in security controls denies access by default."
 - MSTG-CODE-8: "In unmanaged code, memory is allocated, freed and used securely."
 - MSTG-CODE-9: "Free security features offered by the toolchain, such as byte-code minification, stack protection, PIE support and automatic reference counting, are activated."
-
-#### CWE
-
-- CWE-20 - Improper Input Validation
-- CWE-215 - Information Exposure through Debug Information
-- CWE-388 - Error Handling
-- CWE-489 - Leftover Debug Code
-- CWE-656 - Reliance on Security through Obscurity
-- CWE-937 - OWASP Top Ten 2013 Category A9 - Using Components with Known Vulnerabilities
 
 #### Tools
 
@@ -595,7 +601,7 @@ class a$b
 
 #### Memory Analysis References
 
-- A brief history of Android deserialization vulnerabilities - <https://lgtm.com/blog/android_deserialization>
+- A brief history of Android deserialization vulnerabilities - <https://securitylab.github.com/research/android-deserialization-vulnerabilities>
 - 9 ways to avoid memory leaks in Android - <https://android.jlelse.eu/9-ways-to-avoid-memory-leaks-in-android-b6d81648e35e>
 - Memory Leak Patterns in Android - <https://android.jlelse.eu/memory-leak-patterns-in-android-4741a7fcb570>
 

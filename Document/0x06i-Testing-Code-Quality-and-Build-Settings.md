@@ -12,7 +12,7 @@ After you get the application's IPA file, re-save it as a ZIP file and decompres
 
 Execute the following `codesign` command to display the signing information:
 
-```shell
+```bash
 $ codesign -dvvv YOURAPP.app
 Executable=/Users/Documents/YOURAPP/Payload/YOURAPP.app/YOURNAME
 Identifier=com.example.example
@@ -71,7 +71,7 @@ These symbols can be saved in "Stabs" format or the DWARF format. In the Stabs f
 
 Use gobjdump to inspect the main binary and any included dylibs for Stabs and DWARF symbols.
 
-```shell
+```bash
 $ gobjdump --stabs --dwarf TargetApp
 In archive MyTargetApp:
 
@@ -105,7 +105,7 @@ You can take the following static analysis approach for the logging statements:
 3. When you find one of them, determine whether the developers used a wrapping function around the logging function for better mark up of the statements to be logged; if so, add that function to your search.
 4. For every result of steps 2 and 3, determine whether macros or debug-state related guards have been set to turn the logging off in the release build. Please note the change in how Objective-C can use preprocessor macros:
 
-```objc
+```objectivec
 #ifdef DEBUG
     // Debug-only code
 #endif
@@ -125,7 +125,7 @@ As a developer, incorporating debug statements into your application's debug ver
 
 In Objective-C, developers can use preprocessor macros to filter out debug code:
 
-```objc
+```objectivec
 #ifdef DEBUG
     // Debug-only code
 #endif
@@ -133,7 +133,7 @@ In Objective-C, developers can use preprocessor macros to filter out debug code:
 
 In Swift 2 (with Xcode 7), you have to set custom compiler flags for every target, and compiler flags have to start with "-D". So you can use the following annotations when the debug flag `DMSTG-DEBUG` is set:
 
-```swift
+```default
 #if MSTG-DEBUG
     // Debug-only code
 #endif
@@ -141,7 +141,7 @@ In Swift 2 (with Xcode 7), you have to set custom compiler flags for every targe
 
 In Swift 3 (with Xcode 8), you can set Active Compilation Conditions in Build settings/Swift compiler - Custom flags. Instead of a preprocessor, Swift 3 uses [conditional compilation blocks](https://developer.apple.com/library/content/documentation/Swift/Conceptual/BuildingCocoaApps/InteractingWithCAPIs.html#//apple_ref/doc/uid/TP40014216-CH8-ID34 "Swift conditional compilation blocks") based on the defined conditions:
 
-```swift
+```default
 #if DEBUG_LOGGING
     // Debug-only code
 #endif
@@ -160,7 +160,15 @@ For the other "manager-based" debug code: click through the application on both 
 
 #### Overview
 
-iOS applications often make use of third party libraries. These third party libraries accelerate development as the developer has to write less code in order to solve a problem. There are two categories of libraries:
+iOS applications often make use of third party libraries which accelerate development as the developer has to write less code in order to solve a problem. However, third party libraries may contain vulnerabilities, incompatible licensing, or malicious content. Additionally, it is difficult for organizations and developers to manage application dependencies, including monitoring library releases and applying available security patches.
+
+There are three widely used package management tools [Swift Package Manager](https://swift.org/package-manager "Swift Package Manager on Swift.org"), [Carthage](https://github.com/Carthage/Carthage "Carthage on GitHub"), and [CocoaPods](https://cocoapods.org "CocoaPods.org"):
+
+- The Swift Package Manager is open source, included with the Swift language, integrated into Xcode (since Xcode 11) and supports [Swift, Objective-C, Objective-C++, C, and C++](https://developer.apple.com/documentation/swift_packages "Swift Packages Documentation") packages. It is written in Swift, decentralized and uses the Package.swift file to document and manage project dependencies.
+- Carthage is open source and can be used for Swift and Objective-C packages. It is written in Swift, decentralized and uses the Cartfile file to document and manage project dependencies.
+- CocoaPods is open source and can be used for Swift and Objective-C packages. It is written in Ruby, utilizes a centralized package registry for public and private packages and uses the Podfile file to document and manage project dependencies.
+
+There are two categories of libraries:
 
 - Libraries that are not (or should not) be packed within the actual production application, such as `OHHTTPStubs` used for testing.
 - Libraries that are packed within the actual production application, such as `Alamofire`.
@@ -171,7 +179,6 @@ These libraries can lead to unwanted side-effects:
 - A library can no longer be maintained or hardly be used, which is why no vulnerabilities are reported and/or fixed. This can lead to having bad and/or vulnerable code in your application through the library.
 - A library can use a license, such as LGPL2.1, which requires the application author to provide access to the source code for those who use the application and request insight in its sources. In fact the application should then be allowed to be redistributed with modifications to its source code. This can endanger the intellectual property (IP) of the application.
 
-Note: there are two widely used package management tools: Carthage and CocoaPods.
 Please note that this issue can hold on multiple levels: When you use webviews with JavaScript running in the webview, the JavaScript libraries can have these issues as well. The same holds for plugins/libraries for Cordova, React-native and Xamarin apps.
 
 #### Static Analysis
@@ -180,42 +187,73 @@ Please note that this issue can hold on multiple levels: When you use webviews w
 
 In order to ensure that the libraries used by the apps are not carrying vulnerabilities, one can best check the dependencies installed by CocoaPods or Carthage.
 
-In case CocoaPods is used for managing third party dependencies, the following steps can be taken to analyze the third party libraries for vulnerabilities:
+###### Swift Package Manager
+
+In case [Swift Package Manager](https://swift.org/package-manager "Swift Package Manager on Swift.org") is used for managing third party dependencies, the following steps can be taken to analyze the third party libraries for vulnerabilities:
+
+First, at the root of the project, where the Package.swift file is located, type
+
+```bash
+$ swift build
+```
+
+Next, check the file Package.resolved for the actual versions used and inspect the given libraries for known vulnerabilities.
+
+You can utilize the [OWASP Dependency-Check](https://owasp.org/www-project-dependency-check/ "OWASP Dependency-Check")'s experimental [Swift Package Manager Analyzer](https://jeremylong.github.io/DependencyCheck/analyzers/swift.html "dependency-check – SWIFT Package Manager Analyzer") to identify the [Common Platform Enumeration (CPE)](https://nvd.nist.gov/products/cpe "CPE") naming scheme of all dependencies and any corresponding [Common Vulnerability and Exposure (CVE)](https://cve.mitre.org/ "CVE") entries. Scan the application's Package.swift file and generate a report of known vulnerable libraries with the following command:
+
+```bash
+$ dependency-check  --enableExperimental --out . --scan Package.swift
+```
+
+###### CocoaPods
+
+In case [CocoaPods](https://cocoapods.org "CocoaPods.org") is used for managing third party dependencies, the following steps can be taken to analyze the third party libraries for vulnerabilities.
 
 First, at the root of the project, where the Podfile is located, execute the following commands:
 
-```shell
+```bash
 $ sudo gem install CocoaPods
 $ pod install
 ```
 
 Next, now that the dependency tree has been built, you can create an overview of the dependencies and their versions by running the following commands:
 
-```shell
-$ sudo gem install CocoaPods-dependencies
+```bash
+$ sudo gem install cocoapods-dependencies
 $ pod dependencies
 ```
 
 The result of the steps above can now be used as input for searching different vulnerability feeds for known vulnerabilities.
 
 > Note:
+>
+> 1. If the developer packs all dependencies in terms of its own support library using a .podspec file, then this .podspec file can be checked with the experimental CocoaPods podspec checker.
+> 2. If the project uses CocoaPods in combination with Objective-C, SourceClear can be used.
+> 3. Using CocoaPods with HTTP-based links instead of HTTPS might allow for man-in-the-middle attacks during the download of the dependency, allowing an attacker to replace (parts of) the library with other content. Therefore, always use HTTPS.
 
-1. If the developer packs all dependencies in terms of its own support library using a .podspec file, then this .podspec file can be checked with the experimental CocoaPods podspec checker.
-2. If the project uses CocaoPods in combination with Objective-C, SourceClear can be used.
-3. Using CocoaPods with `http` based links instead of `https` might allow for man-in-the-middle attacks during the download of the dependency, which might allow the attacker to replace (parts of) the library you download with other content. Therefore: always use `https`.
+You can utilize the [OWASP Dependency-Check](https://owasp.org/www-project-dependency-check/ "OWASP Dependency-Check")'s experimental [CocoaPods Analyzer](https://jeremylong.github.io/DependencyCheck/analyzers/cocoapods.html "dependency-check – CocoaPods Analyzer")
+to identify the [Common Platform Enumeration (CPE)](https://nvd.nist.gov/products/cpe "CPE") naming scheme of all dependencies and any corresponding [Common Vulnerability and Exposure (CVE)](https://cve.mitre.org/ "CVE") entries. Scan the application's \*.podspec and/or Podfile.lock files and generate a report of known vulnerable libraries with the following command:
 
-In case Carthage is used for third party dependencies, then the following steps can be taken to analyze the third party libraries for vulnerabilities:
+```bash
+$ dependency-check  --enableExperimental --out . --scan Podfile.lock
+```
+
+###### Carthage
+
+In case [Carthage](https://github.com/Carthage/Carthage "Carthage on GitHub") is used for third party dependencies, then the following steps can be taken to analyze the third party libraries for vulnerabilities.
 
 First, at the root of the project, where the Cartfile is located, type
 
-```shell
+```bash
 $ brew install carthage
 $ carthage update --platform iOS
 ```
 
 Next, check the Cartfile.resolved for actual versions used and inspect the given libraries for known vulnerabilities.
 
-> Note, at the time of writing of this chapter, there is no automated support for Carthage based dependency analysis known to the authors.
+> Note, at the time of writing this chapter, there is no automated support for Carthage based dependency analysis known to the authors.
+
+###### Discovered library vulnerabilities
 
 When a library is found to contain vulnerabilities, then the following reasoning applies:
 
@@ -235,26 +273,42 @@ Last, if the application is a high-risk application, you will end up vetting the
 
 ##### Detecting the Licenses Used by the Libraries of the Application
 
-In order to ensure that the copyright laws are not infringed, one can best check the dependencies installed by CocoaPods or Carthage.
+In order to ensure that the copyright laws are not infringed, one can best check the dependencies installed by Swift Packager Manager, CocoaPods, or Carthage.
+
+###### Swift Package Manager
+
+When the application sources are available and Swift Package Manager is used, execute the following code in the root directory of the project, where the Package.swift file is located:
+
+```bash
+$ swift build
+```
+
+The sources of each of the dependencies have now been downloaded to `/.build/checkouts/` folder in the project. Here you can find the license for each of the libraries in their respective folder.
+
+###### CocoaPods
 
 When the application sources are available and CocoaPods is used, then execute the following steps to get the different licenses:
 First, at the root of the project, where the Podfile is located, type
 
-```shell
+```bash
 $ sudo gem install CocoaPods
 $ pod install
 ```
 
-This will create aPods folder where all libraries are installed, each in their own folder. You can now check the licenses for each of the libraries by inspecting the license files in each of the folders.
+This will create a Pods folder where all libraries are installed, each in their own folder. You can now check the licenses for each of the libraries by inspecting the license files in each of the folders.
+
+###### Carthage
 
 When the application sources are available and Carthage is used, execute the following code in the root directory of the project, where the Cartfile is located:
 
-```shell
+```bash
 $ brew install carthage
 $ carthage update --platform iOS
 ```
 
 The sources of each of the dependencies have now been downloaded to `Carthage/Checkouts` folder in the project. Here you can find the license for each of the libraries in their respective folder.
+
+###### Issues with library licenses
 
 When a library contains a license in which the app's IP needs to be open-sourced, check if there is an alternative for the library which can be used to provide similar functionalities.
 
@@ -269,13 +323,13 @@ It need to be validated whether the copyrights of the licenses have been adhered
 When no source-code is available for library analysis, you can find some of the frameworks being used with otool and MobSF.
 After you obtain the library and Clutched it (e.g. removed the DRM), you can run oTool with the root of the application's directory:
 
-```shell
+```bash
 $ otool -L <Executable>
 ```
 
-However, these do not include all the libraries being used. Next, with Class-dump (for Objective-C) you can generate a subset of the header files used and derive which libraries are involved. But not detect the version of the library.
+However, these do not include all the libraries being used. Next, with class-dump (for Objective-C) or the more recent dsdump you can generate a subset of the header files used and derive which libraries are involved. But not detect the version of the library.
 
-```shell
+```bash
 $ ./class-dump <Executable> -r
 ```
 
@@ -296,7 +350,7 @@ Objective-C has two types of errors:
 `NSException` is used to handle programming and low-level errors (e.g., division by 0 and out-of-bounds array access).
 An `NSException` can either be raised by `raise` or thrown with `@throw`. Unless caught, this exception will invoke the unhandled exception handler, with which you can log the statement (logging will halt the program). `@catch` allows you to recover from the exception if you're using a `@try`-`@catch`-block:
 
-```objc
+```objectivec
  @try {
     //do work here
  }
@@ -321,7 +375,7 @@ Methods that can throw errors use the `throws` keyword. The `Result` type repres
 
 - Propagate the error from a function to the code that calls that function. In this situation, there's no `do-catch`; there's only a `throw` throwing the actual error or a `try` to execute the method that throws. The method containing the `try` also requires the `throws` keyword:
 
-```swift
+```default
 func dosomething(argumentx:TypeX) throws {
     try functionThatThrows(argumentx: argumentx)
 }
@@ -329,49 +383,49 @@ func dosomething(argumentx:TypeX) throws {
 
 - Handle the error with a `do-catch` statement. You can use the following pattern:
 
-    ```swift
-    func doTryExample() {
-        do {
-            try functionThatThrows(number: 203)
-        } catch NumberError.lessThanZero {
-            // Handle number is less than zero
-        } catch let NumberError.tooLarge(delta) {
-            // Handle number is too large (with delta value)
-        } catch {
-            // Handle any other errors
-        }
-    }
+  ```default
+  func doTryExample() {
+      do {
+          try functionThatThrows(number: 203)
+      } catch NumberError.lessThanZero {
+          // Handle number is less than zero
+      } catch let NumberError.tooLarge(delta) {
+          // Handle number is too large (with delta value)
+      } catch {
+          // Handle any other errors
+      }
+  }
 
-    enum NumberError: Error {
-        case lessThanZero
-        case tooLarge(Int)
-        case tooSmall(Int)
-    }
+  enum NumberError: Error {
+      case lessThanZero
+      case tooLarge(Int)
+      case tooSmall(Int)
+  }
 
-    func functionThatThrows(number: Int) throws -> Bool {
-        if number < 0 {
-            throw NumberError.lessThanZero
-        } else if number < 10 {
-            throw NumberError.tooSmall(10 - number)
-        } else if number > 100 {
-            throw NumberError.tooLarge(100 - number)
-        } else {
-            return true
-        }
-    }
-    ```
+  func functionThatThrows(number: Int) throws -> Bool {
+      if number < 0 {
+          throw NumberError.lessThanZero
+      } else if number < 10 {
+          throw NumberError.tooSmall(10 - number)
+      } else if number > 100 {
+          throw NumberError.tooLarge(100 - number)
+      } else {
+          return true
+      }
+  }
+  ```
 
 - Handle the error as an optional value:
 
-    ```swift
-        let x = try? functionThatThrows()
-        // In this case the value of x is nil in case of an error.
-    ```
+  ```default
+      let x = try? functionThatThrows()
+      // In this case the value of x is nil in case of an error.
+  ```
 
 - Use the `try!` expression to assert that the error won't occur.
 - Handle the generic error as a `Result` return:
 
-```swift
+```default
 enum ErrorType: Error {
     case typeOne
     case typeTwo
@@ -398,7 +452,7 @@ func callResultFunction() {
 
 - Handle network and JSON decoding errors with a `Result` type:
 
-```swift
+```default
 struct MSTG: Codable {
     var root: String
     var plugins: [String]
@@ -529,7 +583,7 @@ For any managed code (Objective-C / Swift) in the project, check the following i
 
 [A great talk is given on this subject at Realm academy](https://academy.realm.io/posts/russ-bishop-unsafe-swift/ "Russh Bishop on Unsafe Swift") and [a nice tutorial to see what is actually happening](https://www.raywenderlich.com/780-unsafe-swift-using-pointers-and-interacting-with-c "Unsafe Swift: Using Pointers And Interacting With C") is provided by Ray Wenderlich on this subject.
 
->Please note that with Swift 5 you can only deallocate full blocks, which means the playground has changed a bit.
+> Please note that with Swift 5 you can only deallocate full blocks, which means the playground has changed a bit.
 
 #### Dynamic Analysis
 
@@ -583,56 +637,56 @@ Below are procedures for checking the binary security features described above. 
 
 - PIE:
 
-```shell
-$ unzip DamnVulnerableiOSApp.ipa
-$ cd Payload/DamnVulnerableIOSApp.app
-$ otool -hv DamnVulnerableIOSApp
-DamnVulnerableIOSApp (architecture armv7):
-Mach header
-magic cputype cpusubtype caps filetype ncmds sizeofcmds flags
-MH_MAGIC ARM V7 0x00 EXECUTE 38 4292 NOUNDEFS DYLDLINK TWOLEVEL
-WEAK_DEFINES BINDS_TO_WEAK PIE
-DamnVulnerableIOSApp (architecture arm64):
-Mach header
-magic cputype cpusubtype caps filetype ncmds sizeofcmds flags
-MH_MAGIC_64 ARM64 ALL 0x00 EXECUTE 38 4856 NOUNDEFS DYLDLINK TWOLEVEL
-WEAK_DEFINES BINDS_TO_WEAK PIE
-```
+    ```bash
+    $ unzip DamnVulnerableiOSApp.ipa
+    $ cd Payload/DamnVulnerableIOSApp.app
+    $ otool -hv DamnVulnerableIOSApp
+    DamnVulnerableIOSApp (architecture armv7):
+    Mach header
+    magic cputype cpusubtype caps filetype ncmds sizeofcmds flags
+    MH_MAGIC ARM V7 0x00 EXECUTE 38 4292 NOUNDEFS DYLDLINK TWOLEVEL
+    WEAK_DEFINES BINDS_TO_WEAK PIE
+    DamnVulnerableIOSApp (architecture arm64):
+    Mach header
+    magic cputype cpusubtype caps filetype ncmds sizeofcmds flags
+    MH_MAGIC_64 ARM64 ALL 0x00 EXECUTE 38 4856 NOUNDEFS DYLDLINK TWOLEVEL
+    WEAK_DEFINES BINDS_TO_WEAK PIE
+    ```
 
 - stack canary:
 
-```shell
-$ otool -Iv DamnVulnerableIOSApp | grep stack
-0x0046040c 83177 ___stack_chk_fail
-0x0046100c 83521 _sigaltstack
-0x004fc010 83178 ___stack_chk_guard
-0x004fe5c8 83177 ___stack_chk_fail
-0x004fe8c8 83521 _sigaltstack
-0x00000001004b3fd8 83077 ___stack_chk_fail
-0x00000001004b4890 83414 _sigaltstack
-0x0000000100590cf0 83078 ___stack_chk_guard
-0x00000001005937f8 83077 ___stack_chk_fail
-0x0000000100593dc8 83414 _sigaltstack
-```
+    ```bash
+    $ otool -Iv DamnVulnerableIOSApp | grep stack
+    0x0046040c 83177 ___stack_chk_fail
+    0x0046100c 83521 _sigaltstack
+    0x004fc010 83178 ___stack_chk_guard
+    0x004fe5c8 83177 ___stack_chk_fail
+    0x004fe8c8 83521 _sigaltstack
+    0x00000001004b3fd8 83077 ___stack_chk_fail
+    0x00000001004b4890 83414 _sigaltstack
+    0x0000000100590cf0 83078 ___stack_chk_guard
+    0x00000001005937f8 83077 ___stack_chk_fail
+    0x0000000100593dc8 83414 _sigaltstack
+    ```
 
 - Automatic Reference Counting:
 
-```shell
-$ otool -Iv DamnVulnerableIOSApp | grep release
-0x0045b7dc 83156 ___cxa_guard_release
-0x0045fd5c 83414 _objc_autorelease
-0x0045fd6c 83415 _objc_autoreleasePoolPop
-0x0045fd7c 83416 _objc_autoreleasePoolPush
-0x0045fd8c 83417 _objc_autoreleaseReturnValue
-0x0045ff0c 83441 _objc_release
-[SNIP]
-```
+    ```bash
+    $ otool -Iv DamnVulnerableIOSApp | grep release
+    0x0045b7dc 83156 ___cxa_guard_release
+    0x0045fd5c 83414 _objc_autorelease
+    0x0045fd6c 83415 _objc_autoreleasePoolPop
+    0x0045fd7c 83416 _objc_autoreleasePoolPush
+    0x0045fd8c 83417 _objc_autoreleaseReturnValue
+    0x0045ff0c 83441 _objc_release
+    [SNIP]
+    ```
 
 ##### With idb
 
 IDB automates the processes of checking for stack canary and PIE support. Select the target binary in the IDB GUI and click the "Analyze Binary…" button.
 
-<img src="Images/Chapters/0x06i/idb.png" alt="IDB Analyze Binary" width="400">
+<img src="Images/Chapters/0x06i/idb.png" alt="IDB Analyze Binary" width="350px" />
 
 #### Dynamic Analysis
 
@@ -646,32 +700,25 @@ Dynamic analysis is not applicable for finding security features offered by the 
 - <https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/MemoryMgmt/Articles/MemoryMgmt.html>
 - <https://medium.com/zendesk-engineering/ios-identifying-memory-leaks-using-the-xcode-memory-graph-debugger-e84f097b9d15>
 
-#### OWASP Mobile Top 10 2016
-
-- M7 - Poor Code Quality - <https://www.owasp.org/index.php/Mobile_Top_10_2016-M7-Poor_Code_Quality>
-
 #### OWASP MASVS
 
-- MSTG-CODE-1: "The app is signed and provisioned with a valid certificate."
+- MSTG-CODE-1: "The app is signed and provisioned with a valid certificate, of which the private key is properly protected."
 - MSTG-CODE-2: "The app has been built in release mode, with settings appropriate for a release build (e.g. non-debuggable)."
 - MSTG-CODE-3: "Debugging symbols have been removed from native binaries."
-- MSTG-CODE-4: "Debugging code has been removed, and the app does not log verbose errors or debugging messages."
+- MSTG-CODE-4: "Debugging code and developer assistance code (e.g. test code, backdoors, hidden settings) have been removed. The app does not log verbose errors or debugging messages."
 - MSTG-CODE-5: "All third party components used by the mobile app, such as libraries and frameworks, are identified, and checked for known vulnerabilities."
 - MSTG-CODE-6: "The app catches and handles possible exceptions."
 - MSTG-CODE-8: "In unmanaged code, memory is allocated, freed and used securely."
 - MSTG-CODE-9: "Free security features offered by the toolchain, such as byte-code minification, stack protection, PIE support and automatic reference counting, are activated."
 
-##### CWE
-
-- CWE-937 - OWASP Top Ten 2013 Category A9 - Using Components with Known Vulnerabilities
-
 ##### Tools
 
+- Swift Package Manager - <https://swift.org/package-manager/>
 - Carthage - <https://github.com/carthage/carthage>
 - CocoaPods - <https://CocoaPods.org>
-- OWASP Dependency Checker - <https://jeremylong.github.io/DependencyCheck/>
+- OWASP Dependency Check - <https://jeremylong.github.io/DependencyCheck/>
 - Sourceclear - <https://sourceclear.com>
-- Class-dump - <https://github.com/nygard/class-dump>
+- class-dump - <https://github.com/nygard/class-dump>
 - RetireJS - <https://retirejs.github.io/retire.js/>
 - idb - <https://github.com/dmayer/idb>
 - Codesign - <https://developer.apple.com/library/archive/documentation/Security/Conceptual/CodeSigningGuide/Procedures/Procedures.html>

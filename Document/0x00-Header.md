@@ -1,6 +1,3 @@
+# Mobile Security Testing Guide
 
-![OWASP LOGO](Images/OWASP_logo.png)
-
-# Mobile Application Security Testing Guide
-
-[DATE]
+<img src="Images/OWASP_logo.png" alt="OWASP Logo" width="350" />

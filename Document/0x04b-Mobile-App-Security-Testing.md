@@ -61,6 +61,9 @@ The focus of DAST is the testing and evaluation of apps via their real-time exec
 
 Dynamic analysis is usually used to check for security mechanisms that provide sufficient protection against the most prevalent types of attack, such as disclosure of data in transit, authentication and authorization issues, and server configuration errors.
 
+<br/>
+<br/>
+
 #### Avoiding False Positives
 
 ##### Automated Scanning Tools
@@ -76,7 +79,7 @@ Let's take CSRF as an example. A successful CSRF attack requires the following:
 
 Mobile apps don't fulfill these requirements: even if WebViews and cookie-based session management are used, any malicious link the user clicks opens in the default browser, which has a separate cookie store.
 
-Stored Cross-Site Scripting (XSS) can be an issue if the app includes WebViews, and it may even lead to command execution if the app exports JavaScript interfaces. However, reflected Cross-Site Scripting is rarely an issue for the reason mentioned above (even though whether they should exist at all is arguable — escaping output is simply a best practice).
+Stored Cross-Site Scripting (XSS) can be an issue if the app includes WebViews, and it may even lead to command execution if the app exports JavaScript interfaces. However, reflected Cross-Site Scripting is rarely an issue for the reason mentioned above (even though whether they should exist at all is arguable, escaping output is simply a best practice).
 
 > In any case, consider exploit scenarios when you perform the risk assessment; don't blindly trust your scanning tool's output.
 
@@ -101,7 +104,7 @@ The classic approach involves all-around security testing of the app's final or 
 - **Intelligence Gathering** - analyzing the **environmental** and **architectural** context of the app to gain a general contextual understanding.
 - **Mapping the Application** - based on information from the previous phases; may be complemented by automated scanning and manually exploring the app. Mapping provides a thorough understanding of the app, its entry points, the data it holds, and the main potential vulnerabilities. These vulnerabilities can then be ranked according to the damage their exploitation would cause so that the security tester can prioritize them. This phase includes the creation of test cases that may be used during test execution.
 - **Exploitation** - in this phase, the security tester tries to penetrate the app by exploiting the vulnerabilities identified during the previous phase. This phase is necessary for determining whether vulnerabilities are real and true positives.
-- **Reporting** - in this phase, which is essential to the client, the security tester reports the vulnerabilities he or she has been able to exploit and documents the kind of compromise he or she has been able to perform, including the compromise's scope (for example, the data the tester has been able to access illegitimately).
+- **Reporting** - in this phase, which is essential to the client, the security tester reports the vulnerabilities. This includes the exploitation process in detail, classifies the type of vulnerability, documents the risk if an attacker would be able to compromise the target and outlines which data the tester has been able to access illegitimately.
 
 ##### Preparation
 
@@ -111,7 +114,7 @@ Organizations may have different regulatory and legal obligations in certain ter
 
 Security goals/controls defined earlier in the development process may also be reviewed during the discussion with stakeholders. Some controls may conform to MASVS controls, but others may be specific to the organization or application.
 
-![Preparation](Images/Chapters/0x03/mstg-preparation.png)
+<img src="Images/Chapters/0x03/mstg-preparation.png" width="550" />
 
 All involved parties must agree on the decisions and the scope in the checklist because these will define the baseline for all security testing.
 
@@ -245,7 +248,7 @@ You can use the [OWASP MASVS](https://mobile-security.gitbook.io/masvs/ "OWASP M
 
 The picture below illustrates all the phases and artifacts:
 
-![General description of SDLC](Images/Chapters/0x04b/SDLCOverview.jpg)
+<img src="Images/Chapters/0x04b/SDLCOverview.jpg" width="550" />
 
 Based on the project's general risk profile, you may simplify (or even skip) some artifacts, and you may add others (formal intermediary approvals, formal documentation of certain points, etc.). **Always remember two things: an SDLC is meant to reduce risks associated with software development, and it is a framework that helps you set up controls to that end.** This this is a generic description of SDLC; always tailor this framework to your projects.
 
@@ -296,7 +299,7 @@ Security is just as critical to business success as the overall quality, perform
 
 However, DevSecOps is not just a linear process oriented towards delivering the best possible software to operations; it is also a mandate that operations closely monitor software that's in production to identify issues and fix them by forming a quick and efficient feedback loop with development. DevSecOps is a process through which Continuous Improvement is heavily emphasized.
 
-![DevSecOps process](Images/Chapters/0x04b/DevSecOpsProcess.JPG)
+<img src="Images/Chapters/0x04b/DevSecOpsProcess.JPG" width="550" />
 
 The human aspect of this emphasis is reflected in the creation of cross-functional teams that work together to achieve business outcomes. This section is focused on necessary interactions and integrating security into the development life cycle (which starts with project inception and ends with the delivery of value to users).
 
@@ -357,7 +360,7 @@ The security of an application developed with DevOps must be considered during o
 - Pentesting may take place regularly. (The version of the application used in production is the version that should be pentested, and the testing should take place in a dedicated environment and include data that's similar to the production version data. See the section on Penetration Testing for more details.)
 - Active monitoring should be performed to identify issues and remediate them as soon as possible via the feedback loop.
 
-![Example of a DevSecOps process](Images/Chapters/0x04b/ExampleOfADevSecOpsProcess.jpg)
+<img src="Images/Chapters/0x04b/ExampleOfADevSecOpsProcess.jpg" width="500" />
 
 ### References
 
@@ -366,10 +369,10 @@ The security of an application developed with DevOps must be considered during o
 
 #### OWASP MASVS
 
-- V1.1: "All app components are identified and known to be needed."
-- V1.3: "A high-level architecture for the mobile app and all connected remote services has been defined and security has been addressed in that architecture."
-- V1.4: "Data considered sensitive in the context of the mobile app is clearly identified."
-- V1.5: "All app components are defined in terms of the business functions and/or security functions they provide."
-- V1.6: "A threat model for the mobile app and the associated remote services has been produced that identifies potential threats and countermeasures."
-- V1.7: "All security controls have a centralized implementation."
-- V1.10: "Security is addressed within all parts of the software development lifecycle."
+- MSTG-ARCH-1: "All app components are identified and known to be needed."
+- MSTG-ARCH-3: "A high-level architecture for the mobile app and all connected remote services has been defined and security has been addressed in that architecture."
+- MSTG-ARCH-4: "Data considered sensitive in the context of the mobile app is clearly identified."
+- MSTG-ARCH-5: "All app components are defined in terms of the business functions and/or security functions they provide."
+- MSTG-ARCH-6: "A threat model for the mobile app and the associated remote services has been produced that identifies potential threats and countermeasures."
+- MSTG-ARCH-7: "All security controls have a centralized implementation."
+- MSTG-ARCH-10: "Security is addressed within all parts of the software development lifecycle."

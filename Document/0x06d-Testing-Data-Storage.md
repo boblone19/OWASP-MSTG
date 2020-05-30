@@ -16,7 +16,7 @@ Every file stored on the iOS file system is encrypted with its own per-file key,
 
 The following illustration shows the [iOS Data Protection Key Hierarchy](https://www.apple.com/business/docs/iOS_Security_Guide.pdf "iOS Security Guide").
 
-<img src="Images/Chapters/0x06d/key_hierarchy_apple.jpg" alt="Key Hierarchy iOS" width="550">
+<img src="Images/Chapters/0x06d/key_hierarchy_apple.jpg" alt="Key Hierarchy iOS" width="550" />
 
 Files can be assigned to one of four different protection classes, which are explained in more detail in the [iOS Security Guide](https://www.apple.com/business/docs/iOS_Security_Guide.pdf "iOS Security Guide"):
 
@@ -48,12 +48,12 @@ The [Keychain API](https://developer.apple.com/library/content/documentation/Sec
 Data stored in the Keychain is protected via a class structure that is similar to the class structure used for file encryption. Items added to the Keychain are encoded as a binary plist and encrypted with a 128-bit AES per-item key in Galois/Counter Mode (GCM). Note that larger blobs of data aren't meant to be saved directly in the Keychain-that's what the Data Protection API is for. You can configure data protection for Keychain items by setting the `kSecAttrAccessible` key in the call to `SecItemAdd` or `SecItemUpdate`. The following configurable [accessibility values for kSecAttrAccessible](https://developer.apple.com/documentation/security/keychain_services/keychain_items/item_attribute_keys_and_values#1679100 "Accessibility Values for kSecAttrAccessible") are the Keychain Data Protection classes:
 
 - `kSecAttrAccessibleAlways`: The data in the Keychain item can always be accessed, regardless of whether the device is locked.
-- `kSecAttrAccessibleAlwaysThisDeviceOnly`: The data in the Keychain item can always be accessed, regardless of whether the device is locked. The data won't be included in an iCloud or iTunes backup.
+- `kSecAttrAccessibleAlwaysThisDeviceOnly`: The data in the Keychain item can always be accessed, regardless of whether the device is locked. The data won't be included in an iCloud or local backup.
 - `kSecAttrAccessibleAfterFirstUnlock`: The data in the Keychain item can't be accessed after a restart until the device has been unlocked once by the user.
 - `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly`: The data in the Keychain item can't be accessed after a restart until the device has been unlocked once by the user. Items with this attribute do not migrate to a new device. Thus, after restoring from a backup of a different device, these items will not be present.
 - `kSecAttrAccessibleWhenUnlocked`: The data in the Keychain item can be accessed only while the device is unlocked by the user.
-- `kSecAttrAccessibleWhenUnlockedThisDeviceOnly`: The data in the Keychain item can be accessed only while the device is unlocked by the user. The data won't be included in an iCloud or iTunes backup.
-- `kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly`: The data in the Keychain can be accessed only when the device is unlocked. This protection class is only available if a passcode is set on the device. The data won't be included in an iCloud or iTunes backup.
+- `kSecAttrAccessibleWhenUnlockedThisDeviceOnly`: The data in the Keychain item can be accessed only while the device is unlocked by the user. The data won't be included in an iCloud or local backup.
+- `kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly`: The data in the Keychain can be accessed only when the device is unlocked. This protection class is only available if a passcode is set on the device. The data won't be included in an iCloud or local backup.
 
 `AccessControlFlags` define the mechanisms with which users can authenticate the key (`SecAccessControlCreateFlags`):
 
@@ -71,7 +71,7 @@ In case you want to use these mechanisms, it is recommended to test whether the 
 
 Swift:
 
-```swift
+```default
 public func devicePasscodeEnabled() -> Bool {
     return LAContext().canEvaluatePolicy(.deviceOwnerAuthentication, error: nil)
 }
@@ -79,12 +79,12 @@ public func devicePasscodeEnabled() -> Bool {
 
 Objective-C:
 
-```objc
+```objectivec
 -(BOOL)devicePasscodeEnabled:(LAContex)context{
   if ([context canEvaluatePolicy:LAPolicyDeviceOwnerAuthentication error:nil]) {
         return true;
     } else {
-        creturn false;
+        return false;
     }
 }
 ```
@@ -95,7 +95,7 @@ On iOS, when an application is uninstalled, the Keychain data used by the applic
 
 When assessing an iOS application, you should look for Keychain data persistence. This is normally done by using the application to generate sample data that may be stored in the Keychain, uninstalling the application, then reinstalling the application to see whether the data was retained between application installations. You can also verify persistence by using the iOS security assessment framework Needle to read the Keychain. The following Needle commands demonstrate this procedure:
 
-```shell
+```bash
 $ python needle.py
 [needle] > use storage/data/keychain_dump
 [needle] > run
@@ -125,7 +125,7 @@ There's no iOS API that developers can use to force wipe data when an applicatio
 
 - When an application is first launched after installation, wipe all Keychain data associated with the application. This will prevent a device's second user from accidentally gaining access to the previous user's accounts. The following Swift example is a basic demonstration of this wiping procedure:
 
-```swift
+```default
 let userDefaults = UserDefaults.standard
 
 if userDefaults.bool(forKey: "hasRunBefore") == false {
@@ -149,7 +149,7 @@ The encryption must be implemented so that the secret key is stored in the Keych
 
 Here is sample Swift code you can use to create keys (Notice the `kSecAttrTokenID as String: kSecAttrTokenIDSecureEnclave`: this indicates that we want to use the Secure Enclave directly.):
 
-```swift
+```default
 // private key parameters
 let privateKeyParams = [
     kSecAttrLabel as String: "privateLabel",
@@ -201,7 +201,7 @@ The [`NSUserDefaults`](https://developer.apple.com/documentation/foundation/nsus
 
 The following example shows how to create a securely encrypted file using the `createFileAtPath` method:
 
-```objc
+```objectivec
 [[NSFileManager defaultManager] createFileAtPath:[self filePath]
   contents:[@"secret text" dataUsingEncoding:NSUTF8StringEncoding]
   attributes:[NSDictionary dictionaryWithObject:NSFileProtectionComplete
@@ -222,11 +222,7 @@ The SQLite 3 library must be added to an app if the app is to use SQLite. This l
 
 Firebase is a development platform with more than 15 products, and one of them is Firebase Real-time Database. It can be leveraged by application developers to store and sync data with a NoSQL cloud-hosted database. The data is stored as JSON and is synchronized in real-time to every connected client and also remains available even when the application goes offline.
 
-###### Identifying Misconfigured Firebase Instance
-
-In Jan 2018, [Appthority Mobile Threat Team (MTT)](https://cdn2.hubspot.net/hubfs/436053/Appthority%20Q2-2018%20MTR%20Unsecured%20Firebase%20Databases.pdf "Unsecured Firebase Databases: Exposing Sensitive Data via Thousands of Mobile Apps") performed security research on insecure backend services connecting to mobile applications. They discovered a misconfiguration in Firebase, which is one of the top 10 most popular data stores which could allow attackers to retrieve all the unprotected data hosted on the cloud server. The team performed the research on 2 Million+ mobile applications and found that the around 9% of Android applications and almost half (47%) of iOS apps that connect to a Firebase database were vulnerable.
-
-The misconfigured Firebase instance can be identified by making the following network call:
+A misconfigured Firebase instance can be identified by making the following network call:
 
 `https://\<firebaseProjectName\>.firebaseio.com/.json`
 
@@ -234,7 +230,7 @@ The _firebaseProjectName_ can be retrieved from the property list(.plist) file. 
 
 Alternatively, the analysts can use [Firebase Scanner](https://github.com/shivsahni/FireBaseScanner "Firebase Scanner"), a python script that automates the task above as shown below:
 
-```shell
+```bash
 python FirebaseScanner.py -f <commaSeperatedFirebaseProjectNames>
 ```
 
@@ -244,7 +240,7 @@ python FirebaseScanner.py -f <commaSeperatedFirebaseProjectNames>
 
 The following example demonstrates how to use encryption with a Realm database:
 
-```swift
+```default
 // Open the encrypted Realm file where getKey() is a method to obtain a key from the Keychain or a server
 let config = Realm.Configuration(encryptionKey: getKey())
 do {
@@ -280,7 +276,7 @@ You can analyze the app's data directory on a non-jailbroken iOS device by using
 1. Trigger the functionality that stores potentially sensitive data.
 2. Connect the iOS device to your workstation and launch iMazing.
 3. Select "Apps", right-click the desired iOS application, and select "Extract App".
-4. Navigate to the output directory and locate $APP_NAME.imazing. Rename it `$APP_NAME.zip`.
+4. Navigate to the output directory and locate `$APP_NAME.imazing`. Rename it to `$APP_NAME.zip`.
 5. Unpack the ZIP file. You can then analyze the application data.
 
 > Note that tools like iMazing don't copy data directly from the device. They try to extract data from the backups they create. Therefore, getting all the app data that's stored on the iOS device is impossible: not all folders are included in backups. Use a jailbroken device or repackage the app with Frida and use a tool like objection to access all the data and files.
@@ -291,7 +287,7 @@ The Keychain contents can be dumped during dynamic analysis. On a jailbroken dev
 
 The path to the Keychain file is
 
-```shell
+```bash
 /private/var/Keychains/keychain-2.db
 ```
 
@@ -305,7 +301,7 @@ For testing the local storage and verifying what data is stored within it, it's 
 
 Once the app is running in the iOS simulator, you can navigate to the directory of the latest simulator started with the following command:
 
-```shell
+```bash
 $ cd ~/Library/Developer/CoreSimulator/Devices/$(
 ls -alht ~/Library/Developer/CoreSimulator/Devices | head -n 2 |
 awk '{print $9}' | sed -n '1!p')/data/Containers/Data/Application
@@ -313,7 +309,7 @@ awk '{print $9}' | sed -n '1!p')/data/Containers/Data/Application
 
 The command above will automatically find the UUID of the latest simulator started. Now you still need to grep for your app name or a keyword in your app. This will show you the UUID of the app.
 
-```shell
+```bash
 $ grep -iRn keyword .
 ```
 
@@ -327,7 +323,7 @@ On a jailbroken device, you can use the iOS security assessment framework Needle
 
 To use Needle to read the Keychain, execute the following command:
 
-```shell
+```bash
 [needle] > use storage/data/keychain_dump
 [needle][keychain_dump] > run
 ```  
@@ -336,7 +332,7 @@ To use Needle to read the Keychain, execute the following command:
 
 iOS applications often store binary cookie files in the application sandbox. Cookies are binary files containing cookie data for application WebViews. You can use Needle to convert these files to a readable format and inspect the data. Use the following Needle module, which searches for binary cookie files stored in the application container, lists their data protection values, and gives the user the options to inspect or download the file:
 
-```shell
+```bash
 [needle] > use storage/data/files_binarycookies
 [needle][files_binarycookies] > run
 ```
@@ -345,7 +341,7 @@ iOS applications often store binary cookie files in the application sandbox. Coo
 
 iOS applications often store data in property list (plist) files that are stored in both the application sandbox and the IPA package. Sometimes these files contain sensitive information, such as usernames and passwords; therefore, the contents of these files should be inspected during iOS assessments. Use the following Needle module, which searches for plist files stored in the application container, lists their data protection values, and gives the user the options to inspect or download the file:
 
-```shell
+```bash
 [needle] > use storage/data/files_plist
 [needle][files_plist] > run
 ```
@@ -354,7 +350,7 @@ iOS applications often store data in property list (plist) files that are stored
 
 iOS applications can store data in cache databases. These databases contain data such as web requests and responses. Sometimes the data is sensitive. Use the following Needle module, which searches for cache files stored in the application container, lists their data protection values, and gives the user the options to inspect or download the file:
 
-```shell
+```bash
 [needle] > use storage/data/files_cachedb
 [needle][files_cachedb] > run
 ```
@@ -363,7 +359,7 @@ iOS applications can store data in cache databases. These databases contain data
 
 iOS applications typically use SQLite databases to store data required by the application. Testers should check the data protection values of these files and their contents for sensitive data. Use the following Needle module, which searches for SQLite databases stored in the application container, lists their data protection values, and gives the user the options to inspect or download the file:
 
-```shell
+```bash
 [needle] > use storage/data/files_sql
 [needle][files_sql] >
 ```
@@ -393,7 +389,7 @@ Use the following keywords to check the app's source code for predefined and cus
 
 A generalized approach to this issue is to use a define to enable `NSLog` statements for development and debugging, then disable them before shipping the software. You can do this by adding the following code to the appropriate PREFIX_HEADER (\*.pch) file:
 
-```C#
+```objectivec
 #ifdef DEBUG
 #   define NSLog (...) NSLog(__VA_ARGS__)
 #else
@@ -442,7 +438,7 @@ The [UITextInputTraits protocol](https://developer.apple.com/reference/uikit/uit
 
 - Search through the source code for similar implementations, such as
 
-```objc
+```objectivec
   textObject.autocorrectionType = UITextAutocorrectionTypeNo;
   textObject.secureTextEntry = YES;
 ```
@@ -451,7 +447,7 @@ The [UITextInputTraits protocol](https://developer.apple.com/reference/uikit/uit
 
 The application must prevent the caching of sensitive information entered into text fields. You can prevent caching by disabling it programmatically, using the `textObject.autocorrectionType = UITextAutocorrectionTypeNo` directive in the desired UITextFields, UITextViews, and UISearchBars. For data that should be masked, such as PINs and passwords, set `textObject.secureTextEntry` to `YES`.
 
-```objc
+```objectivec
 UITextField *textField = [ [ UITextField alloc ] initWithFrame: frame ];
 textField.autocorrectionType = UITextAutocorrectionTypeNo;
 ```
@@ -468,7 +464,7 @@ If a jailbroken iPhone is available, execute the following steps:
 
 With Needle:
 
-```shell
+```bash
 [needle] > use storage/caching/keyboard_autocomplete
 [needle] > run
 
@@ -498,7 +494,7 @@ With Needle:
 
 ```
 
-```objc
+```objectivec
 UITextField *textField = [ [ UITextField alloc ] initWithFrame: frame ];
 textField.autocorrectionType = UITextAutocorrectionTypeNo;
 ```
@@ -583,7 +579,7 @@ In the iOS project's storyboard, navigate to the configuration options for the t
 **Source Code**
 If the text field is defined in the source code, make sure that the option [isSecureTextEntry](https://developer.apple.com/documentation/uikit/uitextinputtraits/1624427-issecuretextentry "isSecureTextEntry in Text Field") is set to "true". This option obscures the text input by showing dots.
 
-```Swift
+```default
 sensitiveTextField.isSecureTextEntry = true
 ```
 
@@ -597,7 +593,7 @@ If the information is masked by, for example, asterisks or dots, the app isn't l
 
 #### Overview
 
-iOS includes auto-backup features that create copies of the data stored on the device. On iOS, backups can be made through iTunes or the cloud (via the iCloud backup feature). In both cases, the backup includes nearly all data stored on the device except highly sensitive data such as Apple Pay information and Touch ID settings.
+iOS includes auto-backup features that create copies of the data stored on the device. You can make iOS backups from your host computer by using iTunes (till macOS Catalina) or Finder (from macOS Catalina onwards), or via the iCloud backup feature. In both cases, the backup includes nearly all data stored on the iOS device except highly sensitive data such as Apple Pay information and Touch ID settings.
 
 Since iOS backs up installed apps and their data, an obvious concern is whether sensitive user data stored by the app might unintentionally leak through the backup. Another concern, though less obvious, is whether sensitive configuration settings used to protect data or restrict app functionality could be tampered to change app behavior after restoring a modified backup. Both concerns are valid and these vulnerabilities have proven to exist in a vast number of apps today.
 
@@ -613,11 +609,11 @@ The takeaway: If sensitive data is handled as recommended earlier in this chapte
 
 ##### Static Analysis
 
-An iTunes backup of a device on which a mobile application has been installed will include all subdirectories (except for `Library/Caches/`) and files in the [app's private directory](https://developer.apple.com/library/content/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/FileSystemOverview/FileSystemOverview.html#//apple_ref/doc/uid/TP40010672-CH2-SW12 "Directories of an iOS App").
+A backup of a device on which a mobile application has been installed will include all subdirectories (except for `Library/Caches/`) and files in the [app's private directory](https://developer.apple.com/library/content/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/FileSystemOverview/FileSystemOverview.html#//apple_ref/doc/uid/TP40010672-CH2-SW12 "Directories of an iOS App").
 
 Therefore, avoid storing sensitive data in plaintext within any of the files or folders that are in the app's private directory or subdirectories.
 
-Although all the files in `Documents/` and `Library/Application Support/` are always backed up by default, you can [exclude files from the backup](https://developer.apple.com/library/content/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/FileSystemOverview/FileSystemOverview.html#//apple_ref/doc/uid/TP40010672-CH2-SW28 "Where You Should Put Your App's Files") by calling `NSURL setResourceValue:forKey:error:` with the `NSURLIsExcludedFromBackupKey` key.
+Although all the files in `Documents/` and `Library/Application Support/` are always backed up by default, you can [exclude files from the backup](https://developer.apple.com/library/content/documentation/FileManagement/Conceptual/FileSystemProgrammingGuide/FileSystemOverview/FileSystemOverview.html#//apple_ref/doc/uid/TP40010672-CH2-SW28 "Where You Should Put Your App\'s Files") by calling `NSURL setResourceValue:forKey:error:` with the `NSURLIsExcludedFromBackupKey` key.
 
 You can use the [NSURLIsExcludedFromBackupKey](https://developer.apple.com/reference/foundation/nsurl#//apple_ref/c/data/NSURLIsExcludedFromBackupKey "NSURLIsExcludedFromBackupKey") and [CFURLIsExcludedFromBackupKey](https://developer.apple.com/reference/corefoundation/cfurl-rd7#//apple_ref/c/data/kCFURLIsExcludedFromBackupKey "kCFURLIsExcludedFromBackupKey") file system properties to exclude files and directories from backups. An app that needs to exclude many files can do so by creating its own subdirectory and marking that directory excluded. Apps should create their own directories for exclusion instead of excluding system-defined directories.
 
@@ -625,7 +621,7 @@ Both file system properties are preferable to the deprecated approach of directl
 
 The following is [sample Objective-C code for excluding a file from a backup](https://developer.apple.com/library/content/qa/qa1719/index.html "How do I prevent files from being backed up to iCloud and iTunes?") on iOS 5.1 and later:
 
-```ObjC
+```objectivec
 - (BOOL)addSkipBackupAttributeToItemAtPath:(NSString *) filePathString
 {
     NSURL* URL= [NSURL fileURLWithPath: filePathString];
@@ -643,7 +639,7 @@ The following is [sample Objective-C code for excluding a file from a backup](ht
 
 The following is sample Swift code for excluding a file from a backup on iOS 5.1 and later, see [Swift excluding files from iCloud backup](https://bencoding.com/2017/02/20/swift-excluding-files-from-icloud-backup/) for more information:
 
-```swift
+```default
 enum ExcludeFileError: Error {
     case fileDoesNotExist
     case error(String)
@@ -670,11 +666,13 @@ func excludeFileFromBackup(filePath: URL) -> Result<Bool, ExcludeFileError> {
 
 #### Dynamic Analysis
 
-In order to test the backup, you obviously need to create one first. The most common way to create a backup of an iOS device is by using iTunes, which is available for Windows, Linux and of course macOS. When creating a backup via iTunes you can always only backup the whole device and not select just a single app. Make sure that the option "Encrypt local backup" in iTunes is not set, so that the backup is stored in cleartext on your hard drive.
+In order to test the backup, you obviously need to create one first. The most common way to create a backup of an iOS device is by using iTunes, which is available for Windows, Linux and of course macOS (till macOS Mojave). When creating a backup via iTunes you can always only backup the whole device and not select just a single app. Make sure that the option "Encrypt local backup" in iTunes is not set, so that the backup is stored in cleartext on your hard drive.
 
-After the iOS device has been backed up through iTunes you need to retrieve the file path of the backup, which are different locations on each OS. The official Apple documentation will help you to [locate backups of your iPhone, iPad, and iPod touch](https://support.apple.com/en-us/HT204215 "Locate backups of your iPhone, iPad, and iPod touch").
+> iTunes is not available anymore from macOS Catalina onwards. Managing of an iOS device, including updates, backup and restore has been moved to the Finder app. The approach remains the same, as described above.
 
-When you want to navigate to the iTunes backup folder up to High Sierra you can easily do so. Starting with macOS Mojave you will get the following error (even as root):
+After the iOS device has been backed up, you need to retrieve the file path of the backup, which are different locations on each OS. The official Apple documentation will help you to [locate backups of your iPhone, iPad, and iPod touch](https://support.apple.com/en-us/HT204215 "Locate backups of your iPhone, iPad, and iPod touch").
+
+When you want to navigate to the backup folder up to High Sierra you can easily do so. Starting with macOS Mojave you will get the following error (even as root):
 
 ```bash
 $ pwd
@@ -683,7 +681,7 @@ $ ls -alh MobileSync
 ls: MobileSync: Operation not permitted
 ```
 
-This is not a permission issue of the backup folder, but a new feature in macOS Mojave. Solve this problem by granting full disk access to your terminal application by following the explanation on [OSXDaily](http://osxdaily.com/2018/10/09/fix-operation-not-permitted-terminal-error-macos/ "Fix Terminal “Operation not permitted” Error in MacOS Mojave").
+This is not a permission issue of the backup folder, but a new feature in macOS Mojave. You can solve this problem by granting full disk access to your terminal application by following the explanation on [OSXDaily](http://osxdaily.com/2018/10/09/fix-operation-not-permitted-terminal-error-macos/ "Fix Terminal “Operation not permitted” Error in MacOS Mojave").
 
 Before you can access the directory you need to select the folder with the UDID of your device. Check the section "Getting the UDID of an iOS device" in the "iOS Basic Security Testing" chapter on how to retrieve the UDID.
 
@@ -700,7 +698,9 @@ $ ls | head -n 3
 000200a644d7d2c56eec5b89c1921dacbec83c3e
 ```
 
-Therefore, it's not straightforward to navigate through it and you will not find any hints of the app you want to analyze in the directory or file name. You can consider using the [iMazing](https://imazing.com "iMazing") shareware utility to assist here. Perform a device backup with iMazing and use its built-in backup explorer to easily analyze app container contents including original paths and file names. Without iMazing or similar software you may need to resort to using grep to identify sensitive data. This is not the most thorough approach but you can try searching for sensitive data that you have keyed in while using the app before you made the backup. For example: the username, password, credit card data, PII or any data that is considered sensitive in the context of the app.
+Therefore, it's not straightforward to navigate through it and you will not find any hints of the app you want to analyze in the directory or file name. You can consider using the [iMazing](https://imazing.com "iMazing") shareware utility to assist here. Perform a device backup with iMazing and use its built-in backup explorer to easily analyze app container contents including original paths and file names.
+
+Without iMazing or similar software you may need to resort to using grep to identify sensitive data. This is not the most thorough approach but you can try searching for sensitive data that you have keyed in while using the app before you made the backup. For example: the username, password, credit card data, PII or any data that is considered sensitive in the context of the app.
 
 ```bash
 $ ~/Library/Application Support/MobileSync/Backup/<UDID>
@@ -709,19 +709,15 @@ $ grep -iRn "password" .
 
 As described in the Static Analysis section, any sensitive data that you're able to find should be excluded from the backup, encrypted properly by using the Keychain or not stored on the device in the first place.
 
-In case you need to work with an encrypted backup, there are some Python scripts in [DinoSec's GitHub repo](https://github.com/dinosec/iphone-dataprotection/tree/master/python_scripts "iphone-dataprotection"), such as backup_tool.py and backup_passwd.py, that will serve as a good starting point. However, note that they might not work with the latest iTunes versions and might need to be tweaked.
+In case you need to work with an encrypted backup, there are some Python scripts in [DinoSec's GitHub repo](https://github.com/dinosec/iphone-dataprotection/tree/master/python_scripts "iphone-dataprotection"), such as backup_tool.py and backup_passwd.py, that will serve as a good starting point. However, note that they might not work with the latest iTunes/Finder versions and might need to be tweaked.
 
 ##### Proof of Concept: Removing UI Lock with Tampered Backup
 
 As discussed earlier, sensitive data is not limited to just user data and PII. It can also be configuration or settings files that affect app behavior, restrict functionality, or enable security controls. If you take a look at the open source bitcoin wallet app, [Bither](https://github.com/bither/bither-ios "Bither for iOS"), you'll see that it's possible to configure a PIN to lock the UI. And after a few easy steps, you will see how to bypass this UI lock with a modified backup on a non-jailbroken device.
 
-<table bordercolor="#FFFFFF">
-  <tr><td>
-    <img src="Images/Chapters/0x06d/bither_demo_enable_pin.PNG" alt="configure pin" width="270">
-  </td><td>
-    <img src="Images/Chapters/0x06d/bither_demo_pin_screen.PNG" alt="pin enabled" width="270">
-  </td></tr>
-</table>
+<img src="Images/Chapters/0x06d/bither_demo_enable_pin.png" width="270" />
+
+<img src="Images/Chapters/0x06d/bither_demo_pin_screen.png" width="270" />
 
 After you enable the pin, use iMazing to perform a device backup:
 
@@ -737,11 +733,13 @@ Next you can open the backup to view app container files within your target app:
 
 At this point you can view all the backed up content for Bither.
 
-<img src="Images/Chapters/0x06d/bither_demo_imazing_1.png" alt="iMazing" width="550">
+<img src="Images/Chapters/0x06d/bither_demo_imazing_1.png" alt="iMazing" width="550" />
 
-This is where you can begin parsing through the files looking for sensitive data. In the screenshot you'll see the net.bither.plist file which contains the `pin_code` attribute. To remove the UI lock restriction, simply delete the `pin_code` attribute and save the changes.
+This is where you can begin parsing through the files looking for sensitive data. In the screenshot you'll see the `net.bither.plist` file which contains the `pin_code` attribute. To remove the UI lock restriction, simply delete the `pin_code` attribute and save the changes.
 
-From there it's possible to easily restore the modified version of net.bither.plist back onto the device using the licensed version of iMazing. The free workaround, however, is to find the plist file in the obfuscated backup generated by iTunes. So create your iTunes backup of the device with Bither's PIN code configured. Then, using the steps described earlier, find the backup directory and grep for "pin_code" as shown below.
+From there it's possible to easily restore the modified version of `net.bither.plist` back onto the device using the licensed version of iMazing.
+
+The free workaround, however, is to find the plist file in the obfuscated backup generated by iTunes/Finder. So create your backup of the device with Bither's PIN code configured. Then, using the steps described earlier, find the backup directory and grep for "pin_code" as shown below.
 
 ```bash
 $ ~/Library/Application Support/MobileSync/Backup/<UDID>
@@ -749,11 +747,11 @@ $ grep -iRn "pin_code" .
 Binary file ./13/135416dd5f251f9251e0f07206277586b7eac6f6 matches
 ```
 
-You'll see there was a match on a binary file with an obfuscated name. This is your net.bither.plist file. Go ahead and rename the file giving it a plist extension so Xcode can easily open it up for you.
+You'll see there was a match on a binary file with an obfuscated name. This is your `net.bither.plist` file. Go ahead and rename the file giving it a plist extension so Xcode can easily open it up for you.
 
-<img src="Images/Chapters/0x06d/bither_demo_plist.png" alt="iMazing" width="550">
+<img src="Images/Chapters/0x06d/bither_demo_plist.png" alt="iMazing" width="550" />
 
-Again, remove the `pin_code` attribute from the plist and save your changes. Rename the file back to the original name (i.e., without the plist extension) and perform your backup restore from iTunes. When the restore is complete you'll see that Bither no longer prompts you for the PIN code when launched.
+Again, remove the `pin_code` attribute from the plist and save your changes. Rename the file back to the original name (i.e., without the plist extension) and perform your backup restore. When the restore is complete you'll see that Bither no longer prompts you for the PIN code when launched.
 
 ### Testing Auto-Generated Screenshots for Sensitive Information (MSTG-STORAGE-9)
 
@@ -767,7 +765,7 @@ While analyzing the source code, look for the fields or screens that take or dis
 
 The following is a sample remediation method that will set a default screenshot:
 
-```objc
+```objectivec
 @property (UIImageView *)backgroundImage;
 
 - (void)applicationDidEnterBackground:(UIApplication *)application {
@@ -787,7 +785,7 @@ Navigate to an application screen that displays sensitive information, such as a
 
 Screenshot caching vulnerabilities can also be detected with Needle. This is demonstrated in the following Needle excerpt:
 
-```shell
+```bash
 [needle] > use storage/caching/screenshot
 [needle][screenshot] > run
 [V] Creating timestamp file...
@@ -829,7 +827,7 @@ Such data structures give developers direct access to memory. Make sure that thi
 
 Avoid Swift data types other than collections regardless of whether they are considered mutable. Many Swift data types hold their data by value, not by reference. Although this allows modification of the memory allocated to simple types like `char` and `int`, handling a complex type such as `String` by value involves a hidden layer of objects, structures, or primitive arrays whose memory can't be directly accessed or modified. Certain types of usage may seem to create a mutable data object (and even be documented as doing so), but they actually create a mutable identifier (variable) instead of an immutable identifier (constant). For example, many think that the following results in a mutable `String` in Swift, but this is actually an example of a variable whose complex value can be changed (replaced, not modified in place):
 
-```swift
+```default
 var str1 = "Goodbye"              // "Goodbye", base address:            0x0001039e8dd0
 str1.append(" ")                 // "Goodbye ", base address:            0x608000064ae0
 str1.append("cruel world!")      // "Goodbye cruel world", base address: 0x6080000338a0
@@ -867,7 +865,7 @@ Wether you are using a jailbroken or a non-jailbroken device, you can dump the a
 
 After the memory has been dumped (e.g. to a file called "memory"), depending on the nature of the data you're looking for, you'll need a set of different tools to process and analyze that memory dump. For instance, if you're focusing on strings, it might be sufficient for you to execute the command `strings` or `rabin2 -zz` to extract those strings.
 
-```shell
+```bash
 # using strings
 $ strings memory > strings.txt
 
@@ -905,14 +903,9 @@ For more information, options and approaches, please refer to section "[In-Memor
 
 ### References
 
-#### OWASP Mobile Top 10 2016
-
-- M1 - Improper Platform Usage - <https://www.owasp.org/index.php/Mobile_Top_10_2016-M1-Improper_Platform_Usage>
-- M2 - Insecure Data Storage - <https://www.owasp.org/index.php/Mobile_Top_10_2016-M2-Insecure_Data_Storage>
-
 #### OWASP MASVS
 
-- MSTG-STORAGE-1: "System credential storage facilities are used appropriately to store sensitive data, such as user credentials or cryptographic keys."
+- MSTG-STORAGE-1: "System credential storage facilities need to be used to store sensitive data, such as PII, user credentials or cryptographic keys."
 - MSTG-STORAGE-2: "No sensitive data should be stored outside of the app container or system credential storage facilities."
 - MSTG-STORAGE-3: "No sensitive data is written to application logs."
 - MSTG-STORAGE-4: "No sensitive data is shared with third parties unless it is a necessary part of the architecture."
@@ -922,21 +915,6 @@ For more information, options and approaches, please refer to section "[In-Memor
 - MSTG-STORAGE-8: "No sensitive data is included in backups generated by the mobile operating system."
 - MSTG-STORAGE-9: "The app removes sensitive data from views when moved to the background."
 - MSTG-STORAGE-10: "The app does not hold sensitive data in memory longer than necessary, and memory is cleared explicitly after use."
-
-#### CWE
-
-- CWE-117 - Improper Output Neutralization for Logs
-- CWE-200 - Information Exposure
-- CWE-311 - Missing Encryption of Sensitive Data
-- CWE-312 - Cleartext Storage of Sensitive Information
-- CWE-359 - "Exposure of Private Information ('Privacy Violation')"
-- CWE-522 - Insufficiently Protected Credentials
-- CWE-524 - Information Exposure Through Caching
-- CWE-532 - Information Exposure Through Log Files
-- CWE-534 - Information Exposure Through Debug Log Files
-- CWE-538 - File and Directory Information Exposure
-- CWE-634 - Weaknesses that Affect System Processes
-- CWE-922 - Insecure Storage of Sensitive Information
 
 #### Tools
 
@@ -948,5 +926,4 @@ For more information, options and approaches, please refer to section "[In-Memor
 
 #### Others
 
-- Appthority Mobile Threat Team Research Paper - <https://cdn2.hubspot.net/hubfs/436053/Appthority%20Q2-2018%20MTR%20Unsecured%20Firebase%20Databases.pdf>
-- Demystifying the Secure Enclave Processor - <https://www.blackhat.com/docs/us-16/materials/us-16-Mandt-Demystifying-The-Secure-Enclave-Processor.pdf>
+- [#mandt] Tarjei Mandt, Mathew Solnik  and  David Wang, Demystifying the Secure Enclave Processor - <https://www.blackhat.com/docs/us-16/materials/us-16-Mandt-Demystifying-The-Secure-Enclave-Processor.pdf>
