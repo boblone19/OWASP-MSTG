@@ -23,10 +23,12 @@ Currently the MASVS and MSTG are used by at least the following companies:
 - [Randorisec](https://randorisec.fr/ "Randorisec")
 - [Secarma](https://www.secarma.com/ "Secarma")
 - [SecuRing](https://securing.biz/ "SecuRing")
+- [Stingray Technologies](https://stingray.appsec.global/  "Stingray Technologies")
 - [STM Solutions](https://stmsolutions.pl/ "STM Solutions")
 - [Toreon](https://www.toreon.com/ "Toreon")
 - [VantagePoint](https://www.vantagepoint.sg "VantagePoint")
 - [Vertical Structure](https://www.verticalstructure.com "Vertical Structure Ltd")
+- [Websec Canada](https://www.websec.ca/mobile-application-security "Websec Canada")
 - [Xebia](https://xebia.com "Xebia")
 
 > Note: the quality of the application of the MASVS/MSTG by these companies has not been vetted by the MSTG team. It is just an indicator of adoption reported publicly.
@@ -50,4 +52,4 @@ Currently the MASVS and MSTG are used by at least the following companies:
 
 ## Call for Users
 
-Are you actively using the MASVS or MSTG and want to be listed here? File an [issue on github](https://github.com/OWASP/owasp-mstg/issues/new "New Issue"), contact Sven Schleier (Slack: *Sven*), Jeroen Willemsen (Slack: *jeroenwillemsen*) or Carlos Holguera (Slack: *Carlos*), or send an email to [Sven](mailto:sven.schleier@owasp.org), [Jeroen](mailto:jeroen.willemsen@owasp.org) or [Carlos](mailto:carlos.holguera@owasp.org).
+Are you actively using the MASVS or MSTG and want to be listed here? File an [issue on GitHub](https://github.com/OWASP/owasp-mstg/issues/new "New Issue"), contact Sven Schleier (Slack: *Sven*) or Carlos Holguera (Slack: *Carlos*), or send an email to [Sven](mailto:sven.schleier@owasp.org) or [Carlos](mailto:carlos.holguera@owasp.org).
